@@ -1087,22 +1087,20 @@ function updateNav(activeIdx) {
 }
 
 // ─── QA TEST SCRIPT ───────────────────────────────────────────────────────────
-// Auto-replays a scripted conversation covering all known problem areas.
-// Triggered by the "Run QA Test Script" button on the welcome screen.
 
 var TEST_SCRIPT = [
-  // Section 1: Timelogs — biometric with brand follow-up
+  // Section 1: Timelogs
   "Biometric devices",
   "ZKTeco",
   "Automatically synced to a system",
   "DarwinBox",
   "Branch HR or supervisors",
   "Every payroll cutoff",
-  // Section 2: Approval Flow — simple one-level
+  // Section 2: Approval Flow
   "Through DarwinBox",
   "Just immediate manager approves",
   "Same for all request types",
-  // Section 3: Work Schedule — multiple schedules + night shift
+  // Section 3: Work Schedule
   "Different schedules by department or role",
   "Support team is fixed 9-6PM, Sales flexi 8hrs, rest are 8-5pm, consultants exempt",
   "completely open",
@@ -1115,17 +1113,16 @@ var TEST_SCRIPT = [
   "yes sometimes",
   "were not sure how we compute that",
   "no we dont give night diff",
-  "covered all, done",
-  // Section 4: Computation — hybrid late rule (known edge case)
+  "covered all done",
+  // Section 4: Computation
   "Yes, we have a grace period",
   "5 minutes",
-  "Rounded to nearest 30 minutes",
-  "if they are late 5x for the cutoff, we deduct 5k from their salary",
-  "if fewer than 5x, we deduct exact minutes",
+  "if they are late 5x for the cutoff we deduct 5k from salary",
+  "if fewer than 5x we deduct exact minutes",
   "Yes that is correct",
-  "No, breaks are not monitored",
+  "No breaks are not monitored",
   "Exact minutes deducted",
-  // Section 5: Leaves — use it or lose it (DOLE flag)
+  // Section 5: Leaves
   "Just one combined leave type",
   "10",
   "All at once at the start of the year",
@@ -1133,118 +1130,130 @@ var TEST_SCRIPT = [
   "Use it or lose it",
   "Full days only",
   "Prorated based on hire date",
-  "No, just the 10-day combined leave",
-  "Increases with tenure",
+  "No just the 10-day combined leave",
   "Every 2 years plus 2 days",
-  // Section 6: Overtime — flat 110% (DOLE flag)
-  "Manager's discretion",
+  // Section 6: Overtime
+  "Managers discretion",
   "Starts immediately after shift ends",
   "Every minute of OT is counted",
   "its 110% for all types",
   "Managers and above are exempt",
-  // Section 7: Holidays — quick option then follow-ups
+  // Section 7: Holidays
   "Philippine proclaimed holidays only",
-  "Not sure",
-  "No work, no pay",
+  "Not sure about day before rule",
+  "No work no pay",
   "Regular rate 100%",
   "No night shifts",
-  // Section 8: Other Notes — perfect attendance bonus
+  // Section 8: Other Notes
   "Perfect attendance bonus",
+  "Nothing else"
 ];
 
 var testScriptIndex = 0;
 var testScriptRunning = false;
-var TEST_DELAY_MIN = 1200;
-var TEST_DELAY_MAX = 2200;
+var testScriptTimer = null;
+var testScriptLastMessageCount = 0;
+
+function getOrcaMessageCount() {
+  var area = document.getElementById('chatArea');
+  if (!area) return 0;
+  return area.querySelectorAll('.message.orca').length;
+}
+
+function updateTestStatus(text) {
+  var s = document.getElementById('testScriptStatus');
+  if (s) s.textContent = text;
+}
 
 function runTestScript() {
-  // Pre-fill form with test data
+  // Pre-fill form
   document.getElementById('inputCompany').value = 'QA Test Company';
   document.getElementById('inputContact').value = 'Test User';
   document.getElementById('inputTitle').value = 'HR Manager';
   document.getElementById('inputEmail').value = 'kvirata@sprout.ph';
-  document.getElementById('inputPhone').value = '09171234567';
-  var salesRepInput = document.getElementById('inputSalesRep');
-  if (salesRepInput) salesRepInput.value = 'Tin Dela Cruz';
+  if (document.getElementById('inputPhone')) document.getElementById('inputPhone').value = '09171234567';
+  if (document.getElementById('inputSalesRep')) document.getElementById('inputSalesRep').value = 'Tin Dela Cruz';
 
-  testScriptIndex = 0;
-  testScriptRunning = true;
-
-  // Show a small status indicator
+  // Create status pill
   var statusDiv = document.getElementById('testScriptStatus');
   if (!statusDiv) {
     statusDiv = document.createElement('div');
     statusDiv.id = 'testScriptStatus';
-    statusDiv.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#8139EE;color:white;padding:10px 18px;border-radius:100px;font-size:12px;font-weight:600;z-index:999;font-family:DM Sans,sans-serif;';
+    statusDiv.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#8139EE;color:white;padding:10px 18px;border-radius:100px;font-size:12px;font-weight:600;z-index:9999;font-family:DM Sans,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,0.2);';
     document.body.appendChild(statusDiv);
   }
-  statusDiv.textContent = '🧪 Test running — answer 1 of ' + TEST_SCRIPT.length;
+  statusDiv.textContent = '🧪 Starting test...';
   statusDiv.style.display = 'block';
 
-  // Start the interview
+  testScriptIndex = 0;
+  testScriptRunning = true;
+  testScriptLastMessageCount = 0;
+
+  // Start the interview first
   startInterview();
+
+  // Wait for Orca's first message then begin feeding answers
+  setTimeout(function() {
+    testScriptPoll();
+  }, 3000);
 }
 
-function testScriptNext() {
+function testScriptPoll() {
   if (!testScriptRunning) return;
-  if (testScriptIndex >= TEST_SCRIPT.length) {
+
+  // Stop if we hit the summary screen
+  if (document.getElementById('screenSummary') &&
+      document.getElementById('screenSummary').classList.contains('active')) {
     testScriptRunning = false;
-    var statusDiv = document.getElementById('testScriptStatus');
-    if (statusDiv) {
-      statusDiv.textContent = '✅ Test script complete';
-      setTimeout(function() { statusDiv.style.display = 'none'; }, 4000);
-    }
+    updateTestStatus('✅ Test complete — review summary');
+    setTimeout(function() {
+      var s = document.getElementById('testScriptStatus');
+      if (s) s.style.display = 'none';
+    }, 5000);
     return;
   }
 
-  var answer = TEST_SCRIPT[testScriptIndex];
-  var statusDiv = document.getElementById('testScriptStatus');
-  if (statusDiv) statusDiv.textContent = '🧪 Test running — answer ' + (testScriptIndex + 1) + ' of ' + TEST_SCRIPT.length;
+  // Check if all answers sent
+  if (testScriptIndex >= TEST_SCRIPT.length) {
+    updateTestStatus('🧪 All answers sent — waiting for summary...');
+    setTimeout(testScriptPoll, 2000);
+    return;
+  }
 
-  // Random delay to feel natural, not robotic
-  var delay = TEST_DELAY_MIN + Math.random() * (TEST_DELAY_MAX - TEST_DELAY_MIN);
+  // Check if Orca is still waiting (send button disabled = Orca is thinking)
+  var sendBtn = document.getElementById('btnSend');
+  var orcaThinking = sendBtn && sendBtn.disabled;
+
+  if (orcaThinking) {
+    // Wait and check again
+    setTimeout(testScriptPoll, 800);
+    return;
+  }
+
+  // Check if Orca has responded since our last message
+  var currentCount = getOrcaMessageCount();
+  if (currentCount <= testScriptLastMessageCount && testScriptIndex > 0) {
+    // No new message yet, wait
+    setTimeout(testScriptPoll, 800);
+    return;
+  }
+
+  // Orca has responded — send next answer after a short human-like delay
+  var answer = TEST_SCRIPT[testScriptIndex];
+  updateTestStatus('🧪 Test running — ' + (testScriptIndex + 1) + ' / ' + TEST_SCRIPT.length + ': "' + answer.substring(0, 25) + '..."');
+
+  testScriptLastMessageCount = currentCount;
+  testScriptIndex++;
 
   setTimeout(function() {
     if (!testScriptRunning) return;
-    // Check if we're on the summary screen already — stop if so
-    if (document.getElementById('screenSummary').classList.contains('active')) {
-      testScriptRunning = false;
-      var s = document.getElementById('testScriptStatus');
-      if (s) { s.textContent = '✅ Test complete — review summary'; setTimeout(function(){ s.style.display='none'; }, 4000); }
-      return;
-    }
-    testScriptIndex++;
     sendMessage(answer);
-  }, delay);
+    // Poll again after sending
+    setTimeout(testScriptPoll, 2000);
+  }, 600 + Math.random() * 800);
 }
 
-// Hook into sendMessage to advance the test script after each AI response
-var _origSetWaiting = null;
-function patchTestScript() {
-  // Watch for isWaiting to go false after a test message — that means Orca responded
-  // We do this by observing the send button's disabled state
-  var observer = new MutationObserver(function() {
-    var btn = document.getElementById('btnSend');
-    if (btn && !btn.disabled && testScriptRunning && testScriptIndex > 0) {
-      // Small guard to avoid double-firing
-      setTimeout(function() {
-        var btn2 = document.getElementById('btnSend');
-        if (btn2 && !btn2.disabled && testScriptRunning) {
-          testScriptNext();
-        }
-      }, 300);
-    }
-  });
-  var btn = document.getElementById('btnSend');
-  if (btn) observer.observe(btn, { attributes: true, attributeFilter: ['disabled'] });
-}
-
-// Initialize patch when DOM is ready
-document.addEventListener('DOMContentLoaded', patchTestScript);
-// Also run immediately in case DOM is already loaded
-if (document.readyState !== 'loading') patchTestScript();
-
-// ─── END QA TEST SCRIPT ───────────────────────────────────────────────────────
+// ─── END QA TEST SCRIPT ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 </script>
 </body>
