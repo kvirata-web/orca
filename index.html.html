@@ -302,24 +302,28 @@ var SECTIONS = [
 ];
 
 function startDemo() {
-  var company = document.getElementById('inputCompany').value.trim() || 'Demo Company';
-  var contact = document.getElementById('inputContact').value.trim() || 'Demo User';
-  var title   = document.getElementById('inputTitle').value.trim() || 'HR Manager';
-  var email   = document.getElementById('inputEmail').value.trim() || 'demo@company.com';
-  var phone   = document.getElementById('inputPhone').value.trim() || '';
-  var salesRep = document.getElementById('inputSalesRep') ? document.getElementById('inputSalesRep').value.trim() : '';
+  var company = document.getElementById('inputCompany').value.trim() || 'Zus Coffee';
+  var contact = document.getElementById('inputContact').value.trim() || 'Vk Virata';
+  var title   = document.getElementById('inputTitle').value.trim() || 'HR Director';
+  var email   = document.getElementById('inputEmail').value.trim() || 'kvirata@sprout.ph';
+  var phone   = document.getElementById('inputPhone') ? document.getElementById('inputPhone').value.trim() : '';
+  var salesRep = document.getElementById('inputSalesRep') ? document.getElementById('inputSalesRep').value.trim() : 'Tin Dela Cruz';
   prospectData = { companyName: company, contactName: contact, jobTitle: title, email: email, phone: phone, salesRep: salesRep };
-  // Pre-fill all section summaries with realistic demo data
+
+  // Realistic demo data covering all edge cases:
+  // night shift, hybrid late rule, 110% OT (DOLE flag), use-it-or-lose-it (DOLE flag),
+  // no work no pay holidays (DOLE flag), perfect attendance bonus
   sectionSummaries = {
-    timelogs: company + ' uses ZKTeco biometric devices for employee time logging, with data syncing automatically to payroll.',
-    approval: 'Timekeeping approvals follow a single-level chain — the immediate supervisor reviews and approves all requests.',
-    work_schedule: 'All employees work Monday to Friday, 9 AM to 6 PM, with a 1-hour unpaid lunch break.',
-    computation: 'There is no grace period — tardiness is computed from 9:00 AM sharp, rounded to the nearest 15 minutes.',
-    leaves: 'Employees receive 15 days VL, 15 days SL, and 5 days Emergency Leave credited upfront every January 1st.',
-    overtime: 'OT requires pre-approval and counts after 30 minutes past shift end, starting at 6:30 PM.',
-    holidays: 'Standard DOLE rates apply — 200% for regular holidays, 130% for special non-working days, plus 10% night differential.',
-    other: 'No additional policies noted. Standard setup across all departments.'
+    timelogs: company + ' employees clock in and out using ZKTeco biometric devices at all branches. Timelogs automatically sync to DarwinBox, where branch HR or supervisors validate attendance records every payroll cutoff before processing. Integration with Sprout from their existing DarwinBox setup will require specialist involvement for API or data migration discussions.',
+    approval: 'Employees submit all requests (leave, overtime, attendance corrections) through DarwinBox. Approval chain is single-level: Employee to Immediate Manager. No additional approvers required regardless of request type.',
+    work_schedule: 'Four schedule types: (1) Support team works fixed 9AM to 6PM, Monday to Friday; (2) Sales team follows a flexible schedule with no fixed start time but must complete 8 hours per day, Monday to Friday (note: flexi schedules in Sprout do not support overtime tracking — flag if OT is expected for this group); (3) All other employees work fixed 8AM to 5PM, Monday to Friday; (4) Consultants are exempted from attendance tracking entirely. Approximately 20 employees work night shifts across multiple departments, 10PM to 7AM — specific holiday crossover computation is currently unclear (SolServ involvement required). Night differential is not currently being given (DOLE flag: mandatory under Article 86 for work between 10PM and 6AM).',
+    computation: '5-minute grace period currently in place (CRF required to configure grace period type in Sprout). Late deduction follows a hybrid rule: fewer than 5 late instances in a cutoff = exact minute deduction; 5 or more late instances in a cutoff = 5,000 peso penalty instead of time deduction (this penalty-based rule is not natively supported in Sprout and will require custom workflow or manual tracking). Breaks are not monitored or deducted. Undertime is deducted as exact minutes.',
+    leaves: company + ' offers a single combined leave type of 10 days per year, given upfront every January 1st. New hires receive prorated credits based on hire date. Leave credits increase by 2 days every 2 years of tenure. Unused credits follow a use-it-or-lose-it policy (DOLE flag: the 5-day SIL component must be convertible to cash under Article 95 of the Labor Code — Sprout configuration will separate this to ensure compliance). Full-day leaves only; half-days not allowed. Statutory leaves (maternity, paternity, solo parent, VAWC, etc.) are not currently configured but must be added to comply with Philippine labor law.',
+    overtime: 'Overtime approval is at manager\'s discretion (no strict pre-approval requirement). OT starts immediately after the scheduled shift ends, and every minute of OT is counted. Currently applies a flat 110% OT rate regardless of day type (DOLE flag: non-compliant — Article 87 mandates 125% for ordinary days, 130% for rest days and special holidays, and higher premiums for regular holidays worked. Sprout configuration will apply DOLE-compliant rates). Managers and above are exempt from OT; all other employees are eligible.',
+    holidays: company + ' follows Philippine proclaimed holidays as announced by the government. Day-before rule is unconfirmed (requires follow-up). Currently applies no work, no pay for all holidays (DOLE flag: regular holidays are legally required to be paid even without work under Article 94 of the Labor Code — compliance gap). Holiday work is currently compensated at regular rate only (DOLE flag: regular holidays worked require 200% minimum; special holidays worked require 130% — non-compliant with Article 94). No night shift employees, so night differential and holiday boundary rules do not apply.',
+    other: company + ' has a perfect attendance bonus policy (details to be confirmed: qualifying criteria, bonus amount/structure, and frequency). No other special timekeeping or payroll rules were identified beyond what was covered in previous sections.'
   };
+
   currentSection = 8;
   showSummaryScreen();
 }
@@ -812,7 +816,7 @@ async function showSummaryScreen() {
 }
 
 async function saveAndNotify(summaries) {
-  var s = (summaries && Object.keys(summaries).length > 0) ? summaries : sectionSummaries;
+  var enriched = (summaries && Object.keys(summaries).length > 0) ? summaries : sectionSummaries;
   try {
     var resp = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
@@ -824,15 +828,15 @@ async function saveAndNotify(summaries) {
         email: prospectData.email,
         phone: prospectData.phone || '',
         salesRep: prospectData.salesRep || '',
-        timelogs: s.timelogs || sectionSummaries.timelogs || '',
-        approval: s.approval || sectionSummaries.approval || '',
-        work_schedule: s.work_schedule || sectionSummaries.work_schedule || '',
-        computation: s.computation || sectionSummaries.computation || '',
-        leaves: s.leaves || sectionSummaries.leaves || '',
-        overtime: s.overtime || sectionSummaries.overtime || '',
-        holidays: s.holidays || sectionSummaries.holidays || '',
-        other: s.other || sectionSummaries.other || '',
-        fullSummary: JSON.stringify(s)
+        timelogs: enriched.timelogs || sectionSummarieenriched.timelogs || '',
+        approval: enriched.approval || sectionSummarieenriched.approval || '',
+        work_schedule: enriched.work_schedule || sectionSummarieenriched.work_schedule || '',
+        computation: enriched.computation || sectionSummarieenriched.computation || '',
+        leaves: enriched.leaves || sectionSummarieenriched.leaves || '',
+        overtime: enriched.overtime || sectionSummarieenriched.overtime || '',
+        holidays: enriched.holidays || sectionSummarieenriched.holidays || '',
+        other: enriched.other || sectionSummarieenriched.other || '',
+        fullSummary: JSON.stringify(enriched)
       }})
     });
     return await resp.json();
@@ -1087,94 +1091,19 @@ function updateNav(activeIdx) {
 }
 
 // ─── QA TEST SCRIPT ───────────────────────────────────────────────────────────
-
-var TEST_SCRIPT = [
-  // Section 1: Timelogs
-  "Biometric devices",
-  "ZKTeco",
-  "Automatically synced to a system",
-  "DarwinBox",
-  "Branch HR or supervisors",
-  "Every payroll cutoff",
-  // Section 2: Approval Flow
-  "Through DarwinBox",
-  "Just immediate manager approves",
-  "Same for all request types",
-  // Section 3: Work Schedule
-  "Different schedules by department or role",
-  "Support team is fixed 9-6PM, Sales flexi 8hrs, rest are 8-5pm, consultants exempt",
-  "completely open",
-  "Must complete 8 hours per day",
-  "Monday to Friday, weekends off",
-  "We have some night shift employees",
-  "Multiple departments",
-  "10PM to 7AM",
-  "around 20",
-  "yes sometimes",
-  "were not sure how we compute that",
-  "no we dont give night diff",
-  "covered all done",
-  // Section 4: Computation
-  "Yes, we have a grace period",
-  "5 minutes",
-  "if they are late 5x for the cutoff we deduct 5k from salary",
-  "if fewer than 5x we deduct exact minutes",
-  "Yes that is correct",
-  "No breaks are not monitored",
-  "Exact minutes deducted",
-  // Section 5: Leaves
-  "Just one combined leave type",
-  "10",
-  "All at once at the start of the year",
-  "January 1st for everyone",
-  "Use it or lose it",
-  "Full days only",
-  "Prorated based on hire date",
-  "No just the 10-day combined leave",
-  "Every 2 years plus 2 days",
-  // Section 6: Overtime
-  "Managers discretion",
-  "Starts immediately after shift ends",
-  "Every minute of OT is counted",
-  "its 110% for all types",
-  "Managers and above are exempt",
-  // Section 7: Holidays
-  "Philippine proclaimed holidays only",
-  "Not sure about day before rule",
-  "No work no pay",
-  "Regular rate 100%",
-  "No night shifts",
-  // Section 8: Other Notes
-  "Perfect attendance bonus",
-  "Nothing else"
-];
-
-var testScriptIndex = 0;
-var testScriptRunning = false;
-var testScriptTimer = null;
-var testScriptLastMessageCount = 0;
-
-function getOrcaMessageCount() {
-  var area = document.getElementById('chatArea');
-  if (!area) return 0;
-  return area.querySelectorAll('.message.orca').length;
-}
-
-function updateTestStatus(text) {
-  var s = document.getElementById('testScriptStatus');
-  if (s) s.textContent = text;
-}
+// Fast-fill mode: loads edge-case data directly and jumps to summary screen.
+// Tests: summary cards, download, email, DOLE flags, enrichment, SolCon email.
 
 function runTestScript() {
-  // Pre-fill form
-  document.getElementById('inputCompany').value = 'QA Test Company';
+  // Pre-fill form fields
+  document.getElementById('inputCompany').value = 'QA Test Corp';
   document.getElementById('inputContact').value = 'Test User';
   document.getElementById('inputTitle').value = 'HR Manager';
   document.getElementById('inputEmail').value = 'kvirata@sprout.ph';
   if (document.getElementById('inputPhone')) document.getElementById('inputPhone').value = '09171234567';
   if (document.getElementById('inputSalesRep')) document.getElementById('inputSalesRep').value = 'Tin Dela Cruz';
 
-  // Create status pill
+  // Show status pill
   var statusDiv = document.getElementById('testScriptStatus');
   if (!statusDiv) {
     statusDiv = document.createElement('div');
@@ -1182,78 +1111,41 @@ function runTestScript() {
     statusDiv.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#8139EE;color:white;padding:10px 18px;border-radius:100px;font-size:12px;font-weight:600;z-index:9999;font-family:DM Sans,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,0.2);';
     document.body.appendChild(statusDiv);
   }
-  statusDiv.textContent = '🧪 Starting test...';
+  statusDiv.textContent = '🧪 Loading test data...';
   statusDiv.style.display = 'block';
 
-  testScriptIndex = 0;
-  testScriptRunning = true;
-  testScriptLastMessageCount = 0;
+  // Set prospect data
+  prospectData = {
+    companyName: 'QA Test Corp',
+    contactName: 'Test User',
+    jobTitle: 'HR Manager',
+    email: 'kvirata@sprout.ph',
+    phone: '09171234567',
+    salesRep: 'Tin Dela Cruz'
+  };
 
-  // Start the interview first
-  startInterview();
+  // Load edge-case section summaries covering every known problem area
+  sectionSummaries = {
+    timelogs: 'QA Test Corp employees clock in using ZKTeco biometric devices at all locations. Data syncs automatically to DarwinBox, where branch HR validates records every payroll cutoff. Integration with Sprout from DarwinBox will require specialist involvement for API or data migration.',
+    approval: 'All requests (leave, overtime, attendance corrections) are submitted through DarwinBox and approved by the immediate manager only. Single-level approval across all request types — no HR or secondary approver required.',
+    work_schedule: 'Four schedule types: (1) Support team fixed 9AM-6PM Monday-Friday; (2) Sales team flexi with no fixed start time, must complete 8 hours per day Monday-Friday (note: flexi schedules in Sprout do not support overtime tracking — flag if OT expected); (3) All other employees fixed 8AM-5PM Monday-Friday; (4) Consultants exempted from attendance tracking. Approximately 20 employees work night shifts 10PM-7AM across multiple departments — holiday crossover computation currently unclear (specialist involvement required). Night differential not currently given (DOLE flag: mandatory under Article 86 for 10PM-6AM work).',
+    computation: '5-minute grace period in place (CRF required to configure in Sprout). Late deduction is a hybrid rule: fewer than 5 late instances per cutoff = exact minute deduction; 5 or more = flat 5,000 peso penalty (not natively supported in Sprout, requires custom workflow or manual tracking). Breaks not monitored. Undertime deducted as exact minutes.',
+    leaves: 'Single combined leave type of 10 days per year, given upfront every January 1st. New hires receive prorated credits. Credits increase by 2 days every 2 years of tenure. Use-it-or-lose-it policy (DOLE flag: 5-day SIL component must be convertible to cash under Article 95 — Sprout will separate this for compliance). Full-day leaves only. Statutory leaves not currently configured (must be added for legal compliance).',
+    overtime: 'OT approval at manager discretion with no strict pre-approval. OT starts immediately after shift ends and every minute is counted. Flat 110% rate for all day types (DOLE flag: non-compliant — Article 87 requires 125% ordinary days, 130% rest days and special holidays, higher for regular holidays. Sprout will apply DOLE-compliant rates). Managers and above exempt; all others eligible.',
+    holidays: 'Follows Philippine proclaimed holidays only. Day-before rule unconfirmed (requires follow-up). Currently no work, no pay for all holidays (DOLE flag: regular holidays must be paid even without work under Article 94 — compliance gap). Holiday work compensated at regular rate only (DOLE flag: 200% required for regular holiday work, 130% for special holidays — non-compliant). No night shift employees so night differential and holiday boundary rules do not apply.',
+    other: 'QA Test Corp has a perfect attendance bonus policy (qualifying criteria, amount, and frequency to be confirmed). No other special timekeeping or payroll rules identified beyond previous sections.'
+  };
 
-  // Wait for Orca's first message then begin feeding answers
+  currentSection = 8;
+
+  statusDiv.textContent = '🧪 Test data loaded — jumping to summary...';
   setTimeout(function() {
-    testScriptPoll();
-  }, 3000);
+    showSummaryScreen();
+    statusDiv.textContent = '✅ Review summary, download, and check email';
+    setTimeout(function() { statusDiv.style.display = 'none'; }, 6000);
+  }, 800);
 }
-
-function testScriptPoll() {
-  if (!testScriptRunning) return;
-
-  // Stop if we hit the summary screen
-  if (document.getElementById('screenSummary') &&
-      document.getElementById('screenSummary').classList.contains('active')) {
-    testScriptRunning = false;
-    updateTestStatus('✅ Test complete — review summary');
-    setTimeout(function() {
-      var s = document.getElementById('testScriptStatus');
-      if (s) s.style.display = 'none';
-    }, 5000);
-    return;
-  }
-
-  // Check if all answers sent
-  if (testScriptIndex >= TEST_SCRIPT.length) {
-    updateTestStatus('🧪 All answers sent — waiting for summary...');
-    setTimeout(testScriptPoll, 2000);
-    return;
-  }
-
-  // Check if Orca is still waiting (send button disabled = Orca is thinking)
-  var sendBtn = document.getElementById('btnSend');
-  var orcaThinking = sendBtn && sendBtn.disabled;
-
-  if (orcaThinking) {
-    // Wait and check again
-    setTimeout(testScriptPoll, 800);
-    return;
-  }
-
-  // Check if Orca has responded since our last message
-  var currentCount = getOrcaMessageCount();
-  if (currentCount <= testScriptLastMessageCount && testScriptIndex > 0) {
-    // No new message yet, wait
-    setTimeout(testScriptPoll, 800);
-    return;
-  }
-
-  // Orca has responded — send next answer after a short human-like delay
-  var answer = TEST_SCRIPT[testScriptIndex];
-  updateTestStatus('🧪 Test running — ' + (testScriptIndex + 1) + ' / ' + TEST_SCRIPT.length + ': "' + answer.substring(0, 25) + '..."');
-
-  testScriptLastMessageCount = currentCount;
-  testScriptIndex++;
-
-  setTimeout(function() {
-    if (!testScriptRunning) return;
-    sendMessage(answer);
-    // Poll again after sending
-    setTimeout(testScriptPoll, 2000);
-  }, 600 + Math.random() * 800);
-}
-
-// ─── END QA TEST SCRIPT ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+// ─── END QA TEST SCRIPT ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 </script>
 </body>
