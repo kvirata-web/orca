@@ -134,6 +134,15 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .gen-label { font-size: 16px; color: white; font-weight: 300; }
   .gen-sublabel { font-size: 13px; color: var(--muted); }
+  .mode-toggle { display: flex; background: #F0F2F0; border-radius: 10px; padding: 4px; gap: 4px; margin-bottom: 6px; }
+  .mode-tab { flex: 1; padding: 9px 12px; border: none; border-radius: 7px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--muted); }
+  .mode-tab.active { background: white; color: var(--near-black); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  .mode-hint { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 4px; }
+  .transcript-wrap { display: none; flex-direction: column; gap: 6px; }
+  .transcript-wrap.visible { display: flex; }
+  .transcript-area { width: 100%; padding: 13px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--near-black); background: white; outline: none; resize: vertical; min-height: 140px; max-height: 260px; line-height: 1.6; transition: border-color 0.2s; box-sizing: border-box; }
+  .transcript-area:focus { border-color: var(--green); }
+  .transcript-area::placeholder { color: var(--muted); }
   @media (max-width: 900px) {
     .sidebar { display: none; }
     .main { margin-left: 0; }
@@ -184,6 +193,13 @@
         <span class="feature-pill">Client-ready summary</span>
       </div>
       <div class="form-wrap">
+        <!-- MODE TOGGLE -->
+        <div class="mode-toggle">
+          <button class="mode-tab active" id="tabInterview" onclick="setMode('interview')">🎙 Interview me</button>
+          <button class="mode-tab" id="tabTranscript" onclick="setMode('transcript')">📋 I have a transcript</button>
+        </div>
+        <p class="mode-hint" id="modeHint">Answer questions about your policies — Orca guides you through 8 sections</p>
+
         <div class="form-group full">
           <label class="form-label">Company name *</label>
           <input type="text" class="form-input" id="inputCompany" placeholder="e.g. Bigbys Quality Food Corporation">
@@ -208,7 +224,14 @@
             <input type="text" class="form-input" id="inputPhone" placeholder="+63 917 000 0000">
           </div>
         </div>
-        <button class="btn-start" onclick="startInterview()">
+
+        <!-- TRANSCRIPT INPUT (shown in transcript mode) -->
+        <div class="transcript-wrap" id="transcriptWrap">
+          <label class="form-label">Paste your discovery call transcript *</label>
+          <textarea class="transcript-area" id="inputTranscript" placeholder="Paste the full transcript of your policy scoping session here. Orca will extract all 8 sections, flag DOLE risks, and generate the IRD automatically."></textarea>
+        </div>
+
+        <button class="btn-start" id="btnStart" onclick="handleStart()">
           Begin Setup
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -275,7 +298,100 @@
 var EDGE_FUNCTION_URL = 'https://zrdktybfcxfmjwkhhyzk.supabase.co/functions/v1/orca-chat';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyZGt0eWJmY3hmbWp3a2hoeXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5MTc4NzQsImV4cCI6MjA4NzQ5Mzg3NH0.TMnriMM0DFLGbITW4sgHAAsbMcgFdjosjwtUFskDaZI';
 
-var currentSection = 0;
+var currentMode = 'interview';
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('tabInterview').classList.toggle('active', mode === 'interview');
+  document.getElementById('tabTranscript').classList.toggle('active', mode === 'transcript');
+  document.getElementById('transcriptWrap').classList.toggle('visible', mode === 'transcript');
+  document.getElementById('modeHint').textContent = mode === 'interview'
+    ? 'Answer questions about your policies — Orca guides you through 8 sections'
+    : 'Paste a discovery call transcript — Orca extracts all 8 sections and generates the IRD';
+  document.getElementById('btnStart').innerHTML = mode === 'interview'
+    ? 'Begin Setup <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    : 'Generate IRD from Transcript <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+
+function handleStart() {
+  if (currentMode === 'transcript') {
+    processTranscript();
+  } else {
+    startInterview();
+  }
+}
+
+async function processTranscript() {
+  var company  = document.getElementById('inputCompany').value.trim();
+  var contact  = document.getElementById('inputContact').value.trim();
+  var title    = document.getElementById('inputTitle').value.trim();
+  var email    = document.getElementById('inputEmail').value.trim();
+  var phone    = document.getElementById('inputPhone').value.trim();
+  var transcript = document.getElementById('inputTranscript').value.trim();
+
+  if (!company || !contact || !title || !email) {
+    alert('Please fill in all required fields (marked with *)');
+    return;
+  }
+  if (!transcript || transcript.length < 100) {
+    alert('Please paste a transcript before continuing. It should be at least a few lines long.');
+    return;
+  }
+
+  prospectData = { companyName: company, contactName: contact, jobTitle: title, email: email, phone: phone, salesRep: '' };
+
+  document.getElementById('generatingOverlay').classList.add('active');
+  document.getElementById('genLabel').textContent = 'Reading your transcript…';
+
+  var extractPrompt = `You are Orca, an expert Sprout HR Solution Consultant. A SolCon has pasted a discovery call transcript below. Extract the timekeeping policies and return a JSON object with exactly these 8 keys:
+
+timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other
+
+For each key write a single consolidated paragraph (2-4 sentences) summarizing what was said — the way a good SolCon would write it up after the call. Use specific details from the transcript. Do not use sub-question answer lists. If a section was not discussed, write "Not discussed in this session."
+
+Also include two additional keys:
+- "salesRep": the name of the Sprout sales rep or SolCon running the session, if mentioned (otherwise empty string)
+- "contactName": the client contact's name if you can identify it from the transcript (otherwise use the name provided)
+
+Return ONLY valid JSON. No markdown, no backticks.
+
+Transcript:
+${transcript}`;
+
+  try {
+    var extractResp = await callEdge([{ role: 'user', content: extractPrompt }],
+      'You are Orca. Extract timekeeping IRD sections from a discovery transcript. Return only valid JSON with keys: timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, salesRep, contactName.');
+
+    var extracted;
+    try { extracted = JSON.parse(extractResp.replace(/```json|```/g, '').trim()); }
+    catch(e) { throw new Error('Could not parse extraction response'); }
+
+    sectionSummaries = {
+      timelogs:      extracted.timelogs      || 'Not captured.',
+      approval:      extracted.approval      || 'Not captured.',
+      work_schedule: extracted.work_schedule || 'Not captured.',
+      computation:   extracted.computation   || 'Not captured.',
+      leaves:        extracted.leaves        || 'Not captured.',
+      overtime:      extracted.overtime      || 'Not captured.',
+      holidays:      extracted.holidays      || 'Not captured.',
+      other:         extracted.other         || 'Not captured.',
+    };
+
+    if (extracted.salesRep) prospectData.salesRep = extracted.salesRep;
+    if (extracted.contactName && extracted.contactName !== contact) {
+      prospectData.contactName = extracted.contactName;
+    }
+
+    currentSection = 8;
+    document.getElementById('genLabel').textContent = 'Generating your setup document…';
+    await showSummaryScreen();
+
+  } catch(e) {
+    document.getElementById('generatingOverlay').classList.remove('active');
+    alert('Could not process transcript. Please check it and try again.');
+    console.error(e);
+  }
+}
 var isWaiting = false;
 var conversationHistory = [];
 var sectionSummaries = {};
