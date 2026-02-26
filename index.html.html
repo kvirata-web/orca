@@ -350,16 +350,27 @@ async function processTranscript() {
   var extractPrompt = 'You are Orca, an expert Sprout HR Solution Consultant. A SolCon has pasted a discovery call transcript. Extract the timekeeping policies discussed and return a JSON object with exactly these 10 keys:\n\ntimelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, salesRep, contactName\n\nFor each of the 8 policy keys write a consolidated paragraph (2-4 sentences) — the way a SolCon would write it up after the call. Use specific details. If a topic was not discussed write "Not discussed in this session."\n\nsalesRep: name of the Sprout SolCon or sales rep running the session (empty string if unclear)\ncontactName: name of the client contact (empty string if unclear)\n\nReturn ONLY valid JSON. No markdown, no backticks, no explanation.\n\nTranscript:\n' + trimmed;
 
   try {
-    var extractResp = await callEdge(
-      [{ role: 'user', content: extractPrompt }],
-      'You are Orca. Extract timekeeping policies from a discovery transcript. Return ONLY a valid JSON object. No markdown, no explanation, no backticks.'
-    );
+    // Use dedicated extract endpoint with higher token limit
+    var extractResp = await fetch(EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({
+        type: 'extract',
+        transcript: extractPrompt,
+        systemPrompt: 'You are Orca. Extract timekeeping policies from a discovery transcript. Return ONLY a valid JSON object with exactly these 10 keys: timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, salesRep, contactName. No markdown, no backticks, no explanation.'
+      })
+    });
 
-    console.log('Transcript extraction response:', extractResp.substring(0, 200));
+    if (!extractResp.ok) {
+      throw new Error('Edge function returned ' + extractResp.status);
+    }
+
+    var extractData = await extractResp.json();
+    var rawText = extractData.reply || '';
+    console.log('Transcript extraction response (first 300 chars):', rawText.substring(0, 300));
 
     var extracted;
-    var cleaned = extractResp.replace(/```json|```/g, '').trim();
-    // Find the JSON object in case there's any preamble
+    var cleaned = rawText.replace(/```json|```/g, '').trim();
     var jsonStart = cleaned.indexOf('{');
     var jsonEnd   = cleaned.lastIndexOf('}');
     if (jsonStart !== -1 && jsonEnd !== -1) {
@@ -369,7 +380,7 @@ async function processTranscript() {
     try {
       extracted = JSON.parse(cleaned);
     } catch(e) {
-      console.error('JSON parse failed. Raw response:', extractResp);
+      console.error('JSON parse failed. Raw response:', rawText);
       throw new Error('Could not parse extraction response: ' + e.message);
     }
 
