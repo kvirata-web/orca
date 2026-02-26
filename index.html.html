@@ -345,7 +345,7 @@ async function processTranscript() {
   document.querySelector('.gen-sublabel').textContent = 'This may take up to 30 seconds for long transcripts';
 
   // Trim transcript to avoid token limits — first 12000 chars covers most calls
-  var trimmed = transcript.length > 12000 ? transcript.substring(0, 12000) + '\n[transcript trimmed]' : transcript;
+  var trimmed = transcript.length > 20000 ? transcript.substring(0, 20000) + '\n[transcript trimmed]' : transcript;
 
   var extractPrompt = 'You are Orca, an expert Sprout HR Solution Consultant. A SolCon has pasted a discovery call transcript. Extract the timekeeping policies discussed and return a JSON object with exactly these 10 keys:\n\ntimelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, salesRep, contactName\n\nFor each of the 8 policy keys write a consolidated paragraph (2-4 sentences) — the way a SolCon would write it up after the call. Use specific details. If a topic was not discussed write "Not discussed in this session."\n\nsalesRep: name of the Sprout SolCon or sales rep running the session (empty string if unclear)\ncontactName: name of the client contact (empty string if unclear)\n\nReturn ONLY valid JSON. No markdown, no backticks, no explanation.\n\nTranscript:\n' + trimmed;
 
