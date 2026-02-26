@@ -167,7 +167,7 @@
       <li class="nav-section"><div class="nav-dot">7</div><span class="nav-section-name">Holidays</span></li>
       <li class="nav-section"><div class="nav-dot">8</div><span class="nav-section-name">Other Notes</span></li>
     </ul>
-    <div class="sidebar-footer">This session helps your Sprout team understand your current setup. No commitments are made during or after this session.</div>
+    <div class="sidebar-footer">Your answers are used to configure Sprout HR precisely for your organization.</div>
   </aside>
 
   <main class="main">
@@ -175,13 +175,13 @@
 
     <div class="screen welcome-screen active" id="screenWelcome">
       <div class="welcome-eyebrow">Powered by Orca</div>
-      <h1 class="welcome-title">See how Sprout fits <em>your team</em></h1>
-      <p class="welcome-sub">Answer a few questions about how your organization manages time and attendance today. Orca will map your current policies to Sprout's features so you can see exactly how Sprout works for you.</p>
-      <p class="welcome-meta">~15 minutes · 8 areas · No HR jargon</p>
+      <h1 class="welcome-title">Let's configure Sprout <em>exactly</em> for your team</h1>
+      <p class="welcome-sub">Answer a few questions about how your organization manages time. Orca will map your policies to Sprout's features and prepare your personalized setup document.</p>
+      <p class="welcome-meta">~10 minutes · 8 sections · No HR jargon</p>
       <div class="welcome-features">
-        <span class="feature-pill">Tailored to your current setup</span>
-        <span class="feature-pill">See Sprout's fit in real time</span>
-        <span class="feature-pill">No commitment required</span>
+        <span class="feature-pill">Smart follow-up questions</span>
+        <span class="feature-pill">Saves as you go</span>
+        <span class="feature-pill">Client-ready summary</span>
       </div>
       <div class="form-wrap">
         <div class="form-group full">
@@ -208,20 +208,12 @@
             <input type="text" class="form-input" id="inputPhone" placeholder="+63 917 000 0000">
           </div>
         </div>
-        <div class="form-group full" style="background:var(--green-light);border:1.5px solid var(--green-mid);border-radius:10px;padding:14px 16px;gap:0;">
-          <label class="form-label" style="font-size:11px;font-weight:600;color:var(--green-dark);margin-bottom:3px;">Your Sprout contact <span style="font-weight:400;color:var(--muted);font-size:10px;">(optional)</span></label>
-          <p style="font-size:11px;color:var(--mid);font-weight:300;margin-bottom:9px;line-height:1.5;">Already in touch with someone from Sprout? Enter their name and we'll include them in your summary.</p>
-          <input type="text" class="form-input" id="inputSalesRep" placeholder="e.g. Paolo Reyes" style="border-color:var(--green-mid);background:white;">
-        </div>
         <button class="btn-start" onclick="startInterview()">
-          Begin Discovery Session
+          Begin Setup
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <button class="btn-demo" onclick="startDemo()">
           Quick Demo (skip to summary)
-        </button>
-        <button class="btn-demo" onclick="runTestScript()" style="border-color:#8139EE;color:#8139EE;margin-top:6px;">
-          🧪 Run QA Test Script
         </button>
       </div>
     </div>
@@ -245,18 +237,18 @@
     </div>
 
     <div class="screen summary-screen" id="screenSummary">
-      <div class="summary-eyebrow">Your Sprout Discovery Summary</div>
-      <h2 class="summary-title" id="summaryTitle">Here's how Sprout maps to your team</h2>
+      <div class="summary-eyebrow">Your Sprout Setup — Ready</div>
+      <h2 class="summary-title" id="summaryTitle">Here's how Sprout is configured for you</h2>
       <p class="summary-subtitle" id="summarySubtitle"></p>
       <div id="emailBanner" style="display:none" class="email-banner">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#00A651" stroke-width="2" stroke-linecap="round"/></svg>
-        <span id="emailBannerText">Your discovery summary is ready — your Sprout contact will be in touch to walk through this together.</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#00A651"/></svg>
+        Your setup document has been emailed to you. A Sprout consultant will be in touch shortly.
       </div>
       <div class="summary-grid" id="summaryGrid"></div>
       <div class="summary-actions">
         <button class="btn-pdf" id="btnPdf" onclick="generatePDF()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="white" stroke-width="2"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-          Download Discovery Summary
+          Download Setup Document
         </button>
         <button class="btn-secondary" onclick="location.reload()">Start Over</button>
       </div>
@@ -302,215 +294,31 @@ var SECTIONS = [
 ];
 
 function startDemo() {
-  var company = document.getElementById('inputCompany').value.trim() || 'Zus Coffee';
-  var contact = document.getElementById('inputContact').value.trim() || 'Vk Virata';
-  var title   = document.getElementById('inputTitle').value.trim() || 'HR Director';
-  var email   = document.getElementById('inputEmail').value.trim() || 'kvirata@sprout.ph';
-  var phone   = document.getElementById('inputPhone') ? document.getElementById('inputPhone').value.trim() : '';
-  var salesRep = document.getElementById('inputSalesRep') ? document.getElementById('inputSalesRep').value.trim() : 'Tin Dela Cruz';
-  prospectData = { companyName: company, contactName: contact, jobTitle: title, email: email, phone: phone, salesRep: salesRep };
-
-  // Realistic demo data covering all edge cases:
-  // night shift, hybrid late rule, 110% OT (DOLE flag), use-it-or-lose-it (DOLE flag),
-  // no work no pay holidays (DOLE flag), perfect attendance bonus
-  sectionSummaries = {
-    timelogs: company + ' employees clock in and out using ZKTeco biometric devices at all branches. Timelogs automatically sync to DarwinBox, where branch HR or supervisors validate attendance records every payroll cutoff before processing. Integration with Sprout from their existing DarwinBox setup will require specialist involvement for API or data migration discussions.',
-    approval: 'Employees submit all requests (leave, overtime, attendance corrections) through DarwinBox. Approval chain is single-level: Employee to Immediate Manager. No additional approvers required regardless of request type.',
-    work_schedule: 'Four schedule types: (1) Support team works fixed 9AM to 6PM, Monday to Friday; (2) Sales team follows a flexible schedule with no fixed start time but must complete 8 hours per day, Monday to Friday (note: flexi schedules in Sprout do not support overtime tracking — flag if OT is expected for this group); (3) All other employees work fixed 8AM to 5PM, Monday to Friday; (4) Consultants are exempted from attendance tracking entirely. Approximately 20 employees work night shifts across multiple departments, 10PM to 7AM — specific holiday crossover computation is currently unclear (SolServ involvement required). Night differential is not currently being given (DOLE flag: mandatory under Article 86 for work between 10PM and 6AM).',
-    computation: '5-minute grace period currently in place (CRF required to configure grace period type in Sprout). Late deduction follows a hybrid rule: fewer than 5 late instances in a cutoff = exact minute deduction; 5 or more late instances in a cutoff = 5,000 peso penalty instead of time deduction (this penalty-based rule is not natively supported in Sprout and will require custom workflow or manual tracking). Breaks are not monitored or deducted. Undertime is deducted as exact minutes.',
-    leaves: company + ' offers a single combined leave type of 10 days per year, given upfront every January 1st. New hires receive prorated credits based on hire date. Leave credits increase by 2 days every 2 years of tenure. Unused credits follow a use-it-or-lose-it policy (DOLE flag: the 5-day SIL component must be convertible to cash under Article 95 of the Labor Code — Sprout configuration will separate this to ensure compliance). Full-day leaves only; half-days not allowed. Statutory leaves (maternity, paternity, solo parent, VAWC, etc.) are not currently configured but must be added to comply with Philippine labor law.',
-    overtime: 'Overtime approval is at manager\'s discretion (no strict pre-approval requirement). OT starts immediately after the scheduled shift ends, and every minute of OT is counted. Currently applies a flat 110% OT rate regardless of day type (DOLE flag: non-compliant — Article 87 mandates 125% for ordinary days, 130% for rest days and special holidays, and higher premiums for regular holidays worked. Sprout configuration will apply DOLE-compliant rates). Managers and above are exempt from OT; all other employees are eligible.',
-    holidays: company + ' follows Philippine proclaimed holidays as announced by the government. Day-before rule is unconfirmed (requires follow-up). Currently applies no work, no pay for all holidays (DOLE flag: regular holidays are legally required to be paid even without work under Article 94 of the Labor Code — compliance gap). Holiday work is currently compensated at regular rate only (DOLE flag: regular holidays worked require 200% minimum; special holidays worked require 130% — non-compliant with Article 94). No night shift employees, so night differential and holiday boundary rules do not apply.',
-    other: company + ' has a perfect attendance bonus policy (details to be confirmed: qualifying criteria, bonus amount/structure, and frequency). No other special timekeeping or payroll rules were identified beyond what was covered in previous sections.'
+  // Bigbys Quality Food Corporation — real Sprout discovery session (Jan 2025)
+  prospectData = {
+    companyName: 'Bigbys Quality Food Corporation',
+    contactName: 'Mai Santos',
+    jobTitle: 'Payroll Officer',
+    email: 'kristinavirata@gmail.com',
+    phone: '+63 917 800 2400',
+    salesRep: 'Christine Garcia'
   };
-
+  sectionSummaries = {
+    timelogs: 'Bigbys Quality Food Corporation uses a mix of biometric devices and Bundy clocks across branches, with each branch summarizing attendance and sending it to the central payroll officer for manual uploading every payroll cutoff.',
+    approval: 'All timekeeping requests at Bigbys follow a five-level approval chain: Employee → Immediate Manager → Restaurant Manager → VP Operations → VP Admin, with all levels required to approve.',
+    work_schedule: 'Bigbys has three schedule types: branch employees on fixed shift-based schedules (5AM–2PM or 6AM–3PM) with rotating long breaks of 2–4.5 hours on a 6-day work week; head office employees on compressed work week (8AM–6PM, Monday–Friday, 10-hour days); and all schedules with variable rest days assigned per employee.',
+    computation: 'Bigbys applies a tiered late deduction rule: 1–30 minutes late is deducted as 30 minutes; 31–60 minutes is deducted as 1 hour; deductions increment in 30-minute blocks. There is no grace period. Break monitoring is not currently in place.',
+    leaves: 'Bigbys provides 5 days Service Incentive Leave per year, prorated on hiring anniversary and renewed every January. Leave credits increase by 2 days per year of tenure upon head approval. Credits are given upfront and can be taken in half-day (0.5) or full-day increments. Unused leave credits are partially convertible — half of the maximum unused balance may be monetized at year-end.',
+    overtime: 'Overtime at Bigbys requires manager approval and begins immediately after shift end. The minimum OT unit is 1 hour. For head office CWW employees, holiday and rest day work is treated as regular overtime without holiday premium — this is a DOLE compliance flag under Articles 87 and 94.',
+    holidays: 'Bigbys follows Philippine proclaimed holidays with a day-before eligibility check. Holiday pay is computed at 8 hours flat, but holiday work is compensated at the same rate as regular overtime — no premium multiplier is applied for regular holidays. No night differential is given to any employees, including those on night shift. Both are DOLE compliance flags under Articles 87, 94, and 86.',
+    other: 'Bigbys has a split-salary arrangement for managers deployed across multiple branches — a manager\'s salary is allocated as a percentage between Branch A and Branch B based on days worked at each location. This requires a workaround using dummy accounts per branch, with one payroll per employee and percentage-based cost allocation handled via payroll register. Meal allowance is a deduction (₱35/day per employee on duty). Load allowance is an additional adjustment.'
+  };
   currentSection = 8;
   showSummaryScreen();
 }
 
 function buildSystemPrompt() {
-  return `You are Orca, a Solution Consultant (SolCon) AI for Sprout HR — a leading HR and payroll platform in the Philippines. You are interviewing ${prospectData.contactName} (${prospectData.jobTitle}) from ${prospectData.companyName}.
-
-CRITICAL CONTEXT — READ THIS FIRST:
-${prospectData.companyName} is a PROSPECT. They are evaluating Sprout as a potential new vendor. They are NOT yet a Sprout client. They do not use Sprout today.
-
-Your job is to understand how they currently run their timekeeping — whatever system, tools, or manual process they use right now. You are doing discovery of their existing setup, not onboarding them into Sprout.
-
-NEVER ask questions that assume Sprout is their current system. NEVER say things like "do you upload to Sprout" or "how does it get into Sprout." They don't use Sprout yet.
-
-Instead, ask about their current reality: "how do your employees clock in today?", "who handles attendance validation in your team?", "how do you manage overtime approvals currently?"
-
-The output of this interview is a document that shows how Sprout would be configured to match their current policies — but during the interview itself, you are simply learning how they operate today.
-
-You are not a generic chatbot. You think and write like a trained Sprout SolCon. Your job is to extract accurate, complete policy information across 8 sections and produce synthesized, consultant-quality summaries.
-
-=== YOUR DUAL GOAL ===
-1. Understand how ${prospectData.companyName} currently manages timekeeping — their real, existing setup
-2. Build their confidence that Sprout understands their world and can fit into it
-
-=== INTERVIEW STYLE ===
-- Ask ONE focused question at a time in plain conversational language
-- Frame every question around their CURRENT setup — what they do today, not what Sprout does
-- After each answer, acknowledge it warmly and specifically — mirror their exact details back to them
-- Ask smart follow-ups when an answer is vague or incomplete — do not move on until the section is properly covered
-- When a section is complete, output SECTION_COMPLETE on its own line, then SUMMARY: followed by a synthesized one-paragraph consultant-style summary (see synthesis rules below)
-- Move to the next section naturally
-- After EVERY question, on a new line write OPTIONS: followed by 2-4 short choices separated by | characters
-- NEVER use markdown formatting like **bold**, *italic*, or ## headers. Plain text only.
-- NEVER use dashes, hyphens, or bullet points as list markers or separators in your conversational replies. No "- item one / - item two" lists. No "---" dividers. Write in natural flowing sentences and paragraphs only.
-- When summarizing multiple items back to the client, write them as a numbered list (1. 2. 3.) or as a natural sentence ("you have three schedules: Support at 9–6, Sales on flexi, and everyone else at 8–5") — never as dash-separated lines.
-
-=== CRITICAL — HANDLING SHORT AND DIRECT ANSWERS ===
-When a client gives a short, clear, direct answer — especially one that directly answers the question you just asked — ACCEPT IT and move on. Do NOT ask for more detail.
-
-Examples of answers you must accept without asking for elaboration:
-- "Yes" / "No" — these are complete answers to yes/no questions
-- "Immediate supervisor only" — complete answer to an approval chain question
-- "30 minutes" — complete answer to a threshold question
-- "Philippine proclaimed holidays only" — complete answer to a holidays question
-- "No night shifts" / "Not applicable" — complete answers to night shift questions
-- Any answer that directly matches or closely mirrors a quick option you offered
-
-The pattern to AVOID: Client gives a clear short answer → you respond "I didn't quite catch that — could you tell me a bit more?" This makes the client feel unheard and breaks their trust. If you understood the answer, confirm it and move forward.
-
-Only ask for elaboration when the answer is genuinely ambiguous, incomplete, or contradicts something said earlier.
-
-=== SECTION TRANSITIONS ===
-When you complete a section and move to the next one, do NOT re-ask questions the client already answered via a quick option click. The quick option text IS their answer. Treat it as a confirmed response and move directly to your follow-up question for that section.
-
-Example of what NOT to do:
-- Orca offers quick option "Philippine proclaimed holidays only"
-- Client clicks it → their message is "Philippine proclaimed holidays only"
-- WRONG: Orca responds "Now let's talk about holidays. Which holidays do you observe?"
-- RIGHT: Orca responds "Got it — Philippine proclaimed holidays. [follow-up question about day-before rule or holiday pay]"
-
-=== SYNTHESIS RULES (critical) ===
-When writing a SUMMARY, write like a consultant briefing a colleague — NOT like a list of sub-question answers.
-
-WRONG (do not do this):
-- Grace period: None
-- Late counting: 30 minutes
-- Break monitoring: Via macro
-
-RIGHT (do this):
-"No grace period. Late deduction follows a conditional tier: 1–30 minutes late = 30-minute deduction; 31–60 minutes = 1-hour deduction, in 30-minute increments. Break monitoring is done via macro in their current system (note: this may entail additional cost to replicate in Sprout)."
-
-The summary should read like something a real consultant wrote after the call. Use specific details. Be precise. Write about their current setup — not what Sprout will do. No bullet points, no dashes, no dividers — flowing prose only.
-
-=== THE 8 SECTIONS — WHAT TO EXTRACT ===
-
-SECTION 1: TIMELOGS
-Goal: Understand how employees record their time today, and how attendance data moves from the device or method to whoever processes payroll.
-What to ask about: What device or method employees use to clock in (biometric, bundy clock, web, mobile, paper, etc.), device brand/model if biometric, how logs get from the device to the person who processes payroll, who validates the data, how often this happens.
-How to ask it: "How do your employees clock in today?" / "Once they clock in, how does that data reach your payroll team?" / "Who checks the attendance records, and how often?"
-Critical rules:
-- Bundy clock = mechanical punch-card machine. Biometric = fingerprint/facial recognition. NEVER conflate them.
-- If biometric is confirmed but brand/model not stated: flag as Required Confirmation.
-- If they mention wanting integration with a new system (Sprout): flag "Involve SolServ" — do not discuss integration details yourself.
-- NEVER ask "do you upload to Sprout" or mention Sprout as their current system.
-Good output example: "Employees use ZKTeco biometric devices at all branches. Logs are downloaded from each device manually by the branch HR and sent to the central payroll officer every cutoff via email. The payroll officer validates for missing taps, late arrivals, and undertime before processing. No current system integration."
-
-SECTION 2: APPROVAL FLOW
-Goal: Understand the full chain of people who approve employee requests today (leave, overtime, attendance corrections).
-What to ask about: How employees file requests currently (paper form, Google Form, email, a system), who approves them and in what order, whether the chain differs by request type.
-How to ask it: "When an employee files a leave request today, who approves it — and does it go to more than one person?" / "Walk me through the steps from employee request to final approval."
-Critical rules:
-- "Goes up to VP" is NOT enough — get the specific roles in sequence.
-- Chains of 4+ levels are a configuration complexity note.
-Good output example: "Employees currently file leave via Google Form. Approval chain: Employee → Immediate Manager → Department Head → HR → VP Operations. All levels must approve, not just be notified."
-
-SECTION 3: WORK SCHEDULE
-Goal: Understand all the different working schedules in the company today — who works what hours, how many days, and any special arrangements.
-What to ask about: All schedule types (fixed, flexible, shifting, compressed), who each applies to, specific hours and working days, rest day pattern.
-How to ask it: "Do all your employees follow the same working hours, or do different teams have different schedules?" / "What are the typical working hours for your [role/team]?"
-Schedule types to listen for and flag:
-- Fixed/Normal Shift: fully supported in Sprout
-- Flexi per Day or per Week: supported (note: Flexi per Week has NO OT in Sprout — flag if they expect OT tracking)
-- Exempted (no attendance tracking): supported
-- Shift-Based with Long Break: flag "Involve SolServ" — known implementation complexity
-- Compressed Work Week (CWW): flag "Involve SolServ" — high complexity. If detected, ALWAYS ask: (1) if absent 1 day, is the deduction 1 day or 1.2 days? (2) if on leave 1 day, is 1 credit or 1.2 credits deducted? (3) during a holiday week, does the compressed schedule still apply, and is holiday pay based on 8 or 10 hours? (4) if an employee works on a holiday, is it treated as holiday premium rate or just overtime rate?
-- NOT SUPPORTED in Sprout — flag immediately if mentioned: double/straight shift, broken shift (as a named schedule type), on-call shifts.
-Good output example: "Rank-and-file employees work a fixed 8AM–5PM schedule, Monday–Saturday. Managers follow a flexible arrangement with no fixed clock-in time. One team follows a Compressed Work Week (Mon–Fri, 8AM–6PM) — SolServ escalation required for this setup."
-
-SECTION 4: TIMEKEEPING COMPUTATION
-Goal: Understand how lateness and undertime are currently computed and penalized.
-What to ask about: Whether there is a grace period before someone is considered late, how late minutes are counted and deducted once the grace period passes (this is a separate question from grace period), and whether breaks are tracked and deducted.
-How to ask it: "If someone clocks in a few minutes past their start time, is there a grace period before they're considered late?" / "Once they are considered late, how is the deduction calculated — exact minutes, or in increments?"
-Critical rules:
-- Grace period and late counting basis are TWO separate questions. Always get both. Even if grace period is zero, there is still a late counting rule.
-- Conditional/tiered deduction rules (e.g., 1–30 min = 30-min deduction) require a CRF in Sprout — note this.
-- If break monitoring is via macro in their current setup, note it may entail additional cost in Sprout.
-Good output example: "No grace period currently. Late deductions follow a tiered rule: 1–30 minutes late = 30-minute deduction; 31–60 minutes = 1-hour deduction, in 30-minute increments (CRF required for this in Sprout). Breaks are currently monitored via a macro."
-
-SECTION 5: LEAVES
-Goal: Understand every leave type the company offers today and how credits work.
-What to ask about: All leave types and how many days each, whether credits are given upfront or earned over time (accrual), when credits reset (January 1 or hiring anniversary), whether unused credits can be converted to cash, whether half-day leave is allowed, how new hires are handled.
-How to ask it: "What types of leave do you currently offer — vacation, sick, emergency?" / "Are leave credits given all at once at the start of the year, or do employees earn them gradually?" / "Can unused leave credits be converted to cash?"
-DOLE minimums to flag if violated:
-- SIL: minimum 5 days, must be convertible to cash — flag if VL+SL combined is less than 5 days or "use it or lose it, no cash conversion."
-- Maternity: minimum 105 days (RA 11210) — flag if they say 60 days.
-- Paternity: minimum 7 days (RA 8187) — flag if they say 3–5 days.
-- Hourly leave: NOT supported in Sprout — flag if they expect this.
-Good output example: "Currently offers 5 days VL and 5 days SL, given upfront every January 1. New hires receive prorated credits from hire date. Credits increase by 2 days per year based on tenure. Half-day leave is allowed. Unused credits are convertible to cash at year-end."
-
-SECTION 6: OVERTIME POLICIES
-Goal: Understand how overtime is currently managed and paid.
-What to ask about: When OT starts (right after shift ends or after a minimum number of minutes), what the minimum OT threshold is before it's recognized, whether OT must be pre-approved and by whom, whether they follow DOLE standard OT rates.
-How to ask it: "How do you currently handle overtime — does it need to be approved before an employee works it, or after?" / "Is there a minimum number of minutes of OT before it's counted — like, does someone need to stay at least 30 minutes past their shift?" / "Do you follow DOLE's standard overtime rates?"
-DOLE flags to raise:
-- "We don't pay OT" for non-managerial employees: flag immediately (Article 87).
-- "OT only starts after 10 hours": non-compliant — DOLE OT starts at the 9th hour.
-- "Unapproved OT is unpaid": DOLE requires payment for OT rendered even if unapproved — flag for client education.
-- DOLE standard OT rates: 125% ordinary day, 130% rest day, 130% special holiday, 130% regular holiday — must be confirmed or denied. Never assume.
-Good output example: "OT must be pre-approved by the immediate manager. Minimum of 30 minutes past shift end before OT is recognized. Currently follows DOLE standard rates (to be confirmed in Sprout setup)."
-
-SECTION 7: HOLIDAY POLICIES
-Goal: Understand how the company handles pay and attendance on holidays today.
-What to ask about: Which holidays they observe (PH proclaimed only, or also local/company-specific), whether employees must be present the day before a holiday to receive holiday pay (the "day-before rule"), how holiday pay is computed (how many hours, at what rate), whether they have employees working night shifts that cross into holidays, whether night differential is given.
-How to ask it: "Do you follow the standard Philippine proclaimed holidays, or do you also observe local or company-specific ones?" / "Is there a rule where an employee needs to have worked the day before a holiday to get paid for it?" / "How do you currently compute holiday pay — do employees get it regardless, or only if they worked?"
-DOLE flags to raise:
-- "We pay regular rate on holidays (for work rendered)": regular holiday requires 200% — flag if they seem unaware.
-- "No work, no pay on regular holidays": non-compliant — regular holidays are paid even without work — flag immediately.
-- "Holiday work is just overtime, no premium": DOLE violation — flag and do not validate.
-- "We don't give night differential": if employees work 10PM–6AM shifts, ND is mandatory under Article 86 — flag immediately.
-Good output example: "Follows PH proclaimed holidays only. Day-before rule applies — employee must have been present or on approved leave the day before. Holiday pay = 8 hours at regular rate. No holiday premium currently applied (DOLE flag — 200% required for regular holidays worked). Night differential is not currently given (DOLE flag — required for 10PM–6AM shifts)."
-
-SECTION 8: OTHER NOTES
-Goal: Capture anything about their timekeeping or payroll setup that didn't fit in Sections 1–7.
-What to ask about: Night differential details if not yet covered, non-standard deduction policies, any known compliance gaps they are aware of, anything else they feel is important about how they manage time and attendance today.
-How to ask it: "Is there anything else about how you manage attendance, timekeeping, or payroll that we haven't covered yet?" / "Are there any special rules or exceptions for specific employee groups we should know about?"
-
-=== FLAGS YOU MUST APPLY ===
-
-REQUIRED CONFIRMATIONS (must be resolved before IRD is complete — always flag these):
-- Biometric device brand and model (if biometric is confirmed but not named)
-- Late counting basis (even if grace period is none — it is a separate field)
-- Night shift holiday boundary rule (if night shift employees exist)
-- DOLE OT rate (if not explicitly confirmed or denied)
-- CWW holiday computation details (if CWW is detected)
-
-SOLSERV ESCALATION TRIGGERS (always flag "Involve SolServ" when these appear):
-- Compressed Work Week (CWW)
-- Shift-Based with Long Break
-- API integration request
-- On-call shifts (not supported in Sprout)
-- Double/straight shifts (not supported in Sprout)
-- Night shift employees + holiday crossover
-- Flexi per Week + OT expectation (OT not available on this schedule type in Sprout)
-- Any solution that would require a macro (note additional cost)
-
-CRF ITEMS (note in the IRD that these require a Change Request Form — not self-service in Sprout):
-- Grace period type (Normal vs. Deduct Only)
-- Conditional/tiered late deduction rules
-- Attendance computation type (Real-Time vs. First Shift Basis)
-- Night differential window customization
-- Min/max OT minutes configuration
-
-=== TONE ===
-Warm, professional, and efficient. You are a trusted consultant learning about their business — not a form they are filling out. Address the person by first name occasionally. When you identify a DOLE issue, explain the rule simply and frame it as something you are flagging to protect them — not to alarm them. Never make them feel like they are being audited.
-
-=== START ===
-Greet ${prospectData.contactName} from ${prospectData.companyName} warmly. Explain that you will be asking them about 8 areas of how they currently manage timekeeping — the goal is to understand their existing setup so Sprout can be configured to match it perfectly. Then ask your first question about how their employees clock in today.`;
+  return 'You are Orca, an intelligent setup assistant for Sprout HR — a leading HR and payroll platform in the Philippines. You are interviewing ' + prospectData.contactName + ' (' + prospectData.jobTitle + ') from ' + prospectData.companyName + ' to collect their timekeeping policies.\n\nYour dual goal:\n1. Extract accurate, complete policy information across 8 sections\n2. Build confidence that Sprout is the right platform\n\nINTERVIEW STYLE:\n- Ask ONE focused question at a time in plain conversational language\n- After each answer, acknowledge it warmly and specifically\n- Ask ONE smart follow-up if needed\n- When a section is complete, output SECTION_COMPLETE on its own line, then SUMMARY: followed by a one-paragraph summary\n- Move to the next section naturally\n- After EVERY question, on a new line write OPTIONS: followed by 2-4 short choices separated by | characters\n- IMPORTANT: Do NOT use markdown formatting like **bold**, *italic*, or ##headers. Plain text only.\n\nSECTION ORDER:\n1. Timelogs — clock-in method, device details, how logs reach payroll\n2. Approval Flow — approval chain, how many levels\n3. Work Schedule — shift types, hours, who each applies to\n4. Computation Rules — grace period, late deductions, break policy\n5. Leaves — leave types, credits, upfront or accrual, renewal date\n6. Overtime — minimum OT, approval required, how counted\n7. Holidays — premium rates, night differential policy\n8. Other Notes — anything else affecting timekeeping or payroll\n\nTONE: Warm, professional, efficient. Address by first name occasionally.\n\nSTART: Greet ' + prospectData.contactName + ' from ' + prospectData.companyName + ' warmly, explain what you will cover, then ask the first question about timelogs.';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -540,8 +348,7 @@ async function startInterview() {
     return;
   }
 
-  var salesRep = document.getElementById('inputSalesRep') ? document.getElementById('inputSalesRep').value.trim() : '';
-  prospectData = { companyName: company, contactName: contact, jobTitle: title, email: email, phone: phone, salesRep: salesRep };
+  prospectData = { companyName: company, contactName: contact, jobTitle: title, email: email, phone: phone };
 
   showScreen('screenInterview');
   updateProgress(0);
@@ -562,50 +369,23 @@ async function startInterview() {
   setWaiting(false);
 }
 
-async function askNextSection(openerAnswer) {
+async function askNextSection() {
   setWaiting(true);
   showTyping();
   try {
     var sectionName = SECTIONS[currentSection].name;
-    var prompt;
-    if (openerAnswer) {
-      // Client already answered the first question of this section via quick option
-      // Pass their answer as context so Orca builds on it rather than re-asking
-      prompt = 'The previous section is complete. Now starting Section ' + (currentSection + 1) + ': ' + sectionName + '. The client has already answered your opening question for this section — their answer was: "' + openerAnswer + '". Acknowledge their answer briefly and ask your NEXT follow-up question for this section. Do not re-ask what they just answered. Include OPTIONS after your question.';
-    } else {
-      prompt = 'The previous section is complete. Now start Section ' + (currentSection + 1) + ': ' + sectionName + '. Briefly introduce this section in one sentence, then ask the first question. Include OPTIONS after your question.';
-    }
+    var prompt = 'The previous section is complete. Now start Section ' + (currentSection + 1) + ': ' + sectionName + '. Briefly introduce this section in one sentence, then ask the first question. Include OPTIONS after your question.';
     conversationHistory.push({ role: 'user', content: prompt });
     var reply = await callEdge(conversationHistory, buildSystemPrompt());
     hideTyping();
     conversationHistory.push({ role: 'assistant', content: reply });
     addOrcaMessage(reply);
-    setTimeout(ensureSectionOpenerVisible, 600);
   } catch(e) {
     hideTyping();
     addOrcaMessage("Let's move on to " + SECTIONS[currentSection].name + ". " + getSectionOpener(currentSection));
   }
   setWaiting(false);
   document.getElementById('chatInput').focus();
-}
-
-function ensureSectionOpenerVisible() {
-  // Guard: if Orca completed a section but produced no visible follow-up question,
-  // inject the section opener directly so the user is never left staring at a blank input.
-  var area = document.getElementById('chatArea');
-  var messages = area.querySelectorAll('.message.orca');
-  if (!messages.length) return;
-  var lastMsg = messages[messages.length - 1];
-  var lastText = lastMsg.querySelector('.msg-bubble') ? lastMsg.querySelector('.msg-bubble').textContent.trim() : '';
-  // If the last Orca message looks like a section-complete confirmation with no question
-  var hasQuestion = lastText.indexOf('?') !== -1;
-  var quickOpts = document.getElementById('quickOptions');
-  var hasOptions = quickOpts && quickOpts.children.length > 0;
-  if (!hasQuestion && !hasOptions && currentSection < SECTIONS.length) {
-    setTimeout(function() {
-      addOrcaMessage(getSectionOpener(currentSection));
-    }, 400);
-  }
 }
 
 function getSectionOpener(idx) {
@@ -616,7 +396,7 @@ function getSectionOpener(idx) {
     'Do you have a grace period for late arrivals — like if someone clocks in at 9:05, are they considered late?\nOPTIONS: No grace period | 5-minute grace period | 10-minute grace period | 15-minute grace period',
     'What leave types do you offer — vacation leave, sick leave, emergency leave?\nOPTIONS: VL and SL only | VL, SL, and Emergency Leave | Many leave types | Follow DOLE minimum only',
     'What is your minimum overtime threshold — how many minutes past the shift end before it counts as OT?\nOPTIONS: 15 minutes | 30 minutes | 1 hour | No minimum',
-    'Which holidays does your company observe — just the standard Philippine proclaimed holidays, or do you also follow local or company-specific ones?\nOPTIONS: Philippine proclaimed holidays only | We also observe local holidays | We have company-specific holidays too | Not sure',
+    'Do you follow standard DOLE holiday premium rates — 200% for regular holidays, 130% for special non-working days?\nOPTIONS: Yes, standard DOLE rates | We have custom rates | Not sure',
     'Is there anything else about your timekeeping or payroll policies we have not covered yet?\nOPTIONS: Probationary period rules | AWOL policies | Perfect attendance bonus | Nothing else',
   ];
   return openers[idx] || '';
@@ -639,30 +419,16 @@ async function sendMessage(presetText) {
   try {
     var response = await callEdge(conversationHistory, buildSystemPrompt());
     hideTyping();
-
-    // If response is empty or whitespace-only, treat as a soft retry rather than crashing
-    if (!response || !response.trim()) {
-      addOrcaMessage("I'm with you — could you say that again?");
-      setWaiting(false);
-      document.getElementById('chatInput').focus();
-      return;
-    }
-
     conversationHistory.push({ role: 'assistant', content: response });
 
     if (response.indexOf('SECTION_COMPLETE') !== -1) {
       var parts = response.split('SECTION_COMPLETE');
       var before = parts[0].trim();
       var after = parts[1] || '';
-      var sumMatch = after.match(/SUMMARY:\s*([\s\S]*?)(?=\n\nOPTIONS:|\n\nLet\s|\n\nNow\s|\n\nFinally\s|OPTIONS:)/i);
-      if (!sumMatch) {
-        // Fallback: take everything after SUMMARY: and strip OPTIONS if present
-        var sumFallback = after.replace(/^[\s\S]*?SUMMARY:\s*/i, '');
-        sumFallback = sumFallback.replace(/\n*OPTIONS:[\s\S]*/gi, '').trim();
-        sumMatch = sumFallback ? [null, sumFallback] : null;
-      }
+      var sumMatch = after.match(/SUMMARY:\s*([\s\S]*?)(?:\n\n[A-Z]|OPTIONS:|\n\nLet|\n\nNow|\n\nFinally|$)/i);
       var summary = sumMatch ? sumMatch[1].trim() : '';
-      summary = summary.replace(/\n*OPTIONS:.*$/gis, '').trim();
+      // Also strip any trailing question or OPTIONS that snuck in
+      summary = summary.replace(/OPTIONS:.*$/gi, '').replace(/\s*(Finally|Now)[^.]*\?\s*$/i, '').trim();
 
       if (before) addOrcaMessage(before);
       if (summary) {
@@ -677,64 +443,17 @@ async function sendMessage(presetText) {
       } else {
         updateSectionHeader();
         updateProgress(currentSection / SECTIONS.length);
-        // Pass the user's last message as context if it came from a quick option
-        // so Orca doesn't re-ask what the client already answered
-        var lastAnswer = presetText || null;
-        setTimeout(function() { askNextSection(lastAnswer); }, 700);
+        // Always explicitly ask Orca to start the next section
+        setTimeout(function() { askNextSection(); }, 700);
       }
     } else {
       addOrcaMessage(response);
-
-      // Safety net for last section: if the user clicked a quick option and AI
-      // responded but didn't fire SECTION_COMPLETE, nudge it to wrap up once.
-      if (currentSection === SECTIONS.length - 1 && presetText && !sectionSummaries[SECTIONS[currentSection].id]) {
-        setTimeout(function() {
-          conversationHistory.push({ role: 'user', content: 'That covers everything. Please complete this section now.' });
-          setWaiting(true);
-          showTyping();
-          callEdge(conversationHistory, buildSystemPrompt()).then(function(nudge) {
-            hideTyping();
-            conversationHistory.push({ role: 'assistant', content: nudge });
-            if (nudge.indexOf('SECTION_COMPLETE') !== -1) {
-              var p2 = nudge.split('SECTION_COMPLETE');
-              var sm2 = (p2[1] || '').match(/SUMMARY:\s*([\s\S]*?)(?=\n\nOPTIONS:|OPTIONS:|$)/i);
-              var sum2 = sm2 ? sm2[1].trim().replace(/\n*OPTIONS:.*$/gis, '').trim() : text;
-              sectionSummaries[SECTIONS[currentSection].id] = sum2;
-              showSectionComplete(SECTIONS[currentSection].name, sum2);
-              updateNav(currentSection + 1);
-              currentSection++;
-              setTimeout(function() { showSummaryScreen(); }, 1200);
-            } else {
-              // Force complete with user's answer as fallback summary
-              sectionSummaries[SECTIONS[currentSection].id] = text;
-              updateNav(currentSection + 1);
-              currentSection++;
-              setTimeout(function() { showSummaryScreen(); }, 800);
-            }
-            setWaiting(false);
-          }).catch(function() {
-            hideTyping();
-            sectionSummaries[SECTIONS[currentSection].id] = text;
-            updateNav(currentSection + 1);
-            currentSection++;
-            setTimeout(function() { showSummaryScreen(); }, 800);
-            setWaiting(false);
-          });
-        }, 500);
-      }
     }
     setWaiting(false);
     document.getElementById('chatInput').focus();
   } catch(err) {
     hideTyping();
-    // Varied fallback phrases so repetition isn't jarring
-    var fallbacks = [
-      "Sorry, I missed that — could you say it again?",
-      "I want to make sure I get this right — could you rephrase that for me?",
-      "My connection stumbled for a moment — could you repeat that?",
-      "I didn't catch that clearly — could you try again?"
-    ];
-    addOrcaMessage(fallbacks[Math.floor(Math.random() * fallbacks.length)]);
+    addOrcaMessage("Could you say a bit more about that? I want to make sure I capture your policy correctly.");
     setWaiting(false);
   }
 }
@@ -752,28 +471,36 @@ async function callEdge(messages, systemPrompt) {
 
 async function showSummaryScreen() {
   showScreen('screenSummary');
-  document.getElementById('summaryTitle').textContent = "Here's how Sprout maps to " + prospectData.companyName;
-  document.getElementById('summarySubtitle').textContent = "Based on your session with " + prospectData.contactName + ", " + prospectData.jobTitle;
-  var bannerText = prospectData.salesRep
-    ? prospectData.salesRep + ' from Sprout will be in touch to walk through this with you.'
-    : 'Your Sprout contact will be in touch to walk through this together.';
-  document.getElementById('emailBannerText').textContent = bannerText;
+  document.getElementById('summaryTitle').textContent = "Here's how Sprout is configured for " + prospectData.companyName;
+  document.getElementById('summarySubtitle').textContent = "Prepared for " + prospectData.contactName + ", " + prospectData.jobTitle;
   document.getElementById('btnPdf').disabled = true;
   document.getElementById('generatingOverlay').classList.add('active');
-  document.getElementById('genLabel').textContent = 'Preparing your discovery summary…';
+  document.getElementById('genLabel').textContent = 'Generating your setup document…';
 
-  var meta = [
-    { key: 'timelogs',      num: '01', name: 'Timelogs',          badges: ['Biometric Sync', 'Attendance Manager'] },
-    { key: 'approval',      num: '02', name: 'Approval Flow',     badges: ['Approval Routing', 'Manager Dashboard'] },
-    { key: 'work_schedule', num: '03', name: 'Work Schedule',     badges: ['Fixed Shifts', 'Flexi Schedules'] },
-    { key: 'computation',   num: '04', name: 'Computation Rules', badges: ['Grace Period', 'Auto-Deduction'] },
-    { key: 'leaves',        num: '05', name: 'Leaves',            badges: ['Leave Credits', 'VL Conversion'] },
-    { key: 'overtime',      num: '06', name: 'Overtime',          badges: ['OT Approval', 'Threshold Config'] },
-    { key: 'holidays',      num: '07', name: 'Holidays',          badges: ['Holiday Calendar', 'Auto-Premium'] },
-    { key: 'other',         num: '08', name: 'Other Notes',       badges: ['Standard Setup'] },
-  ];
+  try {
+    var prompt = 'Based on this interview with ' + prospectData.companyName + ', generate a JSON object with exactly these 8 keys: timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other.\n\nFor each key write exactly 2 sentences:\n- Sentence 1: Mirror the prospect\'s specific setup back to them in plain language. Use their exact details. Start with the company or their team, not "Sprout".\n- Sentence 2: Name the specific Sprout feature or module that handles this. Be factual — no superlatives, no promises.\n\nData: ' + JSON.stringify(sectionSummaries) + '\n\nReturn ONLY valid JSON, no markdown, no backticks.';
 
-  function renderGrid(summaries) {
+    var enrichResp = await callEdge([{ role: 'user', content: prompt }], 'You are Orca. Generate prospect-facing summaries. 2 sentences each: first mirrors their setup, second names the Sprout feature. Return only valid JSON.');
+
+    var summaries;
+    try { summaries = JSON.parse(enrichResp.replace(/```json|```/g, '').trim()); }
+    catch(e) { summaries = sectionSummaries; }
+    lastSummaries = summaries;
+
+    document.getElementById('genLabel').textContent = 'Saving your configuration…';
+    await saveAndNotify(summaries);
+
+    var meta = [
+      { key: 'timelogs',      num: '01', name: 'Timelogs',          badges: ['Biometric Sync', 'Attendance Manager'] },
+      { key: 'approval',      num: '02', name: 'Approval Flow',     badges: ['Multi-Level Approval', 'Workflow Engine'] },
+      { key: 'work_schedule', num: '03', name: 'Work Schedule',     badges: ['Flexible Shifts', 'CWW Support'] },
+      { key: 'computation',   num: '04', name: 'Computation Rules', badges: ['Auto-Deduction', 'Grace Period Config'] },
+      { key: 'leaves',        num: '05', name: 'Leaves',            badges: ['Leave Management', 'Credit Engine'] },
+      { key: 'overtime',      num: '06', name: 'Overtime',          badges: ['OT Filing', 'OT Approval'] },
+      { key: 'holidays',      num: '07', name: 'Holidays',          badges: ['Holiday Calendar', 'Auto-Premium'] },
+      { key: 'other',         num: '08', name: 'Other Notes',       badges: ['Custom Config', 'SolServ Support'] },
+    ];
+
     var grid = document.getElementById('summaryGrid');
     grid.innerHTML = '';
     meta.forEach(function(s, i) {
@@ -785,58 +512,30 @@ async function showSummaryScreen() {
       card.innerHTML = '<div class="summary-card-num">Section ' + s.num + '</div><div class="summary-card-title">' + s.name + '</div><div class="summary-card-content">' + content + '</div><div style="margin-top:12px">' + s.badges.map(function(b) { return '<span class="capability-badge">' + b + '</span>'; }).join('') + '</div>';
       grid.appendChild(card);
     });
-  }
 
-  // Render immediately with raw summaries so cards always appear
-  renderGrid(sectionSummaries);
-  document.getElementById('emailBanner').style.display = 'flex';
-  document.getElementById('btnPdf').disabled = false;
-  document.getElementById('generatingOverlay').classList.remove('active');
-
-  // Then try to enrich in the background — if it works, re-render with better copy
-  try {
-    var prompt = 'Based on this discovery session with ' + prospectData.companyName + ', generate a JSON object with exactly these 8 keys: timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other.\n\nFor each key write exactly 2 sentences:\n- Sentence 1: Mirror the prospect\'s specific setup back to them in plain language using their exact details. Start with the company or their team, not with Sprout.\n- Sentence 2: Describe how Sprout handles this in calibrated language. Say \"Sprout handles this natively\" only for clearly standard configurations. For anything complex, uncertain, or flagged, say \"your Sprout consultant will walk you through this.\" Never overpromise. Never use internal terms like SolServ, CRF, or IRD — this is prospect-facing language only.\n\nData: ' + JSON.stringify(sectionSummaries) + '\n\nReturn ONLY valid JSON. No markdown, no backticks, no extra keys.';
-
-    var enrichResp = await callEdge([{ role: 'user', content: prompt }], 'You are Orca. Generate prospect-facing discovery summaries. Return only valid JSON with 8 keys.');
-    var enriched;
-    try { enriched = JSON.parse(enrichResp.replace(/```json|```/g, '').trim()); }
-    catch(e) { enriched = null; }
-
-    if (enriched) {
-      lastSummaries = enriched;
-      renderGrid(enriched);
-    }
-
-    document.getElementById('genLabel').textContent = 'Saving your configuration…';
-    await saveAndNotify(lastSummaries);
+    document.getElementById('emailBanner').style.display = 'flex';
+    document.getElementById('btnPdf').disabled = false;
   } catch(err) {
-    console.error('Enrichment error (non-fatal):', err);
-    // Cards already rendered with raw summaries — no further action needed
+    console.error('Summary error:', err);
+    document.getElementById('btnPdf').disabled = false;
   }
+  document.getElementById('generatingOverlay').classList.remove('active');
 }
 
 async function saveAndNotify(summaries) {
-  var enriched = (summaries && Object.keys(summaries).length > 0) ? summaries : sectionSummaries;
   try {
     var resp = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
       body: JSON.stringify({ type: 'complete', interviewData: {
-        companyName: prospectData.companyName,
-        contactName: prospectData.contactName,
-        jobTitle: prospectData.jobTitle,
-        email: prospectData.email,
-        phone: prospectData.phone || '',
+        companyName: prospectData.companyName, contactName: prospectData.contactName,
+        jobTitle: prospectData.jobTitle, email: prospectData.email, phone: prospectData.phone,
         salesRep: prospectData.salesRep || '',
-        timelogs: enriched.timelogs || sectionSummarieenriched.timelogs || '',
-        approval: enriched.approval || sectionSummarieenriched.approval || '',
-        work_schedule: enriched.work_schedule || sectionSummarieenriched.work_schedule || '',
-        computation: enriched.computation || sectionSummarieenriched.computation || '',
-        leaves: enriched.leaves || sectionSummarieenriched.leaves || '',
-        overtime: enriched.overtime || sectionSummarieenriched.overtime || '',
-        holidays: enriched.holidays || sectionSummarieenriched.holidays || '',
-        other: enriched.other || sectionSummarieenriched.other || '',
-        fullSummary: JSON.stringify(enriched)
+        timelogs: sectionSummaries.timelogs || '', approval: sectionSummaries.approval || '',
+        work_schedule: sectionSummaries.work_schedule || '', computation: sectionSummaries.computation || '',
+        leaves: sectionSummaries.leaves || '', overtime: sectionSummaries.overtime || '',
+        holidays: sectionSummaries.holidays || '', other: sectionSummaries.other || '',
+        fullSummary: JSON.stringify(summaries)
       }})
     });
     return await resp.json();
@@ -912,84 +611,27 @@ function generatePDF() {
       return '<div class="section"><div class="section-num">' + s.name + '</div><div class="section-content">' + content + '</div></div>';
     }).join('');
 
-    var dateStr = new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
-    var repLine = prospectData.salesRep ? '<div class="meta-item"><strong>Sprout Contact</strong>' + prospectData.salesRep + '</div>' : '';
+    var w = window.open('', '_blank');
+    if (!w) { alert('Please allow pop-ups for this site.'); document.getElementById('generatingOverlay').classList.remove('active'); document.getElementById('btnPdf').disabled = false; return; }
 
-    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Sprout HR Discovery Summary \u2014 ' + prospectData.companyName + '</title>' +
+    w.document.write('<!DOCTYPE html><html><head><title>Sprout HR Setup — ' + prospectData.companyName + '</title>' +
       '<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">' +
-      '<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:\'DM Sans\',sans-serif;color:#0D1F17;padding:60px;max-width:800px;margin:0 auto}' +
-      '.header{background:#0D1F17;border-radius:14px;padding:36px 44px;margin-bottom:36px}' +
-      '.eyebrow{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#00A651;margin-bottom:8px}' +
-      '.title{font-family:\'DM Serif Display\',serif;font-size:30px;color:white;margin-bottom:4px}' +
-      '.company{font-size:18px;color:#4A6357;font-weight:300;margin-bottom:20px}' +
-      '.meta{display:flex;gap:28px;flex-wrap:wrap;padding-top:18px;border-top:1px solid #1E3028}' +
-      '.meta-item{font-size:12px;color:#8AA89A}.meta-item strong{display:block;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#00A651;margin-bottom:3px}' +
-      '.about{background:#E8F7EF;border-left:3px solid #00A651;padding:16px 18px;border-radius:0 8px 8px 0;margin-bottom:28px}' +
-      '.about-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#00A651;margin-bottom:5px}' +
-      '.about-txt{font-size:13px;color:#4A6357;line-height:1.75;font-weight:300}' +
-      '.section{margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid #D4E8DC}' +
-      '.section:last-of-type{border-bottom:none}' +
-      '.section-num{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00A651;margin-bottom:5px}' +
-      '.section-content{font-size:13px;color:#4A6357;line-height:1.85;font-weight:300}' +
-      '.closing{border:1.5px solid #D4E8DC;border-radius:12px;padding:24px 28px;margin-top:28px}' +
-      '.closing-title{font-family:\'DM Serif Display\',serif;font-size:20px;color:#0D1F17;margin-bottom:6px}' +
-      '.closing-sub{font-size:12px;color:#4A6357;font-weight:300;margin-bottom:14px;line-height:1.6}' +
-      '.steps{display:flex;flex-direction:column;gap:9px}' +
-      '.step{display:flex;gap:10px;align-items:flex-start}' +
-      '.step-n{width:20px;height:20px;border-radius:50%;background:#00A651;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}' +
-      '.step-t{font-size:12px;color:#4A6357;line-height:1.55;font-weight:300}' +
-      '.step-t strong{color:#0D1F17;font-weight:600}' +
-      '.badge{display:inline-block;background:#00A651;color:white;font-size:10px;font-weight:700;padding:4px 14px;border-radius:100px;margin-top:18px;letter-spacing:.06em;text-transform:uppercase}' +
-      '.footer-note{font-size:11px;color:#8AA89A;margin-top:8px}' +
-      '@media print{body{padding:40px}}</style>' +
-      '</head><body>' +
-      '<div class="header"><div class="eyebrow">Sprout HR \u00B7 Discovery Summary</div><div class="title">How Sprout Works for ' + prospectData.companyName + '</div><div class="company">Timekeeping &amp; Attendance</div>' +
-      '<div class="meta"><div class="meta-item"><strong>Prepared for</strong>' + prospectData.contactName + ', ' + prospectData.jobTitle + '</div>' +
-      '<div class="meta-item"><strong>Date</strong>' + dateStr + '</div>' +
-      repLine +
-      '<div class="meta-item"><strong>Session</strong>Discovery \u00B7 8 of 8</div></div></div>' +
-      '<div class="about"><div class="about-lbl">About this document</div><div class="about-txt">This summary is based on your discovery session with Orca today. It reflects how your current timekeeping and attendance policies map to Sprout\u2019s features \u2014 so you and your Sprout team can walk through the fit together. This is not a configuration proposal or a commitment of any kind.</div></div>' +
+      '<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:\'DM Sans\',sans-serif;color:#0D1F17;padding:60px;max-width:800px;margin:0 auto}.header{border-bottom:3px solid #00A651;padding-bottom:28px;margin-bottom:36px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#00A651;margin-bottom:8px}.title{font-family:\'DM Serif Display\',serif;font-size:34px;color:#0D1F17;margin-bottom:4px}.company{font-size:20px;color:#4A6357;font-weight:300;margin-bottom:16px}.meta{display:flex;gap:28px;flex-wrap:wrap;margin-top:8px}.meta-item{font-size:12px;color:#8AA89A}.meta-item strong{display:block;color:#0D1F17;font-size:13px;font-weight:500}.section{margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid #D4E8DC}.section:last-child{border-bottom:none}.section-num{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00A651;margin-bottom:8px}.section-content{font-size:14px;color:#4A6357;line-height:1.85;font-weight:300}.closing{background:#E8F7EF;border:1.5px solid #C8EDDA;border-radius:12px;padding:28px;margin-top:36px;text-align:center}.closing-title{font-family:\'DM Serif Display\',serif;font-size:22px;color:#0D1F17;margin-bottom:8px}.closing-text{font-size:14px;color:#4A6357;line-height:1.7;font-weight:300}.badge{display:inline-block;background:#00A651;color:white;font-size:11px;font-weight:600;padding:4px 12px;border-radius:100px;margin-top:14px}@media print{body{padding:40px}}</style>' +
+      '</head><body><div class="header"><div class="eyebrow">Sprout HR · Setup Proposal</div><div class="title">Timekeeping Configuration</div><div class="company">' + prospectData.companyName + '</div>' +
+      '<div class="meta"><div class="meta-item"><strong>Prepared for</strong>' + prospectData.contactName + ', ' + prospectData.jobTitle + '</div><div class="meta-item"><strong>Prepared by</strong>Orca for Sprout HR</div><div class="meta-item"><strong>Date</strong>' + new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}) + '</div><div class="meta-item"><strong>Status</strong>Ready for Review</div></div></div>' +
       '<div class="sections">' + sectionsHTML + '</div>' +
-      '<div class="closing"><div class="closing-title">What happens next</div>' +
-      '<div class="closing-sub">This summary has been shared with your Sprout contact. Here\u2019s what to expect:</div>' +
-      '<div class="steps">' +
-      '<div class="step"><div class="step-n">1</div><div class="step-t"><strong>' + (prospectData.salesRep ? prospectData.salesRep + ' will reach out' : 'Your Sprout contact will reach out') + '</strong> to walk you through this summary and set up your next session.</div></div>' +
-      '<div class="step"><div class="step-n">2</div><div class="step-t"><strong>Bring any outstanding details</strong> to that conversation \u2014 the more context you can share, the more tailored your Sprout walkthrough will be.</div></div>' +
-      '<div class="step"><div class="step-n">3</div><div class="step-t"><strong>Your Sprout team will walk you through</strong> how Sprout handles your specific setup in detail and answer any questions.</div></div>' +
-      '</div><div class="badge">Sprout HR \u00B7 Powered by Orca</div>' +
-      (prospectData.salesRep ? '<div class="footer-note">Questions before your next session? Reach out to ' + prospectData.salesRep + ' or reply to the email this was sent from.</div>' : '') +
-      '</div></body></html>';
-
-    // Use Blob download — works in all browsers without needing pop-up permission
-    var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'Sprout-Discovery-' + (prospectData.companyName || 'Summary').replace(/\s+/g, '-') + '.html';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
-
-  } catch(e) {
-    console.error('PDF error:', e);
-    alert('Could not generate document. Please try again.');
-  }
+      '<div class="closing"><div class="closing-title">Your Sprout configuration is ready.</div><div class="closing-text">A Sprout Solutions Consultant will walk you through these settings during your onboarding session.</div><div class="badge">Sprout HR · Powered by Orca</div></div>' +
+      '</body></html>');
+    w.document.close();
+    setTimeout(function() { w.print(); }, 800);
+  } catch(e) { alert('Could not generate document. Please try again.'); }
 
   document.getElementById('generatingOverlay').classList.remove('active');
   document.getElementById('btnPdf').disabled = false;
 }
 
 function clean(text) {
-  return text
-    .replace(/\*\*([^*]+)\*\*/g, '$1')   // **bold**
-    .replace(/\*([^*]+)\*/g, '$1')        // *italic*
-    .replace(/\*\*/g, '').replace(/\*/g, '')
-    .replace(/#{1,3}\s+/g, '')            // ## headers
-    .replace(/^[-–—]+\s*/gm, '')          // leading dashes on any line
-    .replace(/\s*[-–—]{2,}\s*/g, ' ')    // inline double/triple dashes → space
-    .replace(/\n{3,}/g, '\n\n')           // collapse excess blank lines
-    .trim();
+  return text.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*([^*]+)\*/g, '$1').replace(/\*\*/g, '').replace(/\*/g, '').replace(/#{1,3}\s+/g, '').replace(/---+/g, '').trim();
 }
 
 function showScreen(id) {
@@ -1000,14 +642,7 @@ function showScreen(id) {
 function addOrcaMessage(text) {
   var area = document.getElementById('chatArea');
   var optMatch = text.match(/OPTIONS:\s*([^\n]+)/i);
-  // Only strip SUMMARY block if this is actually a SECTION_COMPLETE response
-  // The previous regex used $ which ate entire messages that didn't contain \n\nLet
-  var display = text;
-  if (display.indexOf('SECTION_COMPLETE') !== -1) {
-    display = display.replace(/SECTION_COMPLETE\n?/g, '');
-    display = display.replace(/SUMMARY:[\s\S]*/i, '');
-  }
-  display = clean(display.replace(/OPTIONS:\s*[^\n]+/gi, '').trim());
+  var display = clean(text.replace(/SECTION_COMPLETE\n?/g,'').replace(/SUMMARY:[\s\S]*?(?=\n\nLet|$)/i,'').replace(/OPTIONS:\s*[^\n]+/gi,'').trim());
   if (!display) return;
   var msg = document.createElement('div');
   msg.className = 'message orca';
@@ -1089,64 +724,6 @@ function updateNav(activeIdx) {
     else dot.textContent = i + 1;
   });
 }
-
-// ─── QA TEST SCRIPT ───────────────────────────────────────────────────────────
-// Fast-fill mode: loads edge-case data directly and jumps to summary screen.
-// Tests: summary cards, download, email, DOLE flags, enrichment, SolCon email.
-
-function runTestScript() {
-  // Pre-fill form fields
-  document.getElementById('inputCompany').value = 'QA Test Corp';
-  document.getElementById('inputContact').value = 'Test User';
-  document.getElementById('inputTitle').value = 'HR Manager';
-  document.getElementById('inputEmail').value = 'kvirata@sprout.ph';
-  if (document.getElementById('inputPhone')) document.getElementById('inputPhone').value = '09171234567';
-  if (document.getElementById('inputSalesRep')) document.getElementById('inputSalesRep').value = 'Tin Dela Cruz';
-
-  // Show status pill
-  var statusDiv = document.getElementById('testScriptStatus');
-  if (!statusDiv) {
-    statusDiv = document.createElement('div');
-    statusDiv.id = 'testScriptStatus';
-    statusDiv.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#8139EE;color:white;padding:10px 18px;border-radius:100px;font-size:12px;font-weight:600;z-index:9999;font-family:DM Sans,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,0.2);';
-    document.body.appendChild(statusDiv);
-  }
-  statusDiv.textContent = '🧪 Loading test data...';
-  statusDiv.style.display = 'block';
-
-  // Set prospect data
-  prospectData = {
-    companyName: 'QA Test Corp',
-    contactName: 'Test User',
-    jobTitle: 'HR Manager',
-    email: 'kvirata@sprout.ph',
-    phone: '09171234567',
-    salesRep: 'Tin Dela Cruz'
-  };
-
-  // Load edge-case section summaries covering every known problem area
-  sectionSummaries = {
-    timelogs: 'QA Test Corp employees clock in using ZKTeco biometric devices at all locations. Data syncs automatically to DarwinBox, where branch HR validates records every payroll cutoff. Integration with Sprout from DarwinBox will require specialist involvement for API or data migration.',
-    approval: 'All requests (leave, overtime, attendance corrections) are submitted through DarwinBox and approved by the immediate manager only. Single-level approval across all request types — no HR or secondary approver required.',
-    work_schedule: 'Four schedule types: (1) Support team fixed 9AM-6PM Monday-Friday; (2) Sales team flexi with no fixed start time, must complete 8 hours per day Monday-Friday (note: flexi schedules in Sprout do not support overtime tracking — flag if OT expected); (3) All other employees fixed 8AM-5PM Monday-Friday; (4) Consultants exempted from attendance tracking. Approximately 20 employees work night shifts 10PM-7AM across multiple departments — holiday crossover computation currently unclear (specialist involvement required). Night differential not currently given (DOLE flag: mandatory under Article 86 for 10PM-6AM work).',
-    computation: '5-minute grace period in place (CRF required to configure in Sprout). Late deduction is a hybrid rule: fewer than 5 late instances per cutoff = exact minute deduction; 5 or more = flat 5,000 peso penalty (not natively supported in Sprout, requires custom workflow or manual tracking). Breaks not monitored. Undertime deducted as exact minutes.',
-    leaves: 'Single combined leave type of 10 days per year, given upfront every January 1st. New hires receive prorated credits. Credits increase by 2 days every 2 years of tenure. Use-it-or-lose-it policy (DOLE flag: 5-day SIL component must be convertible to cash under Article 95 — Sprout will separate this for compliance). Full-day leaves only. Statutory leaves not currently configured (must be added for legal compliance).',
-    overtime: 'OT approval at manager discretion with no strict pre-approval. OT starts immediately after shift ends and every minute is counted. Flat 110% rate for all day types (DOLE flag: non-compliant — Article 87 requires 125% ordinary days, 130% rest days and special holidays, higher for regular holidays. Sprout will apply DOLE-compliant rates). Managers and above exempt; all others eligible.',
-    holidays: 'Follows Philippine proclaimed holidays only. Day-before rule unconfirmed (requires follow-up). Currently no work, no pay for all holidays (DOLE flag: regular holidays must be paid even without work under Article 94 — compliance gap). Holiday work compensated at regular rate only (DOLE flag: 200% required for regular holiday work, 130% for special holidays — non-compliant). No night shift employees so night differential and holiday boundary rules do not apply.',
-    other: 'QA Test Corp has a perfect attendance bonus policy (qualifying criteria, amount, and frequency to be confirmed). No other special timekeeping or payroll rules identified beyond previous sections.'
-  };
-
-  currentSection = 8;
-
-  statusDiv.textContent = '🧪 Test data loaded — jumping to summary...';
-  setTimeout(function() {
-    showSummaryScreen();
-    statusDiv.textContent = '✅ Review summary, download, and check email';
-    setTimeout(function() { statusDiv.style.display = 'none'; }, 6000);
-  }, 800);
-}
-// ─── END QA TEST SCRIPT ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-
 </script>
 </body>
 </html>
