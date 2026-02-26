@@ -659,6 +659,19 @@ async function showSummaryScreen() {
 
 async function saveAndNotify(summaries) {
   try {
+    // Build conversation log depending on input mode
+    var conversationLog = '';
+    if (currentMode === 'transcript') {
+      var rawTranscript = document.getElementById('inputTranscript');
+      conversationLog = rawTranscript ? rawTranscript.value.trim() : '';
+    } else {
+      // Format interview conversation as readable text
+      conversationLog = conversationHistory.map(function(m) {
+        var role = m.role === 'assistant' ? 'Orca' : prospectData.contactName || 'Prospect';
+        return role + ':\n' + m.content;
+      }).join('\n\n');
+    }
+
     var resp = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
@@ -670,7 +683,9 @@ async function saveAndNotify(summaries) {
         work_schedule: sectionSummaries.work_schedule || '', computation: sectionSummaries.computation || '',
         leaves: sectionSummaries.leaves || '', overtime: sectionSummaries.overtime || '',
         holidays: sectionSummaries.holidays || '', other: sectionSummaries.other || '',
-        fullSummary: JSON.stringify(summaries)
+        fullSummary: JSON.stringify(summaries),
+        inputMode: currentMode || 'interview',
+        conversationLog: conversationLog,
       }})
     });
     return await resp.json();
