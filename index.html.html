@@ -322,19 +322,19 @@ function handleStart() {
 }
 
 async function processTranscript() {
-  var company  = document.getElementById('inputCompany').value.trim();
-  var contact  = document.getElementById('inputContact').value.trim();
-  var title    = document.getElementById('inputTitle').value.trim();
-  var email    = document.getElementById('inputEmail').value.trim();
-  var phone    = document.getElementById('inputPhone').value.trim();
+  var company    = document.getElementById('inputCompany').value.trim();
+  var contact    = document.getElementById('inputContact').value.trim();
+  var title      = document.getElementById('inputTitle').value.trim();
+  var email      = document.getElementById('inputEmail').value.trim();
+  var phone      = document.getElementById('inputPhone').value.trim();
   var transcript = document.getElementById('inputTranscript').value.trim();
 
   if (!company || !contact || !title || !email) {
     alert('Please fill in all required fields (marked with *)');
     return;
   }
-  if (!transcript || transcript.length < 100) {
-    alert('Please paste a transcript before continuing. It should be at least a few lines long.');
+  if (!transcript || transcript.length < 50) {
+    alert('Please paste a transcript before continuing.');
     return;
   }
 
@@ -342,29 +342,36 @@ async function processTranscript() {
 
   document.getElementById('generatingOverlay').classList.add('active');
   document.getElementById('genLabel').textContent = 'Reading your transcript…';
+  document.querySelector('.gen-sublabel').textContent = 'This may take up to 30 seconds for long transcripts';
 
-  var extractPrompt = `You are Orca, an expert Sprout HR Solution Consultant. A SolCon has pasted a discovery call transcript below. Extract the timekeeping policies and return a JSON object with exactly these 8 keys:
+  // Trim transcript to avoid token limits — first 12000 chars covers most calls
+  var trimmed = transcript.length > 12000 ? transcript.substring(0, 12000) + '\n[transcript trimmed]' : transcript;
 
-timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other
-
-For each key write a single consolidated paragraph (2-4 sentences) summarizing what was said — the way a good SolCon would write it up after the call. Use specific details from the transcript. Do not use sub-question answer lists. If a section was not discussed, write "Not discussed in this session."
-
-Also include two additional keys:
-- "salesRep": the name of the Sprout sales rep or SolCon running the session, if mentioned (otherwise empty string)
-- "contactName": the client contact's name if you can identify it from the transcript (otherwise use the name provided)
-
-Return ONLY valid JSON. No markdown, no backticks.
-
-Transcript:
-${transcript}`;
+  var extractPrompt = 'You are Orca, an expert Sprout HR Solution Consultant. A SolCon has pasted a discovery call transcript. Extract the timekeeping policies discussed and return a JSON object with exactly these 10 keys:\n\ntimelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, salesRep, contactName\n\nFor each of the 8 policy keys write a consolidated paragraph (2-4 sentences) — the way a SolCon would write it up after the call. Use specific details. If a topic was not discussed write "Not discussed in this session."\n\nsalesRep: name of the Sprout SolCon or sales rep running the session (empty string if unclear)\ncontactName: name of the client contact (empty string if unclear)\n\nReturn ONLY valid JSON. No markdown, no backticks, no explanation.\n\nTranscript:\n' + trimmed;
 
   try {
-    var extractResp = await callEdge([{ role: 'user', content: extractPrompt }],
-      'You are Orca. Extract timekeeping IRD sections from a discovery transcript. Return only valid JSON with keys: timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, salesRep, contactName.');
+    var extractResp = await callEdge(
+      [{ role: 'user', content: extractPrompt }],
+      'You are Orca. Extract timekeeping policies from a discovery transcript. Return ONLY a valid JSON object. No markdown, no explanation, no backticks.'
+    );
+
+    console.log('Transcript extraction response:', extractResp.substring(0, 200));
 
     var extracted;
-    try { extracted = JSON.parse(extractResp.replace(/```json|```/g, '').trim()); }
-    catch(e) { throw new Error('Could not parse extraction response'); }
+    var cleaned = extractResp.replace(/```json|```/g, '').trim();
+    // Find the JSON object in case there's any preamble
+    var jsonStart = cleaned.indexOf('{');
+    var jsonEnd   = cleaned.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+    }
+
+    try {
+      extracted = JSON.parse(cleaned);
+    } catch(e) {
+      console.error('JSON parse failed. Raw response:', extractResp);
+      throw new Error('Could not parse extraction response: ' + e.message);
+    }
 
     sectionSummaries = {
       timelogs:      extracted.timelogs      || 'Not captured.',
@@ -378,18 +385,19 @@ ${transcript}`;
     };
 
     if (extracted.salesRep) prospectData.salesRep = extracted.salesRep;
-    if (extracted.contactName && extracted.contactName !== contact) {
-      prospectData.contactName = extracted.contactName;
-    }
+    if (extracted.contactName) prospectData.contactName = extracted.contactName;
 
     currentSection = 8;
-    document.getElementById('genLabel').textContent = 'Generating your setup document…';
-    await showSummaryScreen();
+    // Hide the overlay — showSummaryScreen will manage it from here
+    document.getElementById('generatingOverlay').classList.remove('active');
+    document.querySelector('.gen-sublabel').textContent = 'This takes about 20 seconds';
+    showSummaryScreen();
 
   } catch(e) {
     document.getElementById('generatingOverlay').classList.remove('active');
-    alert('Could not process transcript. Please check it and try again.');
-    console.error(e);
+    document.querySelector('.gen-sublabel').textContent = 'This takes about 20 seconds';
+    console.error('Transcript processing error:', e);
+    alert('Could not process transcript. Error: ' + e.message + '\n\nCheck the browser console for details.');
   }
 }
 var isWaiting = false;
