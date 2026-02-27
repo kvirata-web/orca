@@ -206,6 +206,112 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 .ird-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 80px; }
 .sidebar-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 22px; }
 
+/* ── Verify Mode ── */
+.verify-mode-bar {
+  background: #FFFBEB; border-bottom: 2px solid #FDE68A;
+  padding: 9px 48px; display: flex; align-items: center; gap: 14px;
+}
+.vmb-text { font-size: 12px; color: #92400E; font-weight: 500; flex: 1; }
+.vmb-track { width: 100px; height: 4px; background: #FDE68A; border-radius: 2px; overflow: hidden; }
+.vmb-fill  { height: 100%; background: #F59E0B; border-radius: 2px; transition: width .4s ease; }
+.vmb-done  { padding: 6px 14px; background: var(--near-black); color: white; border: none; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: 'DM Sans',sans-serif; cursor: pointer; white-space: nowrap; }
+.btn-review {
+  padding: 7px 16px; border-radius: 9px; font-size: 12px; font-weight: 600;
+  font-family: 'DM Sans',sans-serif; cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; gap: 7px;
+  border: 1.5px solid var(--green-mid); color: var(--green-dark); background: var(--green-light);
+}
+.btn-review:hover { background: var(--green); color: white; border-color: var(--green); }
+.btn-review.active { background: #FFFBEB; border-color: #FDE68A; color: #B45309; }
+.verify-pulse { width: 7px; height: 7px; border-radius: 50%; background: #F59E0B; animation: vpulse 1.6s infinite; flex-shrink: 0; }
+@keyframes vpulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.verify-mode .flag-pill:not(.ok) { cursor: pointer; transition: all .15s; }
+.verify-mode .flag-pill:not(.ok):hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+.flag-pill.v-confirmed::after { content: ' ✓'; }
+.flag-pill.v-rejected { opacity: .3; text-decoration: line-through; pointer-events: none; }
+.flag-pill.v-open { box-shadow: 0 0 0 2.5px #F59E0B; }
+.verify-inline-panel {
+  margin-top: 12px; background: #FFFDF7; border: 1.5px solid #FDE68A;
+  border-radius: 10px; overflow: hidden; animation: vslide .18s ease;
+}
+@keyframes vslide { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
+.vip-header  { padding: 12px 16px 0; display: flex; align-items: flex-start; gap: 10px; }
+.vip-typetag { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+.vip-typetag.dole { background: var(--dole-bg); color: var(--dole-color); border: 1px solid var(--dole-border); }
+.vip-typetag.rc   { background: var(--rc-bg);   color: var(--rc-color);   border: 1px solid var(--rc-border); }
+.vip-typetag.spec { background: var(--spec-bg); color: var(--spec-color); border: 1px solid var(--spec-border); }
+.vip-typetag.crf  { background: var(--crf-bg);  color: var(--crf-color);  border: 1px solid var(--crf-border); }
+.vip-name   { font-size: 13px; font-weight: 600; color: var(--near-black); line-height: 1.4; }
+.vip-detail { font-size: 12px; color: var(--mid); line-height: 1.7; padding: 8px 16px 10px; }
+.vip-actions { padding: 0 16px 14px; display: flex; gap: 7px; flex-wrap: wrap; }
+.vip-btn { padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; font-family: 'DM Sans',sans-serif; cursor: pointer; border: 1.5px solid; transition: all .15s; display: flex; align-items: center; gap: 5px; }
+.vip-btn.confirm { border-color: var(--green-mid); background: var(--green-light); color: var(--green-dark); }
+.vip-btn.confirm:hover { background: var(--green); color: white; border-color: var(--green); }
+.vip-btn.reject  { border-color: var(--dole-border); background: var(--dole-bg); color: var(--dole-color); }
+.vip-btn.reject:hover  { background: var(--dole-color); color: white; }
+.vip-btn.edit    { border-color: var(--rc-border); background: var(--rc-bg); color: var(--rc-color); }
+.vip-btn.edit:hover    { background: var(--rc-color); color: white; }
+.vip-btn.skip    { border-color: var(--border); background: white; color: var(--muted); }
+.vip-btn.skip:hover    { color: var(--near-black); border-color: var(--mid); }
+.vip-edit-wrap  { padding: 0 16px 14px; }
+.vip-textarea   { width: 100%; padding: 10px 12px; border: 1.5px solid var(--rc-border); border-radius: 8px; font-size: 12px; font-family: 'DM Sans',sans-serif; color: var(--near-black); line-height: 1.7; resize: vertical; outline: none; background: white; min-height: 80px; transition: border-color .2s; }
+.vip-textarea:focus { border-color: var(--rc-color); }
+/* Verify tray sidebar card */
+.verify-tray { background: var(--near-black); border: 1.5px solid #2D4035; border-radius: 14px; overflow: hidden; }
+.vt-header { padding: 16px 18px 14px; border-bottom: 1px solid #2D4035; }
+.vt-title  { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+.vt-prog-row { display: flex; align-items: center; gap: 8px; }
+.vt-count  { font-size: 11px; color: #4A6357; white-space: nowrap; }
+.vt-track  { flex: 1; height: 4px; background: #2D4035; border-radius: 2px; overflow: hidden; }
+.vt-fill   { height: 100%; background: var(--green); border-radius: 2px; transition: width .4s ease; }
+.vt-pct    { font-size: 11px; color: var(--green); font-weight: 600; }
+.vt-list   { padding: 8px 0; }
+.vt-item   { display: flex; align-items: center; gap: 10px; padding: 6px 18px; }
+.vt-dot    { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.vt-dot.dole { background: var(--dole-color); }
+.vt-dot.rc   { background: var(--rc-color); }
+.vt-dot.spec { background: var(--spec-color); }
+.vt-dot.crf  { background: var(--crf-color); }
+.vt-flag-name { font-size: 11px; color: #8AA89A; flex: 1; line-height: 1.3; }
+.vt-status { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 100px; }
+.vt-status.pending   { background: #2D4035; color: #4A6357; }
+.vt-status.reviewing { background: rgba(245,158,11,.15); color: #F59E0B; }
+.vt-status.confirmed { background: rgba(0,166,81,.15); color: var(--green); }
+.vt-status.rejected  { background: rgba(220,38,38,.15); color: #DC2626; }
+.vt-status.edited    { background: rgba(180,83,9,.15); color: #B45309; }
+.vt-footer { padding: 14px 18px; border-top: 1px solid #2D4035; }
+.vt-finalize { width: 100%; padding: 11px; background: var(--green); color: white; border: none; border-radius: 9px; font-size: 13px; font-weight: 600; font-family: 'DM Sans',sans-serif; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.vt-finalize:hover { background: var(--green-dark); }
+.vt-finalize:disabled { background: #2D4035; color: #4A6357; cursor: not-allowed; }
+.vt-finalize-sub { font-size: 10px; color: #4A6357; text-align: center; margin-top: 6px; line-height: 1.4; }
+
+/* ── Coaching screen ── */
+#s-coaching { flex-direction: column; background: var(--bg); min-height: 100vh; }
+.coaching-layout { display: grid; grid-template-columns: 200px 1fr; gap: 24px; }
+.coaching-sidenav-item { padding: 9px 13px; border-radius: 9px; font-size: 13px; cursor: pointer; color: var(--mid); transition: all .15s; margin-bottom: 2px; display: flex; align-items: center; gap: 9px; }
+.coaching-sidenav-item:hover { background: white; color: var(--near-black); }
+.coaching-sidenav-item.active { background: var(--near-black); color: white; }
+.coaching-rule-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; transition: all .15s; margin-bottom: 8px; }
+.coaching-rule-item:hover { border-color: var(--green-mid); background: var(--green-light); }
+.coaching-rule-item.disabled { opacity: .5; }
+.rule-num { width: 20px; height: 20px; border-radius: 50%; background: var(--green-light); border: 1.5px solid var(--green-mid); color: var(--green-dark); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.rule-text { font-size: 13px; color: var(--near-black); line-height: 1.6; flex: 1; }
+.rule-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.rule-del  { width: 24px; height: 24px; border-radius: 6px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; line-height: 1; }
+.rule-del:hover { background: var(--dole-bg); color: var(--dole-color); }
+.prompt-preview { background: var(--near-black); border-radius: 12px; padding: 18px 20px; position: relative; overflow: hidden; }
+.prompt-preview::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--green), transparent); }
+.pp-label { font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--green); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.pp-label::after { content: ''; flex: 1; height: 1px; background: #2D4035; }
+.pp-text  { font-size: 12px; color: #8AA89A; line-height: 1.75; font-family: monospace; }
+.pp-inject  { color: #6EE7B7; }
+.pp-comment { color: #4A6357; }
+.vf-item { padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; background: white; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; cursor: default; }
+.vf-pill { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 600; border: 1px solid; }
+.vf-pill.confirmed { background: var(--green-light); border-color: var(--green-mid); color: var(--green-dark); }
+.vf-pill.rejected  { background: var(--dole-bg); border-color: var(--dole-border); color: var(--dole-color); }
+.vf-pill.edited    { background: var(--rc-bg); border-color: var(--rc-border); color: var(--rc-color); }
+
 /* ── Analysis takeover panel (Option 2) ── */
 .ird-analysis-panel {
   background: var(--near-black);
@@ -620,7 +726,21 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
         Download PDF
       </button>
+      <button class="btn-review" id="reviewFlagsBtn" onclick="startVerifyMode()" style="display:none;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Review Flags
+      </button>
     </div>
+  </div>
+  <!-- Verify Mode Bar -->
+  <div class="verify-mode-bar" id="verifyModeBar" style="display:none;">
+    <span style="font-size:13px;">✏️</span>
+    <div class="vmb-text"><strong>Verify Mode is on.</strong> Click any flag to confirm, reject, or edit it. Decisions are saved to Coaching.</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:#B45309;" id="vmProgress">0 of 0 reviewed</span>
+      <div class="vmb-track"><div class="vmb-fill" id="vmFill" style="width:0%"></div></div>
+    </div>
+    <button class="vmb-done" onclick="endVerifyMode()">Done Reviewing</button>
   </div>
   <div class="ird-body">
     <div class="ird-title-row">
@@ -688,6 +808,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 
         <!-- ── REAL SIDEBAR CARDS (hidden during analysis, shown after) ── -->
         <div id="irdRealSidebar" style="display:none; flex-direction:column; gap:16px;">
+
+          <!-- Verify Tray (injected here when verify mode activates) -->
+          <div id="verifyTraySlot"></div>
+
           <div class="sidebar-card">
             <div class="sidebar-section-title">Sales Brief</div>
             <div class="sales-brief" id="irdSalesBrief">Generating…</div>
@@ -737,6 +861,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-archive',this)">Session Archive</div>
           <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--green);color:white;margin-left:4px;vertical-align:middle;">NEW</span></div>
         </div>
       </div>
       <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
@@ -843,6 +968,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
           <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-settings',this)">Settings</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--green);color:white;margin-left:4px;vertical-align:middle;">NEW</span></div>
         </div>
       </div>
       <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
@@ -906,6 +1032,133 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
       <div style="display:flex;justify-content:flex-end;gap:10px;">
         <button onclick="solconNav('s-solcon',null)" style="padding:10px 20px;background:white;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;color:var(--mid);cursor:pointer;">Cancel</button>
         <button style="padding:10px 24px;background:var(--green);border:none;border-radius:10px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;color:white;cursor:pointer;">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: COACH ORCA
+══════════════════════════════════════════ -->
+<div class="screen" id="s-coaching">
+  <div style="display:flex;flex-direction:column;width:100%;min-height:100vh;background:var(--bg);">
+    <div class="solcon-header">
+      <div style="display:flex;align-items:center;gap:24px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
+        </div>
+        <div class="divider" style="height:20px;"></div>
+        <div class="solcon-nav">
+          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
+          <div class="solcon-nav-item active" onclick="solconNav('s-coaching',this)">Coach Orca <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--green);color:white;margin-left:4px;vertical-align:middle;">NEW</span></div>
+        </div>
+      </div>
+      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
+    </div>
+    <div style="padding:40px 48px;max-width:1060px;margin:0 auto;width:100%;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;">
+        <div>
+          <div class="solcon-page-title" style="margin-bottom:4px;">Coach Orca</div>
+          <div class="solcon-page-sub" style="margin-bottom:0;">Write rules that Orca follows on every analysis run. No deployment needed — changes take effect immediately.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;min-width:320px;">
+          <div style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center;">
+            <div style="font-size:22px;font-weight:600;color:var(--green);" id="coachStatRules">0</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px;">Active rules</div>
+          </div>
+          <div style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center;">
+            <div style="font-size:22px;font-weight:600;color:var(--near-black);" id="coachStatVerified">0</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px;">IRDs verified</div>
+          </div>
+          <div style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center;">
+            <div style="font-size:22px;font-weight:600;color:var(--rc-color);" id="coachStatOverrides">0</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px;">Flags overridden</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="coaching-layout">
+        <!-- Sidenav -->
+        <div>
+          <div class="coaching-sidenav-item active" onclick="coachingNav('rules',this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Active Rules
+          </div>
+          <div class="coaching-sidenav-item" onclick="coachingNav('prompt',this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Prompt Preview
+          </div>
+          <div class="coaching-sidenav-item" onclick="coachingNav('history',this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Verified IRDs
+          </div>
+        </div>
+
+        <!-- Main panels -->
+        <div>
+          <!-- RULES panel -->
+          <div id="coachPanelRules">
+            <div class="panel" style="margin-bottom:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <div>
+                  <div style="font-size:14px;font-weight:600;color:var(--near-black);margin-bottom:2px;">Active Coaching Rules</div>
+                  <div style="font-size:12px;color:var(--muted);">Injected above the base DOLE checks on every analysis run. Applied in order.</div>
+                </div>
+              </div>
+              <div id="coachingRulesList" style="margin-bottom:14px;">
+                <div style="font-size:13px;color:var(--muted);padding:20px;text-align:center;background:var(--bg);border-radius:8px;border:1.5px dashed var(--border);">No coaching rules yet. Add your first rule below.</div>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <input id="newRuleInput" class="form-input-sm" type="text" placeholder="e.g. Tiered tardiness → CRF only, not a DOLE flag. No Art. 103 without wage theft evidence." style="flex:1;" onkeydown="if(event.key==='Enter')addCoachingRule()" />
+                <button onclick="addCoachingRule()" style="padding:10px 18px;background:var(--near-black);color:white;border:none;border-radius:9px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;">+ Add Rule</button>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:10px;">
+              <div style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;margin-right:auto;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#8AA89A" stroke-width="1.5"/><path d="M12 8v4M12 16h.01" stroke="#8AA89A" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Rules take effect on the next IRD generated. Existing IRDs are unaffected.
+              </div>
+            </div>
+          </div>
+
+          <!-- PROMPT PREVIEW panel -->
+          <div id="coachPanelPrompt" style="display:none;">
+            <div class="panel">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <div>
+                  <div style="font-size:14px;font-weight:600;color:var(--near-black);margin-bottom:2px;">Prompt Preview</div>
+                  <div style="font-size:12px;color:var(--muted);">Exactly what Orca sees before every analysis. Your rules appear in the <span style="font-family:monospace;font-size:11px;color:var(--green);background:var(--green-light);padding:1px 5px;border-radius:3px;">[COACHING]</span> block.</div>
+                </div>
+              </div>
+              <div class="prompt-preview" id="promptPreviewBox">
+                <div class="pp-label">Analysis prompt · sent to claude-sonnet</div>
+                <div class="pp-text" id="promptPreviewText">
+                  <span class="pp-comment">// You are a strict DOLE compliance officer...</span><br>
+                  <span class="pp-comment">// Be aggressive — if there is any doubt, FLAG IT.</span><br><br>
+                  <span class="pp-inject" id="promptCoachBlock">// [No coaching rules active]</span><br><br>
+                  <span class="pp-comment">// Art. 94 Holiday Premium — 200% rate required...</span><br>
+                  <span class="pp-comment">// Art. 93 Rest Day Premium — 130% minimum...</span><br>
+                  <span class="pp-comment">// Art. 87 Overtime Premium — 125% minimum...</span><br>
+                  <span class="pp-comment">// ...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- VERIFIED IRDs panel -->
+          <div id="coachPanelHistory" style="display:none;">
+            <div class="panel">
+              <div style="font-size:14px;font-weight:600;color:var(--near-black);margin-bottom:4px;">Verified IRDs</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Flags confirmed, rejected, or edited by your team. Use patterns here to write coaching rules.</div>
+              <div id="verifiedIrdsFeed">
+                <div style="font-size:13px;color:var(--muted);padding:20px;text-align:center;background:var(--bg);border-radius:8px;border:1.5px dashed var(--border);">No verified IRDs yet. Use Verify Mode on any IRD to start building your feedback history.</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2289,7 +2542,548 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('loginPassword').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') doLogin();
   });
+
+  // Init coaching screen
+  renderCoachingRules();
+  renderVerifiedIrdsFeed();
+  updateCoachingStats();
 });
+
+// ─────────────────────────────────────────
+// COACHING MODE
+// ─────────────────────────────────────────
+
+var COACHING_KEY = 'orca_coaching_rules';
+var VERIFIED_IRDS_KEY = 'orca_verified_irds';
+
+function getCoachingRules() {
+  try {
+    var raw = localStorage.getItem(COACHING_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+
+function saveCoachingRules(rules) {
+  try { localStorage.setItem(COACHING_KEY, JSON.stringify(rules)); } catch(e) {}
+}
+
+function addCoachingRule() {
+  var input = document.getElementById('newRuleInput');
+  var text = input.value.trim();
+  if (!text) return;
+  var rules = getCoachingRules();
+  rules.push({
+    id: Date.now().toString(),
+    text: text,
+    enabled: true,
+    addedDate: new Date().toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' })
+  });
+  saveCoachingRules(rules);
+  input.value = '';
+  renderCoachingRules();
+  updateCoachingStats();
+  updatePromptPreview();
+}
+
+function deleteCoachingRule(id) {
+  var rules = getCoachingRules().filter(function(r) { return r.id !== id; });
+  saveCoachingRules(rules);
+  renderCoachingRules();
+  updateCoachingStats();
+  updatePromptPreview();
+}
+
+function toggleCoachingRule(id) {
+  var rules = getCoachingRules();
+  rules.forEach(function(r) { if (r.id === id) r.enabled = !r.enabled; });
+  saveCoachingRules(rules);
+  renderCoachingRules();
+  updateCoachingStats();
+  updatePromptPreview();
+}
+
+function renderCoachingRules() {
+  var el = document.getElementById('coachingRulesList');
+  if (!el) return;
+  var rules = getCoachingRules();
+  if (!rules.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px;text-align:center;background:var(--bg);border-radius:8px;border:1.5px dashed var(--border);">No coaching rules yet. Add your first rule below.</div>';
+    return;
+  }
+  el.innerHTML = rules.map(function(r, i) {
+    return '<div class="coaching-rule-item' + (r.enabled ? '' : ' disabled') + '">' +
+      '<div class="rule-num">' + (i + 1) + '</div>' +
+      '<div style="flex:1;">' +
+        '<div class="rule-text">' + escapeHtml(r.text) + '</div>' +
+        '<div class="rule-meta">Added ' + r.addedDate + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">' +
+        '<button onclick="toggleCoachingRule(\'' + r.id + '\')" style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer;border:1.5px solid;transition:all .15s;' +
+          (r.enabled ? 'background:var(--green-light);border-color:var(--green-mid);color:var(--green-dark);' : 'background:var(--bg);border-color:var(--border);color:var(--muted);') + '">' +
+          (r.enabled ? 'Enabled' : 'Disabled') + '</button>' +
+        '<button class="rule-del" onclick="deleteCoachingRule(\'' + r.id + '\')" title="Delete rule">×</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function updateCoachingStats() {
+  var rules = getCoachingRules();
+  var verified = getVerifiedIrds();
+  var overrides = verified.reduce(function(n, v) { return n + (v.rejected || 0) + (v.edited || 0); }, 0);
+  var el;
+  el = document.getElementById('coachStatRules');    if (el) el.textContent = rules.filter(function(r){ return r.enabled; }).length;
+  el = document.getElementById('coachStatVerified'); if (el) el.textContent = verified.length;
+  el = document.getElementById('coachStatOverrides');if (el) el.textContent = overrides;
+}
+
+function updatePromptPreview() {
+  var el = document.getElementById('promptCoachBlock');
+  if (!el) return;
+  var rules = getCoachingRules().filter(function(r) { return r.enabled; });
+  if (!rules.length) {
+    el.innerHTML = '<span class="pp-comment">// [No coaching rules active]</span>';
+    return;
+  }
+  el.innerHTML = '<span class="pp-inject">[MANAGER COACHING NOTES — apply these before analyzing]</span><br>' +
+    rules.map(function(r, i) {
+      return '<span class="pp-inject">' + (i + 1) + '. ' + escapeHtml(r.text) + '</span>';
+    }).join('<br>');
+}
+
+function coachingNav(panel, el) {
+  document.querySelectorAll('.coaching-sidenav-item').forEach(function(e) { e.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  document.getElementById('coachPanelRules').style.display   = panel === 'rules'   ? 'block' : 'none';
+  document.getElementById('coachPanelPrompt').style.display  = panel === 'prompt'  ? 'block' : 'none';
+  document.getElementById('coachPanelHistory').style.display = panel === 'history' ? 'block' : 'none';
+  if (panel === 'prompt') updatePromptPreview();
+  if (panel === 'history') renderVerifiedIrdsFeed();
+}
+
+function getVerifiedIrds() {
+  try {
+    var raw = localStorage.getItem(VERIFIED_IRDS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+
+function saveVerifiedIrd(record) {
+  var list = getVerifiedIrds();
+  list.unshift(record);
+  if (list.length > 50) list = list.slice(0, 50);
+  try { localStorage.setItem(VERIFIED_IRDS_KEY, JSON.stringify(list)); } catch(e) {}
+}
+
+function renderVerifiedIrdsFeed() {
+  var el = document.getElementById('verifiedIrdsFeed');
+  if (!el) return;
+  var list = getVerifiedIrds();
+  if (!list.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px;text-align:center;background:var(--bg);border-radius:8px;border:1.5px dashed var(--border);">No verified IRDs yet. Use Verify Mode on any IRD to start building your feedback history.</div>';
+    return;
+  }
+  el.innerHTML = list.map(function(v) {
+    var pills = '';
+    if (v.confirmed) pills += '<span class="vf-pill confirmed">' + v.confirmed + ' confirmed</span> ';
+    if (v.rejected)  pills += '<span class="vf-pill rejected">'  + v.rejected  + ' rejected</span> ';
+    if (v.edited)    pills += '<span class="vf-pill edited">'    + v.edited    + ' edited</span>';
+    return '<div class="vf-item">' +
+      '<div style="flex:1;">' +
+        '<div style="font-size:13px;font-weight:500;color:var(--near-black);">' + escapeHtml(v.company) + '</div>' +
+        '<div style="font-size:11px;color:var(--muted);">Verified ' + v.date + ' · ' + v.totalFlags + ' flags</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:5px;flex-wrap:wrap;">' + pills + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Inject coaching notes into complete request
+function getActiveCoachingNotes() {
+  var rules = getCoachingRules().filter(function(r) { return r.enabled; });
+  if (!rules.length) return '';
+  return '[MANAGER COACHING NOTES — apply these before analyzing]\n' +
+    rules.map(function(r, i) { return (i + 1) + '. ' + r.text; }).join('\n');
+}
+
+// ─────────────────────────────────────────
+// VERIFY MODE
+// ─────────────────────────────────────────
+
+var verifyActive = false;
+var verifyFlagStates = {};  // flagId → 'confirmed'|'rejected'|'edited'
+var verifyFlagData = [];    // array of {id, type, title, detail} built from lastIrdData
+var verifyOpenFlagId = null;
+
+function buildVerifyFlagData(irdData) {
+  var flags = [];
+  var id = 0;
+  function fid() { return 'f' + (++id); }
+  (irdData.doleFlags || []).forEach(function(f) {
+    flags.push({ id: fid(), type: 'dole', title: f.title, detail: f.detail });
+  });
+  (irdData.requiredConfirmations || []).forEach(function(f) {
+    flags.push({ id: fid(), type: 'rc', title: f.title, detail: f.detail });
+  });
+  (irdData.specialistItems || []).forEach(function(f) {
+    flags.push({ id: fid(), type: 'spec', title: f.title, detail: f.detail });
+  });
+  (irdData.crfItems || []).forEach(function(f) {
+    flags.push({ id: fid(), type: 'crf', title: f.title, detail: f.detail });
+  });
+  return flags;
+}
+
+function startVerifyMode() {
+  if (!lastIrdData) return;
+  verifyActive = true;
+  verifyFlagStates = {};
+  verifyOpenFlagId = null;
+  verifyFlagData = buildVerifyFlagData(lastIrdData);
+
+  // Update button
+  var btn = document.getElementById('reviewFlagsBtn');
+  btn.classList.add('active');
+  btn.innerHTML = '<span class="verify-pulse"></span> Reviewing…';
+  btn.onclick = endVerifyMode;
+
+  // Show bar
+  document.getElementById('verifyModeBar').style.display = 'flex';
+
+  // Add verify-mode class to body for CSS pill interactivity
+  document.getElementById('s-ird').classList.add('verify-mode');
+
+  // Rebuild sections with clickable pills
+  rebuildSectionsForVerify();
+
+  // Show tray in sidebar
+  renderVerifyTray();
+  updateVerifyProgress();
+}
+
+function endVerifyMode() {
+  verifyActive = false;
+  verifyOpenFlagId = null;
+  closeVerifyPanel();
+
+  var btn = document.getElementById('reviewFlagsBtn');
+  btn.classList.remove('active');
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Review Flags';
+  btn.onclick = startVerifyMode;
+
+  document.getElementById('verifyModeBar').style.display = 'none';
+  document.getElementById('s-ird').classList.remove('verify-mode');
+
+  // Remove tray
+  document.getElementById('verifyTraySlot').innerHTML = '';
+
+  // Rebuild sections normally (remove pill interactivity)
+  if (lastIrdData) populateIrdScreen(lastIrdData);
+}
+
+function rebuildSectionsForVerify() {
+  // Re-render the sections HTML with data attributes on each flag pill
+  if (!lastIrdData) return;
+  var irdData = lastIrdData;
+  var sectionDefs  = ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'];
+  var sectionNames = ['Section 01 · Timelogs','Section 02 · Approval Flow','Section 03 · Work Schedule',
+    'Section 04 · Computation Rules','Section 05 · Leaves','Section 06 · Overtime',
+    'Section 07 · Holidays','Section 08 · Other Notes'];
+
+  var doleFlags  = irdData.doleFlags || [];
+  var rcs        = irdData.requiredConfirmations || [];
+  var specItems  = irdData.specialistItems || [];
+  var crfItems   = irdData.crfItems || [];
+
+  // Map flag to section
+  function mapSection(title) {
+    var t = title.toLowerCase();
+    if (/timelog|attendance|biometric|bundy/.test(t)) return 'timelogs';
+    if (/approval|workflow|hierarchy/.test(t)) return 'approval';
+    if (/schedule|shift|cww|compress|broken|rest.*day|night.*diff/.test(t)) return 'work_schedule';
+    if (/holiday|premium|computat|deduct|tardin|late|absence|leave.*credit/.test(t)) return 'computation';
+    if (/leave|vacation|sick|monetiz/.test(t)) return 'leaves';
+    if (/overtime|ot\b/.test(t)) return 'overtime';
+    if (/holiday/.test(t)) return 'holidays';
+    return 'other';
+  }
+
+  // Build per-section flag HTML with data attributes referencing verifyFlagData ids
+  var sfm = {};
+  sectionDefs.forEach(function(k) { sfm[k] = ''; });
+
+  function verifyPill(type, title, flagId) {
+    var icons = { dole:'⚑', rc:'◈', spec:'▲', crf:'■', ok:'✓' };
+    var labels = { dole:'DOLE FLAG', rc:'REQ. CONFIRMATION', spec:'SPECIALIST REVIEW', crf:'CRF REQUIRED' };
+    var state = verifyFlagStates[flagId] || '';
+    var extraClass = state ? ' v-' + state : '';
+    var stateAttr = state ? ' data-state="' + state + '"' : '';
+    return '<span class="flag-pill ' + type + extraClass + '" ' +
+      'data-flagid="' + flagId + '" data-flagtype="' + type + '"' + stateAttr +
+      ' onclick="onPillClick(this)">' +
+      (icons[type] || '•') + ' ' + labels[type] + ' — ' + title + '</span>';
+  }
+
+  verifyFlagData.forEach(function(f) {
+    var sec = mapSection(f.title);
+    sfm[sec] += verifyPill(f.type, f.title, f.id);
+  });
+  sectionDefs.forEach(function(k) {
+    if (!sfm[k]) sfm[k] = '<span class="flag-pill ok">✓ No flags — standard configuration</span>';
+  });
+
+  var sectionsEl = document.getElementById('irdSections');
+  sectionsEl.innerHTML = sectionDefs.map(function(k, i) {
+    return '<div class="ird-section-card" id="sec-card-' + k + '">' +
+      '<div class="ird-section-num">' + sectionNames[i] + '</div>' +
+      '<div class="ird-section-content">' + (sectionSummaries[k] || 'Not captured.') + '</div>' +
+      '<div class="ird-flags" id="sec-flags-' + k + '">' + sfm[k] + '</div>' +
+      '<div id="verify-panel-' + k + '" class="verify-inline-panel" style="display:none;"></div>' +
+    '</div>';
+  }).join('');
+}
+
+function onPillClick(pillEl) {
+  if (!verifyActive) return;
+  var flagId = pillEl.dataset.flagid;
+  if (!flagId) return;
+  // Already rejected — don't reopen
+  if (verifyFlagStates[flagId] === 'rejected') return;
+
+  // If clicking same pill, close it
+  if (verifyOpenFlagId === flagId) { closeVerifyPanel(); return; }
+
+  // Close any open panel first
+  closeVerifyPanel();
+  verifyOpenFlagId = flagId;
+
+  var flagDef = verifyFlagData.find(function(f) { return f.id === flagId; });
+  if (!flagDef) return;
+
+  pillEl.classList.add('v-open');
+
+  // Find which section card this pill is in to inject panel below
+  var sectionCard = pillEl.closest('.ird-section-card');
+  var sectionKey = sectionCard ? sectionCard.id.replace('sec-card-', '') : null;
+  var panelEl = sectionKey ? document.getElementById('verify-panel-' + sectionKey) : null;
+  if (!panelEl) return;
+
+  var typeLabels = { dole:'DOLE FLAG', rc:'REQ. CONFIRMATION', spec:'SPECIALIST REVIEW', crf:'CRF REQUIRED' };
+
+  panelEl.style.display = 'block';
+  panelEl.innerHTML =
+    '<div class="vip-header">' +
+      '<span class="vip-typetag ' + flagDef.type + '">' + typeLabels[flagDef.type] + '</span>' +
+      '<div class="vip-name">' + escapeHtml(flagDef.title) + '</div>' +
+    '</div>' +
+    '<div class="vip-detail">' + escapeHtml(flagDef.detail) + '</div>' +
+    '<div class="vip-actions" id="vip-actions-' + flagId + '">' +
+      '<button class="vip-btn confirm" onclick="doVerifyAction(\'' + flagId + '\',\'confirmed\')">✓ Confirm</button>' +
+      '<button class="vip-btn reject"  onclick="doVerifyAction(\'' + flagId + '\',\'rejected\')">✗ Reject</button>' +
+      '<button class="vip-btn edit"    onclick="showVerifyEdit(\'' + flagId + '\')">✏ Edit detail</button>' +
+      '<button class="vip-btn skip"    onclick="closeVerifyPanel()">Skip</button>' +
+    '</div>' +
+    '<div id="vip-edit-' + flagId + '" class="vip-edit-wrap" style="display:none;">' +
+      '<textarea class="vip-textarea" id="vip-textarea-' + flagId + '" rows="3">' + escapeHtml(flagDef.detail) + '</textarea>' +
+      '<div style="display:flex;gap:8px;margin-top:8px;">' +
+        '<button class="vip-btn confirm" onclick="saveVerifyEdit(\'' + flagId + '\')">Save edit</button>' +
+        '<button class="vip-btn skip"    onclick="cancelVerifyEdit(\'' + flagId + '\')">Cancel</button>' +
+      '</div>' +
+    '</div>';
+
+  // Update tray item to reviewing
+  updateTrayItemStatus(flagId, 'reviewing');
+}
+
+function closeVerifyPanel() {
+  if (verifyOpenFlagId) {
+    // If it was reviewing (not actioned), reset tray item
+    if (!verifyFlagStates[verifyOpenFlagId]) updateTrayItemStatus(verifyOpenFlagId, 'pending');
+    // Remove open class from pill
+    document.querySelectorAll('.flag-pill.v-open').forEach(function(p) { p.classList.remove('v-open'); });
+    // Hide all inline panels
+    document.querySelectorAll('.verify-inline-panel').forEach(function(p) { p.style.display = 'none'; });
+    verifyOpenFlagId = null;
+  }
+}
+
+function doVerifyAction(flagId, action) {
+  verifyFlagStates[flagId] = action;
+  // Update pill class
+  var pills = document.querySelectorAll('[data-flagid="' + flagId + '"]');
+  pills.forEach(function(p) {
+    p.classList.remove('v-confirmed','v-rejected','v-open','v-edited');
+    p.classList.add('v-' + (action === 'edited' ? 'confirmed' : action));
+  });
+  updateTrayItemStatus(flagId, action);
+  closeVerifyPanel();
+  updateVerifyProgress();
+}
+
+function showVerifyEdit(flagId) {
+  document.getElementById('vip-actions-' + flagId).style.display = 'none';
+  document.getElementById('vip-edit-' + flagId).style.display = 'block';
+}
+
+function cancelVerifyEdit(flagId) {
+  document.getElementById('vip-actions-' + flagId).style.display = 'flex';
+  document.getElementById('vip-edit-' + flagId).style.display = 'none';
+}
+
+function saveVerifyEdit(flagId) {
+  var ta = document.getElementById('vip-textarea-' + flagId);
+  var newDetail = ta ? ta.value.trim() : '';
+  // Update the flag data in memory
+  verifyFlagData.forEach(function(f) { if (f.id === flagId) f.detail = newDetail || f.detail; });
+  doVerifyAction(flagId, 'edited');
+}
+
+function renderVerifyTray() {
+  var slot = document.getElementById('verifyTraySlot');
+  if (!slot) return;
+  var items = verifyFlagData.map(function(f) {
+    var state = verifyFlagStates[f.id] || 'pending';
+    return '<div class="vt-item" id="vt-item-' + f.id + '">' +
+      '<span class="vt-dot ' + f.type + '"></span>' +
+      '<span class="vt-flag-name">' + escapeHtml(f.title) + '</span>' +
+      '<span class="vt-status ' + state + '" id="vt-status-' + f.id + '">' + capitalize(state) + '</span>' +
+    '</div>';
+  }).join('');
+
+  slot.innerHTML =
+    '<div class="verify-tray" style="margin-bottom:0;">' +
+      '<div class="vt-header">' +
+        '<div class="vt-title">Verify Progress</div>' +
+        '<div class="vt-prog-row">' +
+          '<span class="vt-count" id="vtCount">0 of ' + verifyFlagData.length + '</span>' +
+          '<div class="vt-track"><div class="vt-fill" id="vtFill" style="width:0%"></div></div>' +
+          '<span class="vt-pct" id="vtPct">0%</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="vt-list">' + items + '</div>' +
+      '<div class="vt-footer">' +
+        '<button class="vt-finalize" id="vtFinalizeBtn" disabled onclick="finalizeVerifiedIrd()">Finalize IRD</button>' +
+        '<div class="vt-finalize-sub" id="vtFinalizeSub">Review all flags to enable finalize</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function updateTrayItemStatus(flagId, state) {
+  var el = document.getElementById('vt-status-' + flagId);
+  if (el) { el.className = 'vt-status ' + state; el.textContent = capitalize(state === 'reviewing' ? 'Reviewing…' : state); }
+}
+
+function updateVerifyProgress() {
+  var total    = verifyFlagData.length;
+  var reviewed = Object.keys(verifyFlagStates).length;
+  var pct      = total ? Math.round((reviewed / total) * 100) : 0;
+
+  var vmProg = document.getElementById('vmProgress');
+  if (vmProg) vmProg.textContent = reviewed + ' of ' + total + ' reviewed';
+  var vmFill = document.getElementById('vmFill');
+  if (vmFill) vmFill.style.width = pct + '%';
+  var vtCount = document.getElementById('vtCount');
+  if (vtCount) vtCount.textContent = reviewed + ' of ' + total;
+  var vtFill = document.getElementById('vtFill');
+  if (vtFill) vtFill.style.width = pct + '%';
+  var vtPct = document.getElementById('vtPct');
+  if (vtPct) vtPct.textContent = pct + '%';
+
+  var allDone = reviewed >= total && total > 0;
+  var btn = document.getElementById('vtFinalizeBtn');
+  if (btn) btn.disabled = !allDone;
+  var sub = document.getElementById('vtFinalizeSub');
+  if (sub) sub.textContent = allDone ? 'All flags reviewed — ready to finalize' : (total - reviewed) + ' flags still pending';
+}
+
+function finalizeVerifiedIrd() {
+  if (!lastIrdData) return;
+  // Build verified record for coaching history
+  var confirmed = 0, rejected = 0, edited = 0;
+  Object.values(verifyFlagStates).forEach(function(s) {
+    if (s === 'confirmed') confirmed++;
+    else if (s === 'rejected') rejected++;
+    else if (s === 'edited') edited++;
+  });
+  saveVerifiedIrd({
+    company: (prospectData && prospectData.companyName) || lastIrdData.companyName || 'Unknown',
+    date: new Date().toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' }),
+    totalFlags: verifyFlagData.length,
+    confirmed: confirmed, rejected: rejected, edited: edited
+  });
+  updateCoachingStats();
+
+  // Build verified irdData — exclude rejected flags
+  var verifiedIrdData = JSON.parse(JSON.stringify(lastIrdData));
+  var rejectedTitles = verifyFlagData
+    .filter(function(f) { return verifyFlagStates[f.id] === 'rejected'; })
+    .map(function(f) { return f.title; });
+
+  verifiedIrdData.doleFlags           = (verifiedIrdData.doleFlags || []).filter(function(f) { return !rejectedTitles.includes(f.title); });
+  verifiedIrdData.requiredConfirmations = (verifiedIrdData.requiredConfirmations || []).filter(function(f) { return !rejectedTitles.includes(f.title); });
+  verifiedIrdData.specialistItems     = (verifiedIrdData.specialistItems || []).filter(function(f) { return !rejectedTitles.includes(f.title); });
+  verifiedIrdData.crfItems            = (verifiedIrdData.crfItems || []).filter(function(f) { return !rejectedTitles.includes(f.title); });
+
+  // Apply edits
+  verifyFlagData
+    .filter(function(f) { return verifyFlagStates[f.id] === 'edited'; })
+    .forEach(function(editedFlag) {
+      ['doleFlags','requiredConfirmations','specialistItems','crfItems'].forEach(function(key) {
+        (verifiedIrdData[key] || []).forEach(function(f) {
+          if (f.title === editedFlag.title) f.detail = editedFlag.detail;
+        });
+      });
+    });
+
+  endVerifyMode();
+
+  // Update the displayed IRD with verified data
+  populateIrdScreen(verifiedIrdData);
+  lastIrdData = verifiedIrdData;
+
+  // Show confirmation
+  alert('IRD verified and finalized.\n' + confirmed + ' confirmed · ' + rejected + ' removed · ' + edited + ' edited\n\nFeedback saved to Coach Orca history.');
+}
+
+function capitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// ─────────────────────────────────────────
+// HOOK COACHING NOTES INTO complete REQUEST
+// ─────────────────────────────────────────
+// Override buildAndShowIrd to inject coaching notes
+// This wraps the existing EDGE_FUNCTION_URL call for type=complete
+
+var _origProcessTranscript = processTranscriptSolCon;
+// Patch: inject coachingNotes into the complete fetch call
+// We patch at the fetch level by overriding the global fetch wrapper
+var _origFetch = window.fetch;
+window.fetch = function(url, opts) {
+  if (opts && opts.body && typeof opts.body === 'string') {
+    try {
+      var parsed = JSON.parse(opts.body);
+      if (parsed.type === 'complete') {
+        var notes = getActiveCoachingNotes();
+        if (notes) parsed.coachingNotes = notes;
+        opts = Object.assign({}, opts, { body: JSON.stringify(parsed) });
+      }
+    } catch(e) {}
+  }
+  return _origFetch.call(this, url, opts);
+};
+
+// Show Review Flags button after IRD is populated
+var _origPopulateIrdScreen = populateIrdScreen;
+populateIrdScreen = function(irdData) {
+  _origPopulateIrdScreen(irdData);
+  var btn = document.getElementById('reviewFlagsBtn');
+  if (btn) btn.style.display = 'flex';
+};
 </script>
 </body>
 </html>
