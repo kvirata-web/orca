@@ -138,11 +138,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 
 /* ── Stat tile loading skeleton ── */
 .stat-val-skeleton {
-  height: 36px; width: 48px; border-radius: 6px;
-  background: linear-gradient(90deg, #E8F0EC 25%, #D4E8DC 50%, #E8F0EC 75%);
+  height: 40px; width: 56px; border-radius: 8px;
+  background: linear-gradient(90deg, #E8F0EC 25%, #C8EDDA 50%, #E8F0EC 75%);
   background-size: 200% 100%;
-  animation: skeleton-sweep 1.4s ease-in-out infinite;
-  margin-bottom: 4px;
+  animation: skeleton-sweep 1.2s ease-in-out infinite;
+  margin-bottom: 4px; display: block;
 }
 @keyframes skeleton-sweep { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
@@ -1422,6 +1422,9 @@ function showStatSkeletons() {
       skel.id = id + '-skel';
       el.parentNode.insertBefore(skel, el);
     }
+    // Dim the whole stat card
+    var card = el.closest('.stat-card');
+    if (card) card.style.opacity = '0.6';
   });
   var badge = document.getElementById('irdRiskBadge');
   badge.className = 'risk-badge amber';
@@ -1432,7 +1435,11 @@ function hideStatSkeletons() {
   ['irdStatDole','irdStatRc','irdStatCrf'].forEach(function(id) {
     var skel = document.getElementById(id + '-skel');
     if (skel) skel.parentNode.removeChild(skel);
-    document.getElementById(id).style.display = '';
+    var el = document.getElementById(id);
+    el.style.display = '';
+    // Restore card opacity
+    var card = el.closest('.stat-card');
+    if (card) card.style.opacity = '';
   });
 }
 
