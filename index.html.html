@@ -136,6 +136,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 .filter-btn:hover { border-color: var(--green); color: var(--green); }
 .filter-btn.active-filter { background: var(--near-black); color: white; border-color: var(--near-black); }
 
+/* ── Stat tile loading skeleton ── */
+.stat-val-skeleton {
+  height: 36px; width: 48px; border-radius: 6px;
+  background: linear-gradient(90deg, #E8F0EC 25%, #D4E8DC 50%, #E8F0EC 75%);
+  background-size: 200% 100%;
+  animation: skeleton-sweep 1.4s ease-in-out infinite;
+  margin-bottom: 4px;
+}
+@keyframes skeleton-sweep { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
 /* ══════════════════════════════════════════
    SCREEN: IRD RESULT
 ══════════════════════════════════════════ */
@@ -554,49 +564,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
               <div class="filter-btn" onclick="filterSessions('stuck',this)">Stuck</div>
             </div>
           </div>
-          <div class="session-row" data-status="in-progress" onclick="showScreen('s-ird')">
-            <div class="risk-dot amber"></div>
-            <div style="flex:1;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-                <div class="session-company">Bigbys Quality Food Corp</div>
-                <div class="status-badge in-progress" onclick="event.stopPropagation();cycleStatus(this)">In Progress</div>
-              </div>
-              <div class="session-meta">Feb 24, 2026 · Mai Santos · 3 flags · Amber</div>
-              <div class="session-flags">Set by Orca · awaiting device confirmation</div>
-            </div>
-          </div>
-          <div class="session-row" data-status="done">
-            <div class="risk-dot green"></div>
-            <div style="flex:1;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-                <div class="session-company">Jollibee Foods Corporation</div>
-                <div class="status-badge done" onclick="event.stopPropagation();cycleStatus(this)">Done</div>
-              </div>
-              <div class="session-meta">Feb 20, 2026 · Rica Reyes · 0 flags · Green</div>
-              <div class="session-flags">Set by Orca · all sections clean</div>
-            </div>
-          </div>
-          <div class="session-row" data-status="stuck">
-            <div class="risk-dot red"></div>
-            <div style="flex:1;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-                <div class="session-company">SM Retail Group</div>
-                <div class="status-badge stuck" onclick="event.stopPropagation();cycleStatus(this)">Stuck</div>
-              </div>
-              <div class="session-meta">Feb 18, 2026 · Tony Cruz · 5 flags · Red</div>
-              <div class="session-flags">Overridden by SolCon · waiting on client</div>
-            </div>
-          </div>
-          <div class="session-row" data-status="done">
-            <div class="risk-dot green"></div>
-            <div style="flex:1;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-                <div class="session-company">Ayala Land Inc.</div>
-                <div class="status-badge done" onclick="event.stopPropagation();cycleStatus(this)">Done</div>
-              </div>
-              <div class="session-meta">Feb 14, 2026 · Grace Tan · 1 flag · Green</div>
-              <div class="session-flags">Set by Orca · all sections clean</div>
-            </div>
+          <div id="recentSessionsList">
+            <!-- Populated by renderRecentSessions() -->
           </div>
           <div style="font-size:11px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:5px;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#8AA89A" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="#8AA89A" stroke-width="2" stroke-linecap="round"/></svg>
@@ -606,9 +575,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <div class="panel" style="margin-top:14px;background:var(--near-black);border-color:#2D4035;">
           <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:14px;">This Month</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-            <div><div style="font-size:26px;font-weight:600;color:white;">8</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Done</div></div>
-            <div><div style="font-size:26px;font-weight:600;color:#F59E0B;">3</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">In Progress</div></div>
-            <div><div style="font-size:26px;font-weight:600;color:#DC2626;">1</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Stuck</div></div>
+            <div><div style="font-size:26px;font-weight:600;color:white;" id="statDone">—</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Done</div></div>
+            <div><div style="font-size:26px;font-weight:600;color:#F59E0B;" id="statInProgress">—</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">In Progress</div></div>
+            <div><div style="font-size:26px;font-weight:600;color:#DC2626;" id="statStuck">—</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Stuck</div></div>
           </div>
         </div>
       </div>
@@ -1121,6 +1090,7 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
   var el = document.getElementById(id);
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+  if (id === 's-solcon') { renderRecentSessions(); updateMonthlyStats(); }
 }
 
 function solconNav(id, clickedEl) {
@@ -1171,7 +1141,106 @@ function exportToSheets() {
   alert('Export to Google Sheets — connected to your session log at the configured Sheets URL.');
 }
 
-function cycleStatus(badge) {
+// ─────────────────────────────────────────
+// SESSION STORE — localStorage-backed
+// ─────────────────────────────────────────
+var SESSION_STORE_KEY = 'orca_recent_sessions';
+
+var SEED_SESSIONS = [
+  { id: 'seed-1', company: 'Bigbys Quality Food Corp', contact: 'Mai Santos', date: 'Feb 24, 2026', flags: 3, risk: 'amber', status: 'in-progress', note: 'Set by Orca · awaiting device confirmation' },
+  { id: 'seed-2', company: 'Jollibee Foods Corporation', contact: 'Rica Reyes', date: 'Feb 20, 2026', flags: 0, risk: 'green', status: 'done', note: 'Set by Orca · all sections clean' },
+  { id: 'seed-3', company: 'SM Retail Group', contact: 'Tony Cruz', date: 'Feb 18, 2026', flags: 5, risk: 'red', status: 'stuck', note: 'Overridden by SolCon · waiting on client' },
+  { id: 'seed-4', company: 'Ayala Land Inc.', contact: 'Grace Tan', date: 'Feb 14, 2026', flags: 1, risk: 'green', status: 'done', note: 'Set by Orca · all sections clean' },
+];
+
+function getSessionStore() {
+  try {
+    var raw = localStorage.getItem(SESSION_STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  localStorage.setItem(SESSION_STORE_KEY, JSON.stringify(SEED_SESSIONS));
+  return SEED_SESSIONS;
+}
+
+function saveSessionStore(sessions) {
+  try { localStorage.setItem(SESSION_STORE_KEY, JSON.stringify(sessions)); } catch(e) {}
+}
+
+function addSession(session) {
+  var sessions = getSessionStore();
+  sessions = sessions.filter(function(s) { return !(s.company === session.company && s.contact === session.contact); });
+  sessions.unshift(session);
+  if (sessions.length > 20) sessions = sessions.slice(0, 20);
+  saveSessionStore(sessions);
+  renderRecentSessions();
+  updateMonthlyStats();
+}
+
+function updateSessionStatus(sessionId, newStatus) {
+  var sessions = getSessionStore();
+  sessions.forEach(function(s) {
+    if (s.id === sessionId) {
+      s.status = newStatus;
+      if (!s.note.includes('Overridden')) {
+        s.note = 'Overridden by SolCon · ' + (newStatus === 'stuck' ? 'waiting on client' : newStatus === 'done' ? 'marked complete' : 'in progress');
+      }
+    }
+  });
+  saveSessionStore(sessions);
+  updateMonthlyStats();
+}
+
+function renderRecentSessions(filterStatus) {
+  var sessions = getSessionStore();
+  var list = document.getElementById('recentSessionsList');
+  if (!list) return;
+  var filtered = filterStatus && filterStatus !== 'all'
+    ? sessions.filter(function(s) { return s.status === filterStatus; })
+    : sessions;
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px 0;text-align:center;">No sessions yet.</div>';
+    return;
+  }
+  var riskColors = { green: 'var(--green)', amber: '#F59E0B', red: '#DC2626' };
+  var statusLabels = { done: 'Done', 'in-progress': 'In Progress', stuck: 'Stuck' };
+  list.innerHTML = filtered.map(function(s) {
+    var flagLabel = s.flags === 1 ? '1 flag' : s.flags + ' flags';
+    var riskLabel = s.risk.charAt(0).toUpperCase() + s.risk.slice(1);
+    return '<div class="session-row" data-status="' + s.status + '" data-session-id="' + s.id + '" onclick="openSession(\'' + s.id + '\')">' +
+      '<div class="risk-dot" style="background:' + (riskColors[s.risk] || '#8AA89A') + '"></div>' +
+      '<div style="flex:1;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">' +
+          '<div class="session-company">' + s.company + '</div>' +
+          '<div class="status-badge ' + s.status + '" onclick="event.stopPropagation();cycleStatus(this,\'' + s.id + '\')">' + (statusLabels[s.status] || s.status) + '</div>' +
+        '</div>' +
+        '<div class="session-meta">' + s.date + ' · ' + s.contact + ' · ' + flagLabel + ' · ' + riskLabel + '</div>' +
+        '<div class="session-flags">' + s.note + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function updateMonthlyStats() {
+  var sessions = getSessionStore();
+  var now = new Date();
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var thisMonth = sessions.filter(function(s) { return s.date && s.date.includes(months[now.getMonth()]); });
+  var done = thisMonth.filter(function(s) { return s.status === 'done'; }).length;
+  var inProg = thisMonth.filter(function(s) { return s.status === 'in-progress'; }).length;
+  var stuck = thisMonth.filter(function(s) { return s.status === 'stuck'; }).length;
+  var dEl = document.getElementById('statDone');
+  var iEl = document.getElementById('statInProgress');
+  var sEl = document.getElementById('statStuck');
+  if (dEl) dEl.textContent = done || '0';
+  if (iEl) iEl.textContent = inProg || '0';
+  if (sEl) sEl.textContent = stuck || '0';
+}
+
+function openSession(sessionId) {
+  showScreen('s-ird');
+}
+
+function cycleStatus(badge, sessionId) {
   var states = ['done', 'in-progress', 'stuck'];
   var labels = { 'done': 'Done', 'in-progress': 'In Progress', 'stuck': 'Stuck' };
   var current = states.find(function(s) { return badge.classList.contains(s); }) || 'done';
@@ -1183,18 +1252,15 @@ function cycleStatus(badge) {
   if (row) {
     row.dataset.status = next;
     var flagEl = row.querySelector('.session-flags');
-    if (flagEl && !flagEl.textContent.includes('Overridden')) {
-      flagEl.textContent = 'Overridden by SolCon · ' + (next === 'stuck' ? 'waiting on client' : next === 'done' ? 'marked complete' : 'in progress');
-    }
+    if (flagEl) flagEl.textContent = 'Overridden by SolCon · ' + (next === 'stuck' ? 'waiting on client' : next === 'done' ? 'marked complete' : 'in progress');
   }
+  if (sessionId) updateSessionStatus(sessionId, next);
 }
 
 function filterSessions(status, btn) {
   document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active-filter'); });
   btn.classList.add('active-filter');
-  document.querySelectorAll('.session-row').forEach(function(row) {
-    row.style.display = (status === 'all' || row.dataset.status === status) ? 'flex' : 'none';
-  });
+  renderRecentSessions(status);
 }
 
 // ─────────────────────────────────────────
@@ -1346,6 +1412,30 @@ function resetExtractProgress() {
   }
 }
 
+function showStatSkeletons() {
+  ['irdStatDole','irdStatRc','irdStatCrf'].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.style.display = 'none';
+    if (!document.getElementById(id + '-skel')) {
+      var skel = document.createElement('div');
+      skel.className = 'stat-val-skeleton';
+      skel.id = id + '-skel';
+      el.parentNode.insertBefore(skel, el);
+    }
+  });
+  var badge = document.getElementById('irdRiskBadge');
+  badge.className = 'risk-badge amber';
+  document.getElementById('irdRiskText').textContent = 'Analysing…';
+}
+
+function hideStatSkeletons() {
+  ['irdStatDole','irdStatRc','irdStatCrf'].forEach(function(id) {
+    var skel = document.getElementById(id + '-skel');
+    if (skel) skel.parentNode.removeChild(skel);
+    document.getElementById(id).style.display = '';
+  });
+}
+
 function startAnalysisProgress() {
   // Show dark analysis panel, hide real sidebar cards
   document.getElementById('irdAnalysisPanel').style.display = 'flex';
@@ -1380,7 +1470,7 @@ function startAnalysisProgress() {
 }
 
 function stopAnalysisProgress() {
-  // Hide panel, show real cards with a gentle fade-in
+  hideStatSkeletons();
   var panel = document.getElementById('irdAnalysisPanel');
   var real = document.getElementById('irdRealSidebar');
   panel.style.display = 'none';
@@ -1403,6 +1493,7 @@ async function buildAndShowIrd() {
 
   // Step 2: Start analysis — dark panel takeover replaces sidebar
   startAnalysisProgress();
+  showStatSkeletons();
 
   try {
     var conversationLog = conversationHistory.map(function(m) {
@@ -1493,6 +1584,19 @@ function populateIrdScreen(irdData) {
   document.getElementById('irdStatDole').textContent = (irdData.doleFlags || []).length;
   document.getElementById('irdStatRc').textContent = (irdData.requiredConfirmations || []).length;
   document.getElementById('irdStatCrf').textContent = (irdData.crfItems || []).length;
+
+  // ── Save to recent sessions store ──
+  var totalFlags = (irdData.doleFlags||[]).length + (irdData.requiredConfirmations||[]).length + (irdData.crfItems||[]).length + (irdData.specialistItems||[]).length;
+  addSession({
+    id: 'session-' + Date.now(),
+    company: prospectData.companyName || 'Unknown Company',
+    contact: prospectData.contactName || '',
+    date: prospectData.sessionDate || new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
+    flags: (irdData.doleFlags||[]).length,
+    risk: irdData.riskLevel || 'amber',
+    status: 'in-progress',
+    note: 'Set by Orca · ' + totalFlags + ' total item' + (totalFlags !== 1 ? 's' : '') + ' to review'
+  });
 
   // ── Client-side flag routing (mirrors index.ts sfm logic) ──
   var sfm = { timelogs:'', approval:'', work_schedule:'', computation:'', leaves:'', overtime:'', holidays:'', other:'' };
@@ -2006,6 +2110,10 @@ function updateNav(activeIdx) {
 // INPUT EVENTS
 // ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize session store and render
+  renderRecentSessions();
+  updateMonthlyStats();
+
   var chatInput = document.getElementById('chatInput');
   if (chatInput) {
     chatInput.addEventListener('keydown', function(e) {
