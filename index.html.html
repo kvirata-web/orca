@@ -628,6 +628,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <div class="solcon-nav-item active" onclick="solconNav('s-solcon',this)">Generate IRD</div>
         <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
         <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
+        <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--green);color:white;margin-left:4px;vertical-align:middle;">NEW</span></div>
       </div>
     </div>
     <div class="solcon-user">
@@ -2105,6 +2106,9 @@ function populateIrdScreen(irdData) {
     document.getElementById('irdDriveLink').href = irdDocUrl;
     document.getElementById('irdDriveLinkText').textContent = 'IRD — ' + prospectData.companyName + ' · ' + (prospectData.sessionDate || new Date().toLocaleDateString());
   }
+
+  // Show Review Flags button now that IRD is ready
+  showReviewFlagsBtn();
 }
 
 function populateIrdSectionsOnly() {
@@ -3077,13 +3081,14 @@ window.fetch = function(url, opts) {
   return _origFetch.call(this, url, opts);
 };
 
-// Show Review Flags button after IRD is populated
-var _origPopulateIrdScreen = populateIrdScreen;
-populateIrdScreen = function(irdData) {
-  _origPopulateIrdScreen(irdData);
+// Show Review Flags button after IRD is populated — called directly from populateIrdScreen
+function showReviewFlagsBtn() {
   var btn = document.getElementById('reviewFlagsBtn');
   if (btn) btn.style.display = 'flex';
-};
+}
+
+// Remove old unreliable override pattern
+
 </script>
 </body>
 </html>
