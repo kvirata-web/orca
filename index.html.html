@@ -1233,14 +1233,7 @@ async function buildAndShowIrd() {
 
     var result = await resp.json();
 
-    // Populate Drive link
-    if (result.irdDocUrl) {
-      irdDocUrl = result.irdDocUrl;
-      document.getElementById('irdDriveLink').href = irdDocUrl;
-      document.getElementById('irdDriveLinkText').textContent = 'IRD — ' + prospectData.companyName;
-    }
-
-    // Populate sidebar from backend irdData
+    // Populate sidebar immediately from irdData
     if (result.irdData) {
       populateIrdScreen(result.irdData);
     } else {
@@ -1248,6 +1241,15 @@ async function buildAndShowIrd() {
       document.getElementById('irdStatDole').textContent = '—';
       document.getElementById('irdStatRc').textContent   = '—';
       document.getElementById('irdStatCrf').textContent  = '—';
+    }
+
+    // Fire-and-forget save call — emails, Drive, Sheets run without blocking
+    if (result._savePayload) {
+      fetch(EDGE_FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+        body: JSON.stringify({ type: 'save', savePayload: result._savePayload })
+      }).catch(function(e) { console.warn('Save call failed (non-fatal):', e); });
     }
 
   } catch(err) {
