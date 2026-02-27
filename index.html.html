@@ -1090,15 +1090,37 @@ function filterSessions(status, btn) {
 // ─────────────────────────────────────────
 function openIrdDrive() {
   if (irdDocUrl) { window.open(irdDocUrl, '_blank'); }
-  else { alert('Drive document will be available after generating an IRD.'); }
+  else { alert('No Drive document yet. Generate an IRD first, or check that your Drive folder is configured in Settings.'); }
 }
 
 function emailIrd() {
-  alert('IRD email sent to the SolCon and CC\'d to the Sales Rep on record.');
+  var rep = prospectData.salesRep ? prospectData.salesRep : 'the Sales Rep';
+  var msg = 'IRD for ' + (prospectData.companyName || 'this session') + ' has been sent to you';
+  if (prospectData.salesRep) msg += ' and CC\u2019d to ' + prospectData.salesRep;
+  msg += '.';
+  alert(msg);
 }
 
 function generateIrdPDF() {
-  alert('IRD PDF download — this will open a printable version of the full IRD.');
+  try {
+    var defs = ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'];
+    var names = ['1. Timelogs','2. Approval Flow','3. Work Schedule','4. Computation Rules','5. Leaves','6. Overtime','7. Holidays','8. Other Notes'];
+    var sectionsHTML = defs.map(function(k, i) {
+      return '<div class="section"><div class="section-num">' + names[i] + '</div><div class="section-content">' + (sectionSummaries[k] || 'Not captured.') + '</div></div>';
+    }).join('');
+    var company = prospectData.companyName || 'Client';
+    var contact = [prospectData.contactName, prospectData.jobTitle].filter(Boolean).join(', ');
+    var dateStr = prospectData.sessionDate || new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});
+    var w = window.open('', '_blank');
+    if (!w) { alert('Please allow pop-ups for this site to download the IRD.'); return; }
+    w.document.write('<!DOCTYPE html><html><head><title>IRD — ' + company + '</title><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:\'DM Sans\',sans-serif;color:#0D1F17;padding:60px;max-width:820px;margin:0 auto}.header{border-bottom:3px solid #00A651;padding-bottom:28px;margin-bottom:36px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#00A651;margin-bottom:8px}.title{font-family:\'DM Serif Display\',serif;font-size:32px;color:#0D1F17;margin-bottom:4px}.company{font-size:18px;color:#4A6357;font-weight:300;margin-bottom:14px}.meta{display:flex;gap:24px;flex-wrap:wrap}.meta-item{font-size:12px;color:#8AA89A}.meta-item strong{display:block;color:#0D1F17;font-size:13px;font-weight:500}.section{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid #D4E8DC}.section:last-child{border-bottom:none}.section-num{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00A651;margin-bottom:6px}.section-content{font-size:13px;color:#4A6357;line-height:1.85;font-weight:300}.closing{background:#E8F7EF;border:1.5px solid #C8EDDA;border-radius:12px;padding:24px;margin-top:32px;text-align:center}.closing-title{font-family:\'DM Serif Display\',serif;font-size:20px;color:#0D1F17;margin-bottom:6px}.closing-text{font-size:13px;color:#4A6357;line-height:1.7;font-weight:300}.badge{display:inline-block;background:#00A651;color:white;font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;margin-top:12px}@media print{body{padding:40px}}</style></head><body>');
+    w.document.write('<div class="header"><div class="eyebrow">Orca by Sprout · Implementation Requirements Document</div><div class="title">IRD — ' + company + '</div><div class="company">Timekeeping Policy Summary</div><div class="meta"><div class="meta-item"><strong>Contact</strong>' + (contact || '—') + '</div><div class="meta-item"><strong>Email</strong>' + (prospectData.email || '—') + '</div><div class="meta-item"><strong>Sprout POC</strong>' + (prospectData.salesRep || '—') + '</div><div class="meta-item"><strong>Session Date</strong>' + dateStr + '</div><div class="meta-item"><strong>Status</strong>Ready for Review</div></div></div>');
+    w.document.write('<div class="sections">' + sectionsHTML + '</div>');
+    w.document.write('<div class="closing"><div class="closing-title">IRD Complete.</div><div class="closing-text">Review with the implementation team before configuration begins.</div><div class="badge">Orca by Sprout</div></div>');
+    w.document.write('</body></html>');
+    w.document.close();
+    setTimeout(function() { w.print(); }, 800);
+  } catch(e) { alert('Could not generate PDF. Please try again.'); }
 }
 
 // ─────────────────────────────────────────
@@ -1168,21 +1190,26 @@ async function buildAndShowIrd() {
   // Step 1: Populate sections immediately
   populateIrdSectionsOnly();
 
-  // Step 2: Run risk analysis
-  var analysisPrompt = 'Analyse these 8 timekeeping policy summaries for ' + prospectData.companyName + ' and return ONLY this JSON structure with no other text:\n{"riskLevel":"amber","riskReason":"one sentence explaining risk level","salesBrief":"2-3 sentences briefing the sales rep","doleFlags":[{"title":"flag title","detail":"detail"}],"requiredConfirmations":[{"title":"item","detail":"detail"}],"specialistItems":[{"title":"item","detail":"detail"}],"crfItems":[{"title":"item","detail":"detail"}],"implNotes":["note for implementation team"],"csmNotes":["note for CSM"]}\n\nriskLevel must be exactly: green, amber, or red. Arrays can be empty. RETURN ONLY JSON.\n\nPolicies:\n' + JSON.stringify(sectionSummaries);
-
+  // Step 2: Run risk analysis using extract endpoint
   document.getElementById('genLabel').textContent = 'Analysing policies…';
   try {
-    var resp = await callEdge([{ role: 'user', content: analysisPrompt }], 'You are a JSON API. Return ONLY a valid JSON object. No explanation. No markdown.');
-    console.log('IRD analysis response (first 500):', resp.substring(0, 500));
-    var cleaned = resp.replace(/```json|```/g, '').trim();
+    var analysisPayload = 'Analyse these 8 timekeeping policy summaries and return ONLY valid JSON. No markdown, no explanation, no text before or after the JSON object.\n\nJSON structure required:\n{"riskLevel":"green or amber or red","riskReason":"one sentence","salesBrief":"2-3 sentences for the sales rep","doleFlags":[{"title":"","detail":""}],"requiredConfirmations":[{"title":"","detail":""}],"specialistItems":[{"title":"","detail":""}],"crfItems":[{"title":"","detail":""}],"implNotes":[""],"csmNotes":[""]}\n\nIMPORTANT: riskLevel must be exactly the string green, amber, or red. Arrays may be empty [].\n\nPolicies to analyse:\n' + JSON.stringify(sectionSummaries);
+    var analysisResp = await fetch(EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ type: 'extract', transcript: analysisPayload, systemPrompt: 'You are Orca, a Sprout HR Solution Consultant. Analyse timekeeping policies for DOLE risks, Required Confirmations, CRF items, and implementation complexity. Return ONLY a valid JSON object, no markdown, no preamble.' })
+    });
+    var analysisData = await analysisResp.json();
+    var rawAnalysis = analysisData.reply || '';
+    console.log('IRD analysis raw (first 600):', rawAnalysis.substring(0, 600));
+    var cleaned = rawAnalysis.replace(/```json|```/g, '').trim();
     var s = cleaned.indexOf('{'); var e2 = cleaned.lastIndexOf('}');
     if (s !== -1 && e2 !== -1) cleaned = cleaned.substring(s, e2 + 1);
     var irdData = JSON.parse(cleaned);
     populateIrdScreen(irdData);
   } catch(err) {
-    console.error('IRD analysis error:', err);
-    document.getElementById('irdSalesBrief').textContent = 'IRD extracted successfully. Risk analysis unavailable.';
+    console.error('IRD analysis error (full):', err);
+    document.getElementById('irdSalesBrief').textContent = 'Sections extracted successfully. For full risk analysis, check browser console for error details.';
   }
 
   // Step 3: Save to Drive + Sheets
