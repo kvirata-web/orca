@@ -186,6 +186,46 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 .flag-pill.ok { background: var(--green-light); border: 1px solid var(--green-mid); color: var(--green-dark); }
 .ird-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 80px; }
 .sidebar-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 22px; }
+
+/* ── Analysis takeover panel (Option 2) ── */
+.ird-analysis-panel {
+  background: var(--near-black);
+  border-radius: 14px;
+  padding: 24px 22px;
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+}
+.ird-analysis-panel-shimmer {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(135deg, transparent 40%, rgba(0,166,81,0.05) 50%, transparent 60%);
+  background-size: 200% 200%;
+  animation: shimmer-panel 3s ease-in-out infinite;
+}
+@keyframes shimmer-panel { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+.iap-pulse-wrap { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.iap-pulse-center { position: relative; width: 34px; height: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.iap-ring { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgba(0,166,81,0.4); animation: iap-ring-out 2s ease-out infinite; }
+.iap-ring:nth-child(2) { animation-delay: 0.65s; }
+@keyframes iap-ring-out { 0%{transform:scale(1);opacity:0.8} 100%{transform:scale(2.3);opacity:0} }
+.iap-core { width: 20px; height: 20px; border-radius: 50%; background: var(--green); z-index: 1; }
+.iap-label { font-size: 13px; font-weight: 500; color: white; }
+.iap-sublabel { font-size: 11px; color: #4A6357; margin-top: 2px; transition: all 0.3s; }
+.iap-divider { height: 1px; background: #1a3a28; margin-bottom: 16px; }
+.iap-step { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 8px; opacity: 0.18; transition: all 0.4s; margin-bottom: 2px; }
+.iap-step.iap-active { opacity: 1; background: rgba(0,166,81,0.08); }
+.iap-step.iap-done { opacity: 0.35; }
+.iap-dot { width: 7px; height: 7px; border-radius: 50%; background: #1a4a2a; flex-shrink: 0; }
+.iap-step.iap-active .iap-dot { background: var(--green); animation: iap-dot-pulse 1s ease-in-out infinite; }
+.iap-step.iap-done .iap-dot { background: #2d5a3d; }
+@keyframes iap-dot-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.8)} }
+.iap-text { font-size: 12px; color: #4A6357; }
+.iap-step.iap-active .iap-text { color: white; font-weight: 500; }
+.iap-step.iap-done .iap-text { color: #2d5a3d; }
+.iap-ghost-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #1a3a28; }
+.iap-ghost-card { background: rgba(255,255,255,0.03); border: 1px solid #1a3a28; border-radius: 10px; padding: 14px 16px; }
+.iap-ghost-title { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #1a4a2a; margin-bottom: 10px; }
+.iap-ghost-line { height: 7px; background: #0f2d1c; border-radius: 4px; margin-bottom: 6px; }
+.iap-ghost-line.short { width: 55%; }
 .sidebar-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
 .sales-brief { font-size: 13px; color: var(--mid); line-height: 1.75; font-weight: 300; padding: 14px 16px; background: var(--green-light); border: 1px solid var(--green-mid); border-radius: 10px; margin-bottom: 10px; }
 .flag-item { display: flex; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
@@ -351,17 +391,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 .gen-step.step-active .gen-step-text { color: white; font-weight: 400; }
 .gen-step.step-done .gen-step-text { color: rgba(255,255,255,0.35); }
 @keyframes pulse-icon { 0%,100%{box-shadow:0 0 0 0 rgba(0,166,81,0.5)} 50%{box-shadow:0 0 0 5px rgba(0,166,81,0)} }
-/* Sidebar analysis progress */
-.ap-wrap { padding: 4px 0; }
-.ap-step { display: flex; align-items: center; gap: 10px; padding: 6px 0; opacity: 0.2; transition: opacity 0.35s ease; }
-.ap-step.ap-active { opacity: 1; }
-.ap-step.ap-done { opacity: 0.4; }
-.ap-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; transition: background 0.3s; }
-.ap-step.ap-active .ap-dot { animation: pulse-dot 1s ease-in-out infinite; }
-.ap-step.ap-done .ap-dot { background: var(--muted); animation: none; }
-.ap-text { font-size: 12px; color: var(--mid); line-height: 1.4; }
-.ap-step.ap-active .ap-text { color: var(--near-black); font-weight: 500; }
-.ap-step.ap-done .ap-text { color: var(--muted); }
 @keyframes pulse-dot { 0%,100%{transform:scale(1)} 50%{transform:scale(1.8)} }
 
 @media (max-width: 900px) {
@@ -634,44 +663,81 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <!-- Populated by JS after generation -->
         <div style="text-align:center;padding:40px;color:var(--muted);font-size:14px;">Generate an IRD from the SolCon workspace to see results here.</div>
       </div>
-      <div class="ird-sidebar">
-        <div class="sidebar-card">
-          <div class="sidebar-section-title">Sales Brief</div>
-          <div id="irdAnalysisProgress" class="ap-wrap" style="display:none;">
-            <div class="ap-step" id="apstep-0"><div class="ap-dot"></div><div class="ap-text">Reading section summaries</div></div>
-            <div class="ap-step" id="apstep-1"><div class="ap-dot"></div><div class="ap-text">Art. 86 — Night Differential</div></div>
-            <div class="ap-step" id="apstep-2"><div class="ap-dot"></div><div class="ap-text">Art. 87 — Overtime Premium</div></div>
-            <div class="ap-step" id="apstep-3"><div class="ap-dot"></div><div class="ap-text">Art. 93 — Rest Day Premium</div></div>
-            <div class="ap-step" id="apstep-4"><div class="ap-dot"></div><div class="ap-text">Art. 94 — Holiday Premium</div></div>
-            <div class="ap-step" id="apstep-5"><div class="ap-dot"></div><div class="ap-text">Art. 95 — Service Incentive Leave</div></div>
-            <div class="ap-step" id="apstep-6"><div class="ap-dot"></div><div class="ap-text">CRF &amp; Specialist items</div></div>
-            <div class="ap-step" id="apstep-7"><div class="ap-dot"></div><div class="ap-text">Assessing risk level</div></div>
-            <div class="ap-step" id="apstep-8"><div class="ap-dot"></div><div class="ap-text">Writing Sales Brief &amp; handoff notes</div></div>
+      <div class="ird-sidebar" id="irdSidebar">
+
+        <!-- ── ANALYSIS PANEL (shown during wait) ── -->
+        <div class="ird-analysis-panel" id="irdAnalysisPanel" style="display:none;">
+          <div class="ird-analysis-panel-shimmer"></div>
+          <div class="iap-pulse-wrap">
+            <div class="iap-pulse-center">
+              <div class="iap-ring"></div>
+              <div class="iap-ring"></div>
+              <div class="iap-core"></div>
+            </div>
+            <div>
+              <div class="iap-label">Running compliance check</div>
+              <div class="iap-sublabel" id="iapSublabel">Reading section summaries…</div>
+            </div>
           </div>
-          <div class="sales-brief" id="irdSalesBrief" style="display:none;">Generating…</div>
-          <div style="font-size:11px;color:var(--muted);" id="irdSalesBriefFor">For: Christine Garcia · Sprout POC</div>
-        </div>
-        <div class="sidebar-card">
-          <div class="sidebar-section-title">Outstanding Items</div>
-          <div id="irdOutstanding"><div style="font-size:13px;color:var(--muted);">No outstanding items.</div></div>
-        </div>
-        <div class="sidebar-card">
-          <div class="sidebar-section-title">Handoff Notes</div>
-          <div id="irdHandoff">
-            <div class="handoff-tag impl" style="margin-bottom:8px;">FOR IMPLEMENTATION</div>
-            <div class="handoff-note" id="irdImplNotes">Pending generation.</div>
-            <div style="height:12px;"></div>
-            <div class="handoff-tag csm" style="margin-bottom:8px;">FOR CSM</div>
-            <div class="handoff-note" id="irdCsmNotes">Pending generation.</div>
+          <div class="iap-divider"></div>
+          <div class="iap-step" id="iapstep-0"><div class="iap-dot"></div><div class="iap-text">Reading section summaries</div></div>
+          <div class="iap-step" id="iapstep-1"><div class="iap-dot"></div><div class="iap-text">Art. 86 — Night Differential</div></div>
+          <div class="iap-step" id="iapstep-2"><div class="iap-dot"></div><div class="iap-text">Art. 87 — Overtime Premium</div></div>
+          <div class="iap-step" id="iapstep-3"><div class="iap-dot"></div><div class="iap-text">Art. 93 — Rest Day Premium</div></div>
+          <div class="iap-step" id="iapstep-4"><div class="iap-dot"></div><div class="iap-text">Art. 94 — Holiday Premium</div></div>
+          <div class="iap-step" id="iapstep-5"><div class="iap-dot"></div><div class="iap-text">Art. 95 — Service Incentive Leave</div></div>
+          <div class="iap-step" id="iapstep-6"><div class="iap-dot"></div><div class="iap-text">CRF &amp; Specialist items</div></div>
+          <div class="iap-step" id="iapstep-7"><div class="iap-dot"></div><div class="iap-text">Assessing risk level</div></div>
+          <div class="iap-step" id="iapstep-8"><div class="iap-dot"></div><div class="iap-text">Writing Sales Brief &amp; handoff notes</div></div>
+          <div class="iap-ghost-cards">
+            <div class="iap-ghost-card">
+              <div class="iap-ghost-title">Sales Brief</div>
+              <div class="iap-ghost-line"></div>
+              <div class="iap-ghost-line"></div>
+              <div class="iap-ghost-line short"></div>
+            </div>
+            <div class="iap-ghost-card">
+              <div class="iap-ghost-title">Outstanding Items</div>
+              <div class="iap-ghost-line short"></div>
+            </div>
+            <div class="iap-ghost-card">
+              <div class="iap-ghost-title">Handoff Notes</div>
+              <div class="iap-ghost-line"></div>
+              <div class="iap-ghost-line short"></div>
+            </div>
           </div>
         </div>
-        <a class="drive-link" id="irdDriveLink">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#00A651" stroke-width="2"/><path d="M14 2v6h6" stroke="#00A651" stroke-width="2"/></svg>
-          <div>
-            <div class="drive-link-text" id="irdDriveLinkText">IRD — Saving to Drive…</div>
-            <div class="drive-link-sub">Saved to Orca — Session Archive on Drive</div>
+
+        <!-- ── REAL SIDEBAR CARDS (hidden during analysis, shown after) ── -->
+        <div id="irdRealSidebar" style="display:none; flex-direction:column; gap:16px;">
+          <div class="sidebar-card">
+            <div class="sidebar-section-title">Sales Brief</div>
+            <div class="sales-brief" id="irdSalesBrief">Generating…</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px;" id="irdSalesBriefFor">For: Christine Garcia · Sprout POC</div>
           </div>
-        </a>
+          <div class="sidebar-card">
+            <div class="sidebar-section-title">Outstanding Items</div>
+            <div id="irdOutstanding"><div style="font-size:13px;color:var(--muted);">No outstanding items.</div></div>
+          </div>
+          <div class="sidebar-card">
+            <div class="sidebar-section-title">Handoff Notes</div>
+            <div id="irdHandoff">
+              <div class="handoff-tag impl" style="margin-bottom:8px;">FOR IMPLEMENTATION</div>
+              <div class="handoff-note" id="irdImplNotes">Pending generation.</div>
+              <div style="height:12px;"></div>
+              <div class="handoff-tag csm" style="margin-bottom:8px;">FOR CSM</div>
+              <div class="handoff-note" id="irdCsmNotes">Pending generation.</div>
+            </div>
+          </div>
+          <a class="drive-link" id="irdDriveLink">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#00A651" stroke-width="2"/><path d="M14 2v6h6" stroke="#00A651" stroke-width="2"/></svg>
+            <div>
+              <div class="drive-link-text" id="irdDriveLinkText">IRD — Saving to Drive…</div>
+              <div class="drive-link-sub">Saved to Orca — Session Archive on Drive</div>
+            </div>
+          </a>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1281,36 +1347,49 @@ function resetExtractProgress() {
 }
 
 function startAnalysisProgress() {
-  // Show progress container, hide sales brief
-  document.getElementById('irdAnalysisProgress').style.display = 'block';
-  document.getElementById('irdSalesBrief').style.display = 'none';
+  // Show dark analysis panel, hide real sidebar cards
+  document.getElementById('irdAnalysisPanel').style.display = 'flex';
+  document.getElementById('irdRealSidebar').style.display = 'none';
 
-  // 9 steps over ~32s — steps get slightly longer toward the end
+  // Step sublabels
+  var labels = [
+    'Reading section summaries…',
+    'Checking Art. 86 — Night Differential…',
+    'Checking Art. 87 — Overtime Premium…',
+    'Checking Art. 93 — Rest Day Premium…',
+    'Checking Art. 94 — Holiday Premium…',
+    'Checking Art. 95 — Service Incentive Leave…',
+    'Reviewing CRF & Specialist items…',
+    'Assessing overall risk level…',
+    'Writing Sales Brief & handoff notes…'
+  ];
+
   var timings = [0, 2500, 5500, 9000, 12500, 16000, 20500, 25000, 29000];
-  var total = 9;
-
   timings.forEach(function(delay, i) {
     setTimeout(function() {
-      // Mark previous done
       if (i > 0) {
-        var prev = document.getElementById('apstep-' + (i-1));
-        if (prev) { prev.classList.remove('ap-active'); prev.classList.add('ap-done'); }
+        var prev = document.getElementById('iapstep-' + (i-1));
+        if (prev) { prev.classList.remove('iap-active'); prev.classList.add('iap-done'); }
       }
-      var cur = document.getElementById('apstep-' + i);
-      if (cur) cur.classList.add('ap-active');
+      var cur = document.getElementById('iapstep-' + i);
+      if (cur) cur.classList.add('iap-active');
+      var sub = document.getElementById('iapSublabel');
+      if (sub) sub.textContent = labels[i];
     }, delay);
   });
 }
 
 function stopAnalysisProgress() {
-  if (_analysisProgressTimer) { clearInterval(_analysisProgressTimer); _analysisProgressTimer = null; }
-  // Hide progress, show real sales brief
-  document.getElementById('irdAnalysisProgress').style.display = 'none';
-  document.getElementById('irdSalesBrief').style.display = 'block';
-  // Reset all steps
+  // Hide panel, show real cards with a gentle fade-in
+  var panel = document.getElementById('irdAnalysisPanel');
+  var real = document.getElementById('irdRealSidebar');
+  panel.style.display = 'none';
+  real.style.display = 'flex';
+  real.style.animation = 'fadeSlideIn 0.5s ease both';
+  // Reset step states
   for (var i = 0; i < 9; i++) {
-    var el = document.getElementById('apstep-' + i);
-    if (el) el.className = 'ap-step';
+    var el = document.getElementById('iapstep-' + i);
+    if (el) { el.classList.remove('iap-active', 'iap-done'); }
   }
 }
 
@@ -1322,13 +1401,8 @@ async function buildAndShowIrd() {
   stopExtractProgress();
   resetExtractProgress();
 
-  // Step 2: Start analysis progress in sidebar
+  // Step 2: Start analysis — dark panel takeover replaces sidebar
   startAnalysisProgress();
-  document.getElementById('irdImplNotes').innerHTML = '<span style="color:var(--muted);font-style:italic;">Pending…</span>';
-  document.getElementById('irdCsmNotes').innerHTML  = '<span style="color:var(--muted);font-style:italic;">Pending…</span>';
-  document.getElementById('irdStatDole').textContent = '—';
-  document.getElementById('irdStatRc').textContent   = '—';
-  document.getElementById('irdStatCrf').textContent  = '—';
 
   try {
     var conversationLog = conversationHistory.map(function(m) {
@@ -1360,14 +1434,13 @@ async function buildAndShowIrd() {
 
     var result = await resp.json();
 
-    // Stop progress animation and show real data
+    // Stop progress panel and show real data
     stopAnalysisProgress();
 
     // Populate sidebar immediately from irdData
     if (result.irdData) {
       populateIrdScreen(result.irdData);
     } else {
-      document.getElementById('irdSalesBrief').style.display = 'block';
       document.getElementById('irdSalesBrief').textContent = 'IRD saved. Email sent to SolCon and Sales Rep.';
       document.getElementById('irdStatDole').textContent = '—';
       document.getElementById('irdStatRc').textContent   = '—';
@@ -1386,7 +1459,6 @@ async function buildAndShowIrd() {
   } catch(err) {
     stopAnalysisProgress();
     console.error('complete() error:', err);
-    document.getElementById('irdSalesBrief').style.display = 'block';
     document.getElementById('irdSalesBrief').textContent = 'IRD saved to Drive. Email sent. Sidebar unavailable: ' + err.message;
   }
 }
@@ -1485,7 +1557,6 @@ function populateIrdScreen(irdData) {
 
   // Sidebar — Sales brief
   var salesBriefEl = document.getElementById('irdSalesBrief');
-  salesBriefEl.style.display = 'block';
   salesBriefEl.textContent = irdData.salesBrief || 'Analysis complete.';
   if (prospectData.salesRep) document.getElementById('irdSalesBriefFor').textContent = 'For: ' + prospectData.salesRep + ' · Sprout POC';
 
