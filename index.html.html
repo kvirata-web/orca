@@ -1165,24 +1165,36 @@ async function processTranscriptSolCon() {
 }
 
 async function buildAndShowIrd() {
-  // Ask Orca to analyse all 8 sections and produce risk data + flags
-  var analysisPrompt = 'You are Orca. Based on these 8 timekeeping policy summaries for ' + prospectData.companyName + ', produce a JSON object with exactly these keys:\n\nriskLevel (green|amber|red), riskReason (one sentence), salesBrief (2-3 sentences for the sales rep), doleFlags (array of {title, detail}), requiredConfirmations (array of {title, detail}), specialistItems (array of {title, detail}), crfItems (array of {title, detail}), implNotes (array of strings), csmNotes (array of strings)\n\nData: ' + JSON.stringify(sectionSummaries) + '\n\nReturn ONLY valid JSON.';
+  // Step 1: Populate sections immediately
+  populateIrdSectionsOnly();
 
+  // Step 2: Run risk analysis
+  var analysisPrompt = 'Analyse these 8 timekeeping policy summaries for ' + prospectData.companyName + ' and return ONLY this JSON structure with no other text:\n{"riskLevel":"amber","riskReason":"one sentence explaining risk level","salesBrief":"2-3 sentences briefing the sales rep","doleFlags":[{"title":"flag title","detail":"detail"}],"requiredConfirmations":[{"title":"item","detail":"detail"}],"specialistItems":[{"title":"item","detail":"detail"}],"crfItems":[{"title":"item","detail":"detail"}],"implNotes":["note for implementation team"],"csmNotes":["note for CSM"]}\n\nriskLevel must be exactly: green, amber, or red. Arrays can be empty. RETURN ONLY JSON.\n\nPolicies:\n' + JSON.stringify(sectionSummaries);
+
+  document.getElementById('genLabel').textContent = 'Analysing policies…';
   try {
-    var resp = await callEdge([{ role: 'user', content: analysisPrompt }], 'You are Orca. Analyse timekeeping policies and return risk data as valid JSON only.');
+    var resp = await callEdge([{ role: 'user', content: analysisPrompt }], 'You are a JSON API. Return ONLY a valid JSON object. No explanation. No markdown.');
+    console.log('IRD analysis response (first 500):', resp.substring(0, 500));
     var cleaned = resp.replace(/```json|```/g, '').trim();
     var s = cleaned.indexOf('{'); var e2 = cleaned.lastIndexOf('}');
     if (s !== -1 && e2 !== -1) cleaned = cleaned.substring(s, e2 + 1);
     var irdData = JSON.parse(cleaned);
     populateIrdScreen(irdData);
   } catch(err) {
-    // Fallback — show sections without analysis
-    populateIrdSectionsOnly();
+    console.error('IRD analysis error:', err);
+    document.getElementById('irdSalesBrief').textContent = 'IRD extracted successfully. Risk analysis unavailable.';
   }
 
-  // Also trigger save + Drive
+  // Step 3: Save to Drive + Sheets
   document.getElementById('genLabel').textContent = 'Saving to Drive…';
-  try { await saveAndNotify(sectionSummaries); } catch(e) { console.error('Save error:', e); }
+  try {
+    var saveResult = await saveAndNotify(sectionSummaries);
+    if (saveResult && saveResult.irdDocUrl) {
+      irdDocUrl = saveResult.irdDocUrl;
+      document.getElementById('irdDriveLink').href = irdDocUrl;
+      document.getElementById('irdDriveLinkText').textContent = 'IRD — ' + prospectData.companyName;
+    }
+  } catch(e) { console.error('Save error:', e); }
 
   document.getElementById('generatingOverlay').classList.remove('active');
   document.getElementById('genSublabel').textContent = 'This takes about 20 seconds';
@@ -1278,12 +1290,30 @@ function fillTestScript() {
   Object.keys(fields).forEach(function(id) { var el = document.getElementById(id); if (el) el.value = fields[id]; });
   var banner = document.getElementById('testScriptBanner');
   if (banner) banner.style.display = 'flex';
+  var go = confirm('Test data loaded for Bigbys QFC.\n\nOK = skip interview, jump to completed summary (fast demo)\nCancel = start interview normally with this data pre-filled');
+  if (go) startBigbysDemo();
 }
 
 function clearTestScript() {
   ['f-company','f-name','f-title','f-email','f-sprout'].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
   var banner = document.getElementById('testScriptBanner');
   if (banner) banner.style.display = 'none';
+}
+
+function startBigbysDemo() {
+  prospectData = { companyName: 'Bigbys Quality Food Corporation', contactName: 'Mai Santos', jobTitle: 'Payroll Officer', email: 'mai@bigbys.com', salesRep: 'Christine Garcia' };
+  sectionSummaries = {
+    timelogs: 'Bigbys Quality Food Corporation uses a mix of biometric devices and Bundy clocks across branches, with each branch summarizing attendance and sending it to the central payroll officer for manual uploading every payroll cutoff.',
+    approval: 'All timekeeping requests at Bigbys follow a five-level approval chain: Employee to Immediate Manager to Restaurant Manager to VP Operations to VP Admin, with all levels required to approve.',
+    work_schedule: 'Bigbys has three schedule types: branch employees on shift-based schedules (5AM-2PM or 6AM-3PM) with rotating long breaks of 2-4.5 hours on a 6-day work week; head office on compressed work week (8AM-6PM, Monday-Friday, 10-hour days); and variable rest days assigned per employee.',
+    computation: 'Bigbys applies a tiered late deduction rule: 1-30 minutes late is deducted as 30 minutes; 31-60 minutes as 1 hour; increments continue in 30-minute blocks. There is no grace period.',
+    leaves: 'Bigbys provides 5 days Service Incentive Leave per year, prorated on hiring anniversary and renewed every January. Credits increase by 2 days per year of tenure. Credits are given upfront and taken in half-day increments. Unused credits are partially convertible at year-end.',
+    overtime: 'Overtime requires manager approval and begins immediately after shift end. The minimum OT unit is 1 hour. For head office CWW employees, holiday and rest day work is treated as regular overtime without holiday premium.',
+    holidays: 'Bigbys follows Philippine proclaimed holidays with a day-before eligibility check. Holiday pay is computed at 8 hours flat at the same rate as regular overtime. No night differential is given to any employees.',
+    other: 'Bigbys has a split-salary arrangement for managers deployed across multiple branches. Meal allowance is a deduction of 35 pesos per day. Load allowance is an additional adjustment per employee.',
+  };
+  currentSection = 8;
+  showProspectSummaryScreen();
 }
 
 // ─────────────────────────────────────────
