@@ -1190,26 +1190,46 @@ async function buildAndShowIrd() {
   // Step 1: Populate sections immediately
   populateIrdSectionsOnly();
 
-  // Step 2: Run risk analysis using extract endpoint
+  // Step 2: Run risk analysis — compact prompt to avoid token truncation
   document.getElementById('genLabel').textContent = 'Analysing policies…';
   try {
-    var analysisPayload = 'Analyse these 8 timekeeping policy summaries and return ONLY valid JSON. No markdown, no explanation, no text before or after the JSON object.\n\nJSON structure required:\n{"riskLevel":"green or amber or red","riskReason":"one sentence","salesBrief":"2-3 sentences for the sales rep","doleFlags":[{"title":"","detail":""}],"requiredConfirmations":[{"title":"","detail":""}],"specialistItems":[{"title":"","detail":""}],"crfItems":[{"title":"","detail":""}],"implNotes":[""],"csmNotes":[""]}\n\nIMPORTANT: riskLevel must be exactly the string green, amber, or red. Arrays may be empty [].\n\nPolicies to analyse:\n' + JSON.stringify(sectionSummaries);
+    // Summarise each section to max 300 chars to keep the payload small
+    var compact = {};
+    Object.keys(sectionSummaries).forEach(function(k) {
+      var t = sectionSummaries[k] || '';
+      compact[k] = t.length > 300 ? t.substring(0, 297) + '...' : t;
+    });
+    var analysisPayload = 'You are Orca. Analyse these timekeeping policies for ' + (prospectData.companyName || 'this company') + '. Return ONLY a JSON object — no markdown, no text outside the JSON.\n\nKeep each string field SHORT (under 120 chars). Limit each array to max 3 items. Each item title max 60 chars, detail max 100 chars.\n\nRequired JSON shape (do not add extra keys):\n{"riskLevel":"amber","riskReason":"short sentence","salesBrief":"2 sentences max","doleFlags":[{"title":"short","detail":"short"}],"requiredConfirmations":[{"title":"short","detail":"short"}],"crfItems":[{"title":"short","detail":"short"}],"implNotes":["short note"],"csmNotes":["short note"]}\n\nriskLevel must be exactly: green, amber, or red.\n\nPolicies:\n' + JSON.stringify(compact);
+
     var analysisResp = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
-      body: JSON.stringify({ type: 'extract', transcript: analysisPayload, systemPrompt: 'You are Orca, a Sprout HR Solution Consultant. Analyse timekeeping policies for DOLE risks, Required Confirmations, CRF items, and implementation complexity. Return ONLY a valid JSON object, no markdown, no preamble.' })
+      body: JSON.stringify({ type: 'extract', transcript: analysisPayload, systemPrompt: 'Return ONLY a valid compact JSON object. No markdown. No preamble. Keep all string values under 120 characters.' })
     });
     var analysisData = await analysisResp.json();
     var rawAnalysis = analysisData.reply || '';
-    console.log('IRD analysis raw (first 600):', rawAnalysis.substring(0, 600));
+    console.log('IRD analysis raw (first 800):', rawAnalysis.substring(0, 800));
+
+    // Robust JSON extraction — find outermost { }
     var cleaned = rawAnalysis.replace(/```json|```/g, '').trim();
-    var s = cleaned.indexOf('{'); var e2 = cleaned.lastIndexOf('}');
-    if (s !== -1 && e2 !== -1) cleaned = cleaned.substring(s, e2 + 1);
-    var irdData = JSON.parse(cleaned);
+    var s = cleaned.indexOf('{');
+    var e2 = cleaned.lastIndexOf('}');
+    if (s === -1 || e2 === -1) throw new Error('No JSON object found in response');
+    cleaned = cleaned.substring(s, e2 + 1);
+
+    // Attempt parse — if it fails try to salvage truncated JSON
+    var irdData;
+    try {
+      irdData = JSON.parse(cleaned);
+    } catch(parseErr) {
+      console.warn('JSON parse failed, attempting salvage:', parseErr.message);
+      // Extract what we can with regex fallbacks
+      irdData = salvageIrdJson(cleaned);
+    }
     populateIrdScreen(irdData);
   } catch(err) {
     console.error('IRD analysis error (full):', err);
-    document.getElementById('irdSalesBrief').textContent = 'Sections extracted successfully. For full risk analysis, check browser console for error details.';
+    document.getElementById('irdSalesBrief').textContent = 'Sections captured. Risk analysis failed — see console. Error: ' + err.message;
   }
 
   // Step 3: Save to Drive + Sheets
@@ -1226,6 +1246,20 @@ async function buildAndShowIrd() {
   document.getElementById('generatingOverlay').classList.remove('active');
   document.getElementById('genSublabel').textContent = 'This takes about 20 seconds';
   showScreen('s-ird');
+}
+
+// Salvage partial JSON when truncation causes parse failure
+function salvageIrdJson(raw) {
+  var result = { riskLevel: 'amber', riskReason: 'Review required — analysis partially completed.', salesBrief: 'IRD sections extracted. Full risk analysis was truncated — review sections manually.', doleFlags: [], requiredConfirmations: [], crfItems: [], implNotes: [], csmNotes: [] };
+  try {
+    var rl = raw.match(/"riskLevel"\s*:\s*"(green|amber|red)"/);
+    if (rl) result.riskLevel = rl[1];
+    var rr = raw.match(/"riskReason"\s*:\s*"([^"]{0,200})"/);
+    if (rr) result.riskReason = rr[1];
+    var sb = raw.match(/"salesBrief"\s*:\s*"([^"]{0,400})"/);
+    if (sb) result.salesBrief = sb[1];
+  } catch(e) {}
+  return result;
 }
 
 function populateIrdScreen(irdData) {
