@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orca by Sprout — Timekeeping Discovery</title>
+<title>Orca Beta by Sprout — Timekeeping Discovery</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -24,6 +24,15 @@
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--near-black); min-height: 100vh; overflow-x: hidden; }
+/* ── Beta tag ── */
+.beta-tag {
+  font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  padding:2px 7px; border-radius:4px; line-height:1;
+  font-family:'DM Sans',sans-serif; display:inline-block;
+}
+.beta-tag.dark  { background:#2D4035; color:var(--green); border:1px solid #3D5045; }
+.beta-tag.light { background:var(--green-light); color:var(--green-dark); border:1px solid var(--green-mid); }
+
 
 /* ── SCREENS ── */
 .screen { display: none; min-height: 100vh; }
@@ -425,7 +434,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <svg viewBox="0 0 24 24" fill="none"><path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9z" fill="white" opacity="0.3"/><circle cx="12" cy="12" r="4" fill="white"/></svg>
       </div>
       <div class="logo-text-wrap">
-        <div class="orca">Orca</div>
+        <div style="display:flex;align-items:center;gap:7px;"><div class="orca">Orca</div><span class="beta-tag dark">BETA</span></div>
         <div class="by">by Sprout</div>
       </div>
     </div>
@@ -476,7 +485,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
   <div class="login-box">
     <div class="login-logo">
       <div class="logo-mark" style="width:32px;height:32px;border-radius:8px;"><svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-      <div class="logo-text-wrap"><div class="orca" style="font-size:16px;">Orca</div><div class="by">by Sprout</div></div>
+      <div class="logo-text-wrap"><div style="display:flex;align-items:center;gap:6px;"><div class="orca" style="font-size:16px;">Orca</div><span class="beta-tag dark">BETA</span></div><div class="by">by Sprout</div></div>
     </div>
     <div class="login-eyebrow">Internal Access</div>
     <div class="login-title">SolCon Workspace</div>
@@ -506,7 +515,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <div style="display:flex;align-items:center;gap:24px;">
       <div style="display:flex;align-items:center;gap:10px;">
         <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-        <span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span>
+        <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
       </div>
       <div class="divider" style="height:20px;"></div>
       <div class="solcon-nav">
@@ -721,7 +730,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
       <div style="display:flex;align-items:center;gap:24px;">
         <div style="display:flex;align-items:center;gap:10px;">
           <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-          <span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
         </div>
         <div class="divider" style="height:20px;"></div>
         <div class="solcon-nav">
@@ -827,7 +836,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
       <div style="display:flex;align-items:center;gap:24px;">
         <div style="display:flex;align-items:center;gap:10px;">
           <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-          <span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
         </div>
         <div class="divider" style="height:20px;"></div>
         <div class="solcon-nav">
@@ -910,7 +919,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <div class="prospect-left">
       <div class="landing-logo">
         <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-        <div class="logo-text-wrap"><div class="orca">Orca</div><div class="by">by Sprout</div></div>
+        <div class="logo-text-wrap"><div style="display:flex;align-items:center;gap:6px;"><div class="orca">Orca</div><span class="beta-tag dark">BETA</span></div><div class="by">by Sprout</div></div>
       </div>
       <div class="prospect-hero">
         <div class="prospect-eyebrow">Self-Serve Discovery Session</div>
@@ -963,7 +972,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <aside class="sidebar">
       <div class="sidebar-logo">
         <div class="logo-mark" style="width:32px;height:32px;border-radius:8px;"><svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-        <div class="logo-text-wrap"><div class="orca" style="font-size:16px;">Orca</div><div class="by">by Sprout</div></div>
+        <div class="logo-text-wrap"><div style="display:flex;align-items:center;gap:6px;"><div class="orca" style="font-size:16px;">Orca</div><span class="beta-tag dark">BETA</span></div><div class="by">by Sprout</div></div>
       </div>
       <div class="sidebar-label">Timekeeping Discovery</div>
       <ul class="nav-sections" id="navSections">
@@ -1006,7 +1015,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
   <div class="ps-header">
     <div style="display:flex;align-items:center;gap:10px;">
       <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-      <div class="logo-text-wrap"><div class="orca" style="font-size:15px;">Orca</div><div class="by">by Sprout</div></div>
+      <div class="logo-text-wrap"><div style="display:flex;align-items:center;gap:6px;"><div class="orca" style="font-size:15px;">Orca</div><span class="beta-tag dark">BETA</span></div><div class="by">by Sprout</div></div>
     </div>
     <div style="font-size:12px;color:var(--muted);">Sprout · Powered by Orca</div>
   </div>
