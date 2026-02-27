@@ -225,8 +225,27 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 .btn-review.active { background: #FFFBEB; border-color: #FDE68A; color: #B45309; }
 .verify-pulse { width: 7px; height: 7px; border-radius: 50%; background: #F59E0B; animation: vpulse 1.6s infinite; flex-shrink: 0; }
 @keyframes vpulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-.verify-mode .flag-pill:not(.ok) { cursor: pointer; transition: all .15s; }
-.verify-mode .flag-pill:not(.ok):hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+.verify-mode .flag-pill:not(.ok) { cursor: pointer; transition: all .15s; position: relative; }
+.verify-mode .flag-pill:not(.ok):not(.v-rejected):not(.v-confirmed):hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+.verify-mode .flag-pill:not(.ok):not(.v-rejected):not(.v-confirmed)::after {
+  content: '▼ click to review'; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: var(--near-black); color: white; font-size: 10px; font-weight: 600; white-space: nowrap;
+  padding: 3px 8px; border-radius: 5px; pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 5;
+}
+.verify-mode .flag-pill:not(.ok):not(.v-rejected):not(.v-confirmed):hover::after { opacity: 1; }
+/* Pulsing ring per flag type */
+.verify-mode .flag-pill.dole:not(.v-rejected):not(.v-confirmed):not(.v-open) { animation: pill-ring-dole 2.5s ease-in-out infinite; }
+.verify-mode .flag-pill.rc:not(.v-rejected):not(.v-confirmed):not(.v-open)   { animation: pill-ring-rc   2.5s ease-in-out infinite; }
+.verify-mode .flag-pill.spec:not(.v-rejected):not(.v-confirmed):not(.v-open) { animation: pill-ring-spec 2.5s ease-in-out infinite; }
+.verify-mode .flag-pill.crf:not(.v-rejected):not(.v-confirmed):not(.v-open)  { animation: pill-ring-crf  2.5s ease-in-out infinite; }
+@keyframes pill-ring-dole { 0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0)} 50%{box-shadow:0 0 0 3px rgba(220,38,38,0.35)} }
+@keyframes pill-ring-rc   { 0%,100%{box-shadow:0 0 0 0 rgba(180,83,9,0)}  50%{box-shadow:0 0 0 3px rgba(180,83,9,0.35)} }
+@keyframes pill-ring-spec { 0%,100%{box-shadow:0 0 0 0 rgba(22,121,250,0)} 50%{box-shadow:0 0 0 3px rgba(22,121,250,0.35)} }
+@keyframes pill-ring-crf  { 0%,100%{box-shadow:0 0 0 0 rgba(129,57,238,0)} 50%{box-shadow:0 0 0 3px rgba(129,57,238,0.35)} }
+/* Verify hint bar — shown only when verify-mode active */
+.verify-hint-bar { display: none; }
+.verify-mode .verify-hint-bar { display: flex; align-items: center; gap: 8px; background: #1a2e22; border: 1px solid #2D4035; border-radius: 8px; padding: 7px 14px; margin-bottom: 8px; font-size: 12px; color: #8AA89A; }
+.verify-hint-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: vpulse 1.6s infinite; }
 .flag-pill.v-confirmed::after { content: ' ✓'; }
 .flag-pill.v-rejected { opacity: .3; text-decoration: line-through; pointer-events: none; }
 .flag-pill.v-open { box-shadow: 0 0 0 2.5px #F59E0B; }
@@ -285,7 +304,30 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 .vt-finalize:disabled { background: #2D4035; color: #4A6357; cursor: not-allowed; }
 .vt-finalize-sub { font-size: 10px; color: #4A6357; text-align: center; margin-top: 6px; line-height: 1.4; }
 
-/* ── Coaching screen ── */
+/* ── Patterns banner ── */
+.patterns-banner {
+  background: linear-gradient(135deg, #0D1F17 0%, #1a3528 100%);
+  border: 1.5px solid #2D5040; border-radius: 14px; padding: 20px 22px;
+  margin-bottom: 20px; position: relative; overflow: hidden;
+}
+.patterns-banner::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--green), transparent);
+}
+.pb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.pb-title { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green); display: flex; align-items: center; gap: 8px; }
+.pb-pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: vpulse 1.6s infinite; }
+.pb-sub { font-size: 11px; color: #4A6357; }
+.pb-pattern { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 9px; background: rgba(255,255,255,0.04); border: 1px solid #1a3a28; margin-bottom: 8px; cursor: pointer; transition: all .15s; }
+.pb-pattern:hover { background: rgba(0,166,81,0.08); border-color: rgba(0,166,81,0.3); }
+.pb-pattern:last-child { margin-bottom: 0; }
+.pb-count { width: 28px; height: 28px; border-radius: 50%; background: var(--dole-bg); border: 1px solid var(--dole-border); color: var(--dole-color); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pb-count.rc  { background: var(--rc-bg);   border-color: var(--rc-border);   color: var(--rc-color); }
+.pb-count.crf { background: var(--crf-bg);  border-color: var(--crf-border);  color: var(--crf-color); }
+.pb-text { flex: 1; }
+.pb-flag-name { font-size: 12px; font-weight: 600; color: white; margin-bottom: 2px; }
+.pb-flag-hint { font-size: 11px; color: #4A6357; line-height: 1.4; }
+.pb-cta { font-size: 10px; font-weight: 600; color: var(--green); white-space: nowrap; align-self: center; flex-shrink: 0; }
 #s-coaching { flex-direction: column; background: var(--bg); min-height: 100vh; }
 .coaching-layout { display: grid; grid-template-columns: 200px 1fr; gap: 24px; }
 .coaching-sidenav-item { padding: 9px 13px; border-radius: 9px; font-size: 13px; cursor: pointer; color: var(--mid); transition: all .15s; margin-bottom: 2px; display: flex; align-items: center; gap: 9px; }
@@ -758,9 +800,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
       <div class="stat-card"><div class="stat-label">Sections</div><div class="stat-val" style="color:var(--green);" id="irdStatSections">8/8</div><div class="stat-sub">Fully captured</div></div>
     </div>
     <div class="ird-two-col">
-      <div class="ird-sections" id="irdSections">
-        <!-- Populated by JS after generation -->
-        <div style="text-align:center;padding:40px;color:var(--muted);font-size:14px;">Generate an IRD from the SolCon workspace to see results here.</div>
+      <div>
+        <div class="verify-hint-bar" id="verifyHintBar">
+          <div class="verify-hint-dot"></div>
+          Click any highlighted flag pill to review it. Confirm flags that are correct, reject ones that don't apply.
+        </div>
+        <div class="ird-sections" id="irdSections">
+          <!-- Populated by JS after generation -->
+          <div style="text-align:center;padding:40px;color:var(--muted);font-size:14px;">Generate an IRD from the SolCon workspace to see results here.</div>
+        </div>
       </div>
       <div class="ird-sidebar" id="irdSidebar">
 
@@ -1082,6 +1130,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
       </div>
 
       <div class="coaching-layout">
+        <!-- Patterns banner — shown above layout if patterns exist -->
+        <div id="patternsBannerWrap" style="display:none;grid-column:1/-1;"></div>
         <!-- Sidenav -->
         <div>
           <div class="coaching-sidenav-item active" onclick="coachingNav('rules',this)">
@@ -1090,7 +1140,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           </div>
           <div class="coaching-sidenav-item" onclick="coachingNav('prompt',this)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            Prompt Preview
+            How Orca Thinks
           </div>
           <div class="coaching-sidenav-item" onclick="coachingNav('history',this)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1125,25 +1175,36 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
             </div>
           </div>
 
-          <!-- PROMPT PREVIEW panel -->
+          <!-- PROMPT PREVIEW panel (renamed: How Orca Thinks) -->
           <div id="coachPanelPrompt" style="display:none;">
             <div class="panel">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
                 <div>
-                  <div style="font-size:14px;font-weight:600;color:var(--near-black);margin-bottom:2px;">Prompt Preview</div>
-                  <div style="font-size:12px;color:var(--muted);">Exactly what Orca sees before every analysis. Your rules appear in the <span style="font-family:monospace;font-size:11px;color:var(--green);background:var(--green-light);padding:1px 5px;border-radius:3px;">[COACHING]</span> block.</div>
+                  <div style="font-size:14px;font-weight:600;color:var(--near-black);margin-bottom:2px;">How Orca Thinks</div>
+                  <div style="font-size:12px;color:var(--muted);">The rules Orca checks on every IRD — your coaching rules appear at the top and override defaults.</div>
                 </div>
               </div>
-              <div class="prompt-preview" id="promptPreviewBox">
-                <div class="pp-label">Analysis prompt · sent to claude-sonnet</div>
-                <div class="pp-text" id="promptPreviewText">
-                  <span class="pp-comment">// You are a strict DOLE compliance officer...</span><br>
-                  <span class="pp-comment">// Be aggressive — if there is any doubt, FLAG IT.</span><br><br>
-                  <span class="pp-inject" id="promptCoachBlock">// [No coaching rules active]</span><br><br>
-                  <span class="pp-comment">// Art. 94 Holiday Premium — 200% rate required...</span><br>
-                  <span class="pp-comment">// Art. 93 Rest Day Premium — 130% minimum...</span><br>
-                  <span class="pp-comment">// Art. 87 Overtime Premium — 125% minimum...</span><br>
-                  <span class="pp-comment">// ...</span>
+              <!-- Coaching rules in effect -->
+              <div style="margin-bottom:16px;" id="htCoachBlock">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Your Coaching Rules (applied first)</div>
+                <div id="htCoachRules" style="font-size:13px;color:var(--muted);padding:12px 14px;background:var(--bg);border-radius:8px;border:1.5px dashed var(--border);">No coaching rules active — add rules from the Active Rules panel.</div>
+              </div>
+              <!-- Base rules summary -->
+              <div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Built-in Compliance Checks (always on)</div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg);border-radius:8px;">
+                    <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--dole-bg);border:1px solid var(--dole-border);color:var(--dole-color);flex-shrink:0;margin-top:1px;">DOLE</span>
+                    <div style="font-size:12px;color:var(--mid);line-height:1.5;">Art. 86 Night Differential · Art. 87 OT Premium · Art. 93 Rest Day · Art. 94 Holiday Pay · Art. 95 Service Incentive Leave · Art. 103 Wage Deductions</div>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg);border-radius:8px;">
+                    <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--rc-bg);border:1px solid var(--rc-border);color:var(--rc-color);flex-shrink:0;margin-top:1px;">RC</span>
+                    <div style="font-size:12px;color:var(--mid);line-height:1.5;">Device integrations · Schedule conflicts · Leave monetization · Payroll computation gaps</div>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg);border-radius:8px;">
+                    <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--crf-bg);border:1px solid var(--crf-border);color:var(--crf-color);flex-shrink:0;margin-top:1px;">CRF</span>
+                    <div style="font-size:12px;color:var(--mid);line-height:1.5;">Tiered tardiness rules · Non-standard computation · Custom approval hierarchies</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1355,6 +1416,7 @@ function showScreen(id) {
   var el = document.getElementById(id);
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
   if (id === 's-solcon') { renderRecentSessions(); updateMonthlyStats(); }
+  if (id === 's-coaching') { renderCoachingRules(); updateCoachingStats(); updatePromptPreview(); renderPatternsBanner(); }
 }
 
 function solconNav(id, clickedEl) {
@@ -2275,8 +2337,7 @@ async function showProspectSummaryScreen() {
   showScreen('s-prospect-summary');
   document.getElementById('summaryTitle').textContent = "Here's a picture of how " + prospectData.companyName + " works today — and how Sprout fits.";
   document.getElementById('btnPdf').disabled = true;
-  document.getElementById('generatingOverlay').classList.add('active');
-  document.getElementById('genLabel').textContent = 'Preparing your summary…';
+  startProspectSummaryProgress();
 
   try {
     var prompt = 'Based on this interview with ' + prospectData.companyName + ', generate a JSON object with exactly these 8 keys: timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other.\n\nFor each section, write a 2-sentence prospect-facing summary:\n- Sentence 1: Mirror their specific setup in plain language. Start with their team or company, not "Sprout".\n- Sentence 2: Name the specific Sprout feature that handles this.\n\nData: ' + JSON.stringify(sectionSummaries) + '\n\nReturn ONLY valid JSON, no markdown.';
@@ -2322,7 +2383,53 @@ async function showProspectSummaryScreen() {
     console.error('Summary error:', err);
     document.getElementById('btnPdf').disabled = false;
   }
+  stopProspectSummaryProgress();
+}
+
+var _prospectProgressInterval = null;
+var PROSPECT_STEPS = [
+  'Reviewing your timekeeping setup',
+  'Understanding your approval flow',
+  'Mapping your work schedules',
+  'Reading your computation rules',
+  'Capturing leave policies',
+  'Checking overtime setup',
+  'Reviewing holiday pay rules',
+  'Preparing your summary',
+];
+var SOLCON_STEPS = [
+  'Timelogs & attendance method',
+  'Approval workflow',
+  'Work schedules & shift patterns',
+  'Computation rules & deductions',
+  'Leave policies & credits',
+  'Overtime rules',
+  'Holiday pay & premiums',
+  'Other policies & adjustments',
+];
+
+function startProspectSummaryProgress() {
+  // Set prospect-specific labels
+  var steps = document.querySelectorAll('#genSteps .gen-step-text');
+  PROSPECT_STEPS.forEach(function(label, i) {
+    if (steps[i]) steps[i].textContent = label;
+  });
+  document.getElementById('generatingOverlay').classList.add('active');
+  document.getElementById('genLabel').textContent = 'Reviewing your session…';
+  document.getElementById('genSublabel').textContent = 'Building your personalised summary';
+  resetExtractProgress();
+  startExtractProgress();
+}
+
+function stopProspectSummaryProgress() {
+  stopExtractProgress();
   document.getElementById('generatingOverlay').classList.remove('active');
+  // Restore SolCon labels
+  var steps = document.querySelectorAll('#genSteps .gen-step-text');
+  SOLCON_STEPS.forEach(function(label, i) {
+    if (steps[i]) steps[i].textContent = label;
+  });
+  resetExtractProgress();
 }
 
 // ─────────────────────────────────────────
@@ -2642,17 +2749,39 @@ function updateCoachingStats() {
 }
 
 function updatePromptPreview() {
+  // Legacy prompt preview element (may not exist after rename)
   var el = document.getElementById('promptCoachBlock');
-  if (!el) return;
-  var rules = getCoachingRules().filter(function(r) { return r.enabled; });
-  if (!rules.length) {
-    el.innerHTML = '<span class="pp-comment">// [No coaching rules active]</span>';
-    return;
+  if (el) {
+    var rules = getCoachingRules().filter(function(r) { return r.enabled; });
+    if (!rules.length) {
+      el.innerHTML = '<span class="pp-comment">// [No coaching rules active]</span>';
+    } else {
+      el.innerHTML = '<span class="pp-inject">[MANAGER COACHING NOTES — apply these before analyzing]</span><br>' +
+        rules.map(function(r, i) {
+          return '<span class="pp-inject">' + (i + 1) + '. ' + escapeHtml(r.text) + '</span>';
+        }).join('<br>');
+    }
   }
-  el.innerHTML = '<span class="pp-inject">[MANAGER COACHING NOTES — apply these before analyzing]</span><br>' +
-    rules.map(function(r, i) {
-      return '<span class="pp-inject">' + (i + 1) + '. ' + escapeHtml(r.text) + '</span>';
-    }).join('<br>');
+  // New "How Orca Thinks" panel
+  var htRules = document.getElementById('htCoachRules');
+  if (htRules) {
+    var rules = getCoachingRules().filter(function(r) { return r.enabled; });
+    if (!rules.length) {
+      htRules.innerHTML = '<div style="font-size:13px;color:var(--muted);">No coaching rules active — add rules from the Active Rules panel.</div>';
+      htRules.style.background = 'var(--bg)';
+      htRules.style.border = '1.5px dashed var(--border)';
+    } else {
+      htRules.style.background = 'none';
+      htRules.style.border = 'none';
+      htRules.style.padding = '0';
+      htRules.innerHTML = rules.map(function(r, i) {
+        return '<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 12px;background:var(--green-light);border:1px solid var(--green-mid);border-radius:8px;margin-bottom:6px;">' +
+          '<div style="width:18px;height:18px;border-radius:50%;background:var(--green);color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">' + (i+1) + '</div>' +
+          '<div style="font-size:12px;color:var(--near-black);line-height:1.55;">' + escapeHtml(r.text) + '</div>' +
+        '</div>';
+      }).join('');
+    }
+  }
 }
 
 function coachingNav(panel, el) {
@@ -2663,6 +2792,73 @@ function coachingNav(panel, el) {
   document.getElementById('coachPanelHistory').style.display = panel === 'history' ? 'block' : 'none';
   if (panel === 'prompt') updatePromptPreview();
   if (panel === 'history') renderVerifiedIrdsFeed();
+  renderPatternsBanner();
+}
+
+function renderPatternsBanner() {
+  var wrap = document.getElementById('patternsBannerWrap');
+  if (!wrap) return;
+  var irds = getVerifiedIrds();
+  // Count rejections per flag title across all verified IRDs
+  var counts = {};
+  var meta = {};
+  irds.forEach(function(v) {
+    (v.flagDetails || []).forEach(function(f) {
+      if (f.state === 'rejected') {
+        counts[f.title] = (counts[f.title] || 0) + 1;
+        if (!meta[f.title]) meta[f.title] = { type: f.type, detail: f.detail };
+      }
+    });
+  });
+  // Find flags rejected 2+ times
+  var patterns = Object.keys(counts).filter(function(t) { return counts[t] >= 2; })
+    .sort(function(a, b) { return counts[b] - counts[a]; })
+    .slice(0, 3);
+
+  if (!patterns.length) {
+    wrap.style.display = 'none';
+    return;
+  }
+
+  wrap.style.display = 'block';
+  var typeClass = function(type) { return type === 'rc' ? 'rc' : type === 'crf' ? 'crf' : ''; };
+  var hint = function(f) {
+    if (f.type === 'dole') return 'Rejected ' + counts[f.title] + '× — consider adding a rule to prevent this flag';
+    if (f.type === 'rc')   return 'Rejected ' + counts[f.title] + '× — may not apply to your typical client';
+    if (f.type === 'crf')  return 'Rejected ' + counts[f.title] + '× — could be a default CRF assumption to correct';
+    return 'Rejected ' + counts[f.title] + '× — review if this flag is needed';
+  };
+
+  wrap.innerHTML = '<div class="patterns-banner">' +
+    '<div class="pb-header">' +
+      '<div class="pb-title"><div class="pb-pulse"></div>Orca noticed a pattern</div>' +
+      '<div class="pb-sub">These flags were rejected ' + (patterns.length > 1 ? 'multiple times' : 'more than once') + ' — write a rule to stop seeing them</div>' +
+    '</div>' +
+    patterns.map(function(title) {
+      var f = meta[title];
+      var tc = typeClass(f.type);
+      return '<div class="pb-pattern" onclick="usePatternAsRule(\'' + escapeHtml(title).replace(/'/g, "\\'") + '\')">' +
+        '<div class="pb-count ' + tc + '">' + counts[title] + '×</div>' +
+        '<div class="pb-text">' +
+          '<div class="pb-flag-name">' + escapeHtml(title) + '</div>' +
+          '<div class="pb-flag-hint">' + hint({ type: f.type, title: title }) + '</div>' +
+        '</div>' +
+        '<div class="pb-cta">→ Write rule</div>' +
+      '</div>';
+    }).join('') +
+  '</div>';
+}
+
+function usePatternAsRule(flagTitle) {
+  // Switch to rules panel
+  var rulesNav = document.querySelector('.coaching-sidenav-item');
+  coachingNav('rules', rulesNav);
+  var input = document.getElementById('newRuleInput');
+  if (input) {
+    input.value = flagTitle + ' — review before flagging. Check if this applies to this client.';
+    input.focus();
+    input.select();
+  }
 }
 
 function getVerifiedIrds() {
@@ -2687,19 +2883,61 @@ function renderVerifiedIrdsFeed() {
     el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px;text-align:center;background:var(--bg);border-radius:8px;border:1.5px dashed var(--border);">No verified IRDs yet. Use Verify Mode on any IRD to start building your feedback history.</div>';
     return;
   }
-  el.innerHTML = list.map(function(v) {
-    var pills = '';
-    if (v.confirmed) pills += '<span class="vf-pill confirmed">' + v.confirmed + ' confirmed</span> ';
-    if (v.rejected)  pills += '<span class="vf-pill rejected">'  + v.rejected  + ' rejected</span> ';
-    if (v.edited)    pills += '<span class="vf-pill edited">'    + v.edited    + ' edited</span>';
-    return '<div class="vf-item">' +
-      '<div style="flex:1;">' +
-        '<div style="font-size:13px;font-weight:500;color:var(--near-black);">' + escapeHtml(v.company) + '</div>' +
-        '<div style="font-size:11px;color:var(--muted);">Verified ' + v.date + ' · ' + v.totalFlags + ' flags</div>' +
+  var typeColors = {
+    dole: { bg:'var(--dole-bg)', border:'var(--dole-border)', color:'var(--dole-color)', label:'DOLE FLAG' },
+    rc:   { bg:'var(--rc-bg)',   border:'var(--rc-border)',   color:'var(--rc-color)',   label:'REQ. CONFIRMATION' },
+    spec: { bg:'var(--spec-bg)', border:'var(--spec-border)', color:'var(--spec-color)', label:'SPECIALIST REVIEW' },
+    crf:  { bg:'var(--crf-bg)',  border:'var(--crf-border)',  color:'var(--crf-color)',  label:'CRF REQUIRED' },
+  };
+  el.innerHTML = list.map(function(v, idx) {
+    var rejectedFlags = (v.flagDetails || []).filter(function(f) { return f.state === 'rejected'; });
+    var confirmedCount = v.confirmed || 0;
+    var headerPills = '';
+    if (confirmedCount) headerPills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:100px;font-size:10px;font-weight:600;background:var(--green-light);border:1px solid var(--green-mid);color:var(--green-dark);">✓ ' + confirmedCount + ' confirmed</span> ';
+    if (v.rejected) headerPills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:100px;font-size:10px;font-weight:600;background:var(--dole-bg);border:1px solid var(--dole-border);color:var(--dole-color);">✗ ' + v.rejected + ' rejected</span>';
+
+    var rejectedDetail = '';
+    if (rejectedFlags.length) {
+      rejectedDetail = '<div id="vird-detail-' + idx + '" style="display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">' +
+        '<div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dole-color);margin-bottom:10px;">Rejected Flags — Use these to write coaching rules</div>' +
+        rejectedFlags.map(function(f) {
+          var tc = typeColors[f.type] || typeColors.dole;
+          return '<div style="display:flex;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--bg);">' +
+            '<div style="flex-shrink:0;margin-top:2px;"><span style="display:inline-block;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.08em;background:' + tc.bg + ';border:1px solid ' + tc.border + ';color:' + tc.color + ';">' + tc.label + '</span></div>' +
+            '<div style="flex:1;">' +
+              '<div style="font-size:12px;font-weight:600;color:var(--near-black);margin-bottom:3px;">' + escapeHtml(f.title) + '</div>' +
+              '<div style="font-size:11px;color:var(--mid);line-height:1.6;font-weight:300;">' + escapeHtml(f.detail) + '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+        (confirmedCount ? '<div style="font-size:11px;color:var(--muted);padding:8px 10px;background:var(--bg);border-radius:7px;">' + confirmedCount + ' flag' + (confirmedCount !== 1 ? 's' : '') + ' confirmed as correct — no action needed.</div>' : '') +
+      '</div>';
+    }
+
+    var hasDetail = rejectedFlags.length > 0;
+    return '<div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;transition:border-color .15s;" ' +
+      (hasDetail ? 'onmouseenter="this.style.borderColor=\'var(--green-mid)\'" onmouseleave="this.style.borderColor=\'var(--border)\'"' : '') + '>' +
+      '<div style="display:flex;align-items:flex-start;gap:12px;">' +
+        '<div style="flex:1;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+            '<div style="font-size:13px;font-weight:600;color:var(--near-black);">' + escapeHtml(v.company) + '</div>' +
+            (hasDetail ? '<button onclick="toggleVirdDetail(' + idx + ',this)" style="font-size:11px;font-weight:600;color:var(--green);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;">▼ Show rejected flags</button>' : '') +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Verified ' + v.date + ' · ' + v.totalFlags + ' flag' + (v.totalFlags !== 1 ? 's' : '') + ' reviewed</div>' +
+          '<div style="display:flex;gap:5px;flex-wrap:wrap;">' + headerPills + '</div>' +
+        '</div>' +
       '</div>' +
-      '<div style="display:flex;gap:5px;flex-wrap:wrap;">' + pills + '</div>' +
+      rejectedDetail +
     '</div>';
   }).join('');
+}
+
+function toggleVirdDetail(idx, btn) {
+  var el = document.getElementById('vird-detail-' + idx);
+  if (!el) return;
+  var isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  btn.textContent = isOpen ? '▼ Show rejected flags' : '▲ Hide rejected flags';
 }
 
 function escapeHtml(s) {
@@ -2888,15 +3126,7 @@ function onPillClick(pillEl) {
     '<div class="vip-actions" id="vip-actions-' + flagId + '">' +
       '<button class="vip-btn confirm" onclick="doVerifyAction(\'' + flagId + '\',\'confirmed\')">✓ Confirm</button>' +
       '<button class="vip-btn reject"  onclick="doVerifyAction(\'' + flagId + '\',\'rejected\')">✗ Reject</button>' +
-      '<button class="vip-btn edit"    onclick="showVerifyEdit(\'' + flagId + '\')">✏ Edit detail</button>' +
       '<button class="vip-btn skip"    onclick="closeVerifyPanel()">Skip</button>' +
-    '</div>' +
-    '<div id="vip-edit-' + flagId + '" class="vip-edit-wrap" style="display:none;">' +
-      '<textarea class="vip-textarea" id="vip-textarea-' + flagId + '" rows="3">' + escapeHtml(flagDef.detail) + '</textarea>' +
-      '<div style="display:flex;gap:8px;margin-top:8px;">' +
-        '<button class="vip-btn confirm" onclick="saveVerifyEdit(\'' + flagId + '\')">Save edit</button>' +
-        '<button class="vip-btn skip"    onclick="cancelVerifyEdit(\'' + flagId + '\')">Cancel</button>' +
-      '</div>' +
     '</div>';
 
   // Update tray item to reviewing
@@ -3017,7 +3247,10 @@ function finalizeVerifiedIrd() {
     company: (prospectData && prospectData.companyName) || lastIrdData.companyName || 'Unknown',
     date: new Date().toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' }),
     totalFlags: verifyFlagData.length,
-    confirmed: confirmed, rejected: rejected, edited: edited
+    confirmed: confirmed, rejected: rejected, edited: edited,
+    flagDetails: verifyFlagData.map(function(f) {
+      return { id: f.id, type: f.type, title: f.title, detail: f.detail, state: verifyFlagStates[f.id] || 'pending' };
+    })
   });
   updateCoachingStats();
 
