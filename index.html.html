@@ -1187,65 +1187,71 @@ async function processTranscriptSolCon() {
 }
 
 async function buildAndShowIrd() {
-  // Step 1: Populate sections immediately
+  // Step 1: Show sections immediately — no waiting
   populateIrdSectionsOnly();
+  showScreen('s-ird');
+  document.getElementById('generatingOverlay').classList.remove('active');
 
-  // Step 2: Run risk analysis — compact prompt to avoid token truncation
-  document.getElementById('genLabel').textContent = 'Analysing policies…';
+  // Step 2: Call complete — backend does real analysis, saves to Drive/Sheets, sends email
+  // Show a non-blocking "Finalising..." indicator on the sidebar
+  document.getElementById('irdSalesBrief').innerHTML = '<span style="color:var(--muted);font-style:italic;">Finalising analysis…</span>';
+  document.getElementById('irdImplNotes').innerHTML = '<span style="color:var(--muted);font-style:italic;">Loading…</span>';
+  document.getElementById('irdCsmNotes').innerHTML  = '<span style="color:var(--muted);font-style:italic;">Loading…</span>';
+  document.getElementById('irdStatDole').textContent = '…';
+  document.getElementById('irdStatRc').textContent   = '…';
+  document.getElementById('irdStatCrf').textContent  = '…';
+
   try {
-    // Summarise each section to max 300 chars to keep the payload small
-    var compact = {};
-    Object.keys(sectionSummaries).forEach(function(k) {
-      var t = sectionSummaries[k] || '';
-      compact[k] = t.length > 300 ? t.substring(0, 297) + '...' : t;
-    });
-    var analysisPayload = 'You are Orca. Analyse these timekeeping policies for ' + (prospectData.companyName || 'this company') + '. Return ONLY a JSON object — no markdown, no text outside the JSON.\n\nKeep each string field SHORT (under 120 chars). Limit each array to max 3 items. Each item title max 60 chars, detail max 100 chars.\n\nRequired JSON shape (do not add extra keys):\n{"riskLevel":"amber","riskReason":"short sentence","salesBrief":"2 sentences max","doleFlags":[{"title":"short","detail":"short"}],"requiredConfirmations":[{"title":"short","detail":"short"}],"crfItems":[{"title":"short","detail":"short"}],"implNotes":["short note"],"csmNotes":["short note"]}\n\nriskLevel must be exactly: green, amber, or red.\n\nPolicies:\n' + JSON.stringify(compact);
+    var conversationLog = conversationHistory.map(function(m) {
+      return (m.role === 'assistant' ? 'Orca' : (prospectData.contactName || 'Prospect')) + ':\n' + m.content;
+    }).join('\n\n');
 
-    var analysisResp = await fetch(EDGE_FUNCTION_URL, {
+    var resp = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
-      body: JSON.stringify({ type: 'extract', transcript: analysisPayload, systemPrompt: 'Return ONLY a valid compact JSON object. No markdown. No preamble. Keep all string values under 120 characters.' })
+      body: JSON.stringify({ type: 'complete', interviewData: {
+        companyName:   prospectData.companyName,
+        contactName:   prospectData.contactName,
+        jobTitle:      prospectData.jobTitle,
+        email:         prospectData.email,
+        salesRep:      prospectData.salesRep || '',
+        sessionDate:   prospectData.sessionDate || '',
+        timelogs:      sectionSummaries.timelogs      || '',
+        approval:      sectionSummaries.approval      || '',
+        work_schedule: sectionSummaries.work_schedule || '',
+        computation:   sectionSummaries.computation   || '',
+        leaves:        sectionSummaries.leaves        || '',
+        overtime:      sectionSummaries.overtime      || '',
+        holidays:      sectionSummaries.holidays      || '',
+        other:         sectionSummaries.other         || '',
+        inputMode: 'transcript',
+        conversationLog: conversationLog,
+      }})
     });
-    var analysisData = await analysisResp.json();
-    var rawAnalysis = analysisData.reply || '';
-    console.log('IRD analysis raw (first 800):', rawAnalysis.substring(0, 800));
 
-    // Robust JSON extraction — find outermost { }
-    var cleaned = rawAnalysis.replace(/```json|```/g, '').trim();
-    var s = cleaned.indexOf('{');
-    var e2 = cleaned.lastIndexOf('}');
-    if (s === -1 || e2 === -1) throw new Error('No JSON object found in response');
-    cleaned = cleaned.substring(s, e2 + 1);
+    var result = await resp.json();
 
-    // Attempt parse — if it fails try to salvage truncated JSON
-    var irdData;
-    try {
-      irdData = JSON.parse(cleaned);
-    } catch(parseErr) {
-      console.warn('JSON parse failed, attempting salvage:', parseErr.message);
-      // Extract what we can with regex fallbacks
-      irdData = salvageIrdJson(cleaned);
-    }
-    populateIrdScreen(irdData);
-  } catch(err) {
-    console.error('IRD analysis error (full):', err);
-    document.getElementById('irdSalesBrief').textContent = 'Sections captured. Risk analysis failed — see console. Error: ' + err.message;
-  }
-
-  // Step 3: Save to Drive + Sheets
-  document.getElementById('genLabel').textContent = 'Saving to Drive…';
-  try {
-    var saveResult = await saveAndNotify(sectionSummaries);
-    if (saveResult && saveResult.irdDocUrl) {
-      irdDocUrl = saveResult.irdDocUrl;
+    // Populate Drive link
+    if (result.irdDocUrl) {
+      irdDocUrl = result.irdDocUrl;
       document.getElementById('irdDriveLink').href = irdDocUrl;
       document.getElementById('irdDriveLinkText').textContent = 'IRD — ' + prospectData.companyName;
     }
-  } catch(e) { console.error('Save error:', e); }
 
-  document.getElementById('generatingOverlay').classList.remove('active');
-  document.getElementById('genSublabel').textContent = 'This takes about 20 seconds';
-  showScreen('s-ird');
+    // Populate sidebar from backend irdData
+    if (result.irdData) {
+      populateIrdScreen(result.irdData);
+    } else {
+      document.getElementById('irdSalesBrief').textContent = 'IRD saved. Email sent to SolCon and Sales Rep.';
+      document.getElementById('irdStatDole').textContent = '—';
+      document.getElementById('irdStatRc').textContent   = '—';
+      document.getElementById('irdStatCrf').textContent  = '—';
+    }
+
+  } catch(err) {
+    console.error('complete() error:', err);
+    document.getElementById('irdSalesBrief').textContent = 'IRD saved to Drive. Email sent. Sidebar unavailable: ' + err.message;
+  }
 }
 
 // Salvage partial JSON when truncation causes parse failure
@@ -1553,15 +1559,23 @@ async function saveAndNotify(summaries) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
       body: JSON.stringify({ type: 'complete', interviewData: {
-        companyName: prospectData.companyName, contactName: prospectData.contactName,
-        jobTitle: prospectData.jobTitle, email: prospectData.email,
-        salesRep: prospectData.salesRep || '',
-        timelogs: sectionSummaries.timelogs || '', approval: sectionSummaries.approval || '',
-        work_schedule: sectionSummaries.work_schedule || '', computation: sectionSummaries.computation || '',
-        leaves: sectionSummaries.leaves || '', overtime: sectionSummaries.overtime || '',
-        holidays: sectionSummaries.holidays || '', other: sectionSummaries.other || '',
-        fullSummary: JSON.stringify(summaries),
-        inputMode: 'interview', conversationLog: conversationLog,
+        companyName:   prospectData.companyName,
+        contactName:   prospectData.contactName,
+        jobTitle:      prospectData.jobTitle,
+        email:         prospectData.email,
+        salesRep:      prospectData.salesRep || '',
+        sessionDate:   prospectData.sessionDate || '',
+        timelogs:      sectionSummaries.timelogs      || '',
+        approval:      sectionSummaries.approval      || '',
+        work_schedule: sectionSummaries.work_schedule || '',
+        computation:   sectionSummaries.computation   || '',
+        leaves:        sectionSummaries.leaves        || '',
+        overtime:      sectionSummaries.overtime      || '',
+        holidays:      sectionSummaries.holidays      || '',
+        other:         sectionSummaries.other         || '',
+        fullSummary:   JSON.stringify(summaries),
+        inputMode:     'interview',
+        conversationLog: conversationLog,
       }})
     });
     var result = await resp.json();
