@@ -1034,12 +1034,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         </button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px;">
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Total</div><div style="font-size:24px;font-weight:600;color:var(--near-black);">28</div><div style="font-size:11px;color:var(--muted);">All sessions</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Done</div><div style="font-size:24px;font-weight:600;color:var(--green);">18</div><div style="font-size:11px;color:var(--muted);">Ready to move</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">In Progress</div><div style="font-size:24px;font-weight:600;color:#F59E0B;">7</div><div style="font-size:11px;color:var(--muted);">Being worked</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Stuck</div><div style="font-size:24px;font-weight:600;color:#DC2626;">3</div><div style="font-size:11px;color:var(--muted);">Waiting on client</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Green</div><div style="font-size:24px;font-weight:600;color:var(--green);">14</div><div style="font-size:11px;color:var(--muted);">Low risk</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Amber / Red</div><div style="font-size:24px;font-weight:600;color:#DC2626;">14</div><div style="font-size:11px;color:var(--muted);">Need review</div></div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Total</div><div style="font-size:24px;font-weight:600;color:var(--near-black);" id="archiveStat-total">0</div><div style="font-size:11px;color:var(--muted);">All sessions</div></div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Done</div><div style="font-size:24px;font-weight:600;color:var(--green);" id="archiveStat-done">0</div><div style="font-size:11px;color:var(--muted);">Ready to move</div></div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">In Progress</div><div style="font-size:24px;font-weight:600;color:#F59E0B;" id="archiveStat-inprog">0</div><div style="font-size:11px;color:var(--muted);">Being worked</div></div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Stuck</div><div style="font-size:24px;font-weight:600;color:#DC2626;" id="archiveStat-stuck">0</div><div style="font-size:11px;color:var(--muted);">Waiting on client</div></div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Green</div><div style="font-size:24px;font-weight:600;color:var(--green);" id="archiveStat-green">0</div><div style="font-size:11px;color:var(--muted);">Low risk</div></div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Amber / Red</div><div style="font-size:24px;font-weight:600;color:#DC2626;" id="archiveStat-amberred">0</div><div style="font-size:11px;color:var(--muted);">Need review</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
         <div style="flex:1;min-width:220px;position:relative;">
@@ -1063,45 +1063,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">IRD</div>
         </div>
         <div id="archiveTableBody">
-          <div class="archive-row" onclick="showScreen('s-ird')">
-            <div><div style="font-size:13px;font-weight:500;color:var(--near-black);">Bigbys Quality Food Corp</div><div style="font-size:11px;color:var(--muted);">3 flags</div></div>
-            <div><div style="font-size:13px;color:var(--mid);">Mai Santos</div><div style="font-size:11px;color:var(--muted);">Payroll Officer</div></div>
-            <div style="font-size:13px;color:var(--mid);">Feb 24, 2026</div>
-            <div style="font-size:13px;color:var(--mid);">Christine Garcia</div>
-            <div style="font-size:13px;color:var(--mid);">VK</div>
-            <div><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:#FFFBEB;border:1px solid #FDE68A;color:#B45309;"><span style="width:6px;height:6px;border-radius:50%;background:#F59E0B;display:inline-block;"></span>Amber</span></div>
-            <div><span class="status-badge in-progress">In Progress</span></div>
-            <div><a onclick="event.stopPropagation();showScreen('s-ird')" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--green-light);border:1px solid var(--green-mid);color:var(--green);cursor:pointer;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a></div>
-          </div>
-          <div class="archive-row">
-            <div><div style="font-size:13px;font-weight:500;color:var(--near-black);">Jollibee Foods Corporation</div><div style="font-size:11px;color:var(--muted);">0 flags</div></div>
-            <div><div style="font-size:13px;color:var(--mid);">Rica Reyes</div><div style="font-size:11px;color:var(--muted);">HR Director</div></div>
-            <div style="font-size:13px;color:var(--mid);">Feb 20, 2026</div>
-            <div style="font-size:13px;color:var(--mid);">Christine Garcia</div>
-            <div style="font-size:13px;color:var(--mid);">VK</div>
-            <div><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:var(--green-light);border:1px solid var(--green-mid);color:var(--green-dark);"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span>Green</span></div>
-            <div><span class="status-badge done">Done</span></div>
-            <div><a style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--green-light);border:1px solid var(--green-mid);color:var(--green);cursor:pointer;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a></div>
-          </div>
-          <div class="archive-row">
-            <div><div style="font-size:13px;font-weight:500;color:var(--near-black);">SM Retail Group</div><div style="font-size:11px;color:var(--muted);">5 flags</div></div>
-            <div><div style="font-size:13px;color:var(--mid);">Tony Cruz</div><div style="font-size:11px;color:var(--muted);">HR Manager</div></div>
-            <div style="font-size:13px;color:var(--mid);">Feb 18, 2026</div>
-            <div style="font-size:13px;color:var(--mid);">Rico Santos</div>
-            <div style="font-size:13px;color:var(--mid);">Christine Garcia</div>
-            <div><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:#FEF2F2;border:1px solid #FECACA;color:#DC2626;"><span style="width:6px;height:6px;border-radius:50%;background:#DC2626;display:inline-block;"></span>Red</span></div>
-            <div><span class="status-badge stuck">Stuck</span></div>
-            <div><a style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--green-light);border:1px solid var(--green-mid);color:var(--green);cursor:pointer;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a></div>
-          </div>
+          <!-- Populated by renderArchiveTable() -->
         </div>
         <div style="padding:12px 20px;border-top:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);">
-          <div style="font-size:12px;color:var(--muted);">Showing 3 of 28 sessions</div>
-          <div style="display:flex;gap:6px;">
-            <div style="padding:5px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--muted);background:white;cursor:pointer;">Previous</div>
-            <div style="padding:5px 12px;border:1.5px solid var(--green);border-radius:7px;font-size:12px;color:var(--green);background:var(--green-light);font-weight:600;cursor:pointer;">1</div>
-            <div style="padding:5px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--muted);background:white;cursor:pointer;">2</div>
-            <div style="padding:5px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--muted);background:white;cursor:pointer;">Next</div>
-          </div>
+          <div style="font-size:12px;color:var(--muted);" id="archiveFooterCount">Loading…</div>
         </div>
       </div>
     </div>
@@ -1673,20 +1638,12 @@ function exportToSheets() {
 // ─────────────────────────────────────────
 var SESSION_STORE_KEY = 'orca_recent_sessions';
 
-var SEED_SESSIONS = [
-  { id: 'seed-1', company: 'Bigbys Quality Food Corp', contact: 'Mai Santos', date: 'Feb 24, 2026', flags: 3, risk: 'amber', status: 'in-progress', note: 'Set by Orca · awaiting device confirmation' },
-  { id: 'seed-2', company: 'Jollibee Foods Corporation', contact: 'Rica Reyes', date: 'Feb 20, 2026', flags: 0, risk: 'green', status: 'done', note: 'Set by Orca · all sections clean' },
-  { id: 'seed-3', company: 'SM Retail Group', contact: 'Tony Cruz', date: 'Feb 18, 2026', flags: 5, risk: 'red', status: 'stuck', note: 'Overridden by SolCon · waiting on client' },
-  { id: 'seed-4', company: 'Ayala Land Inc.', contact: 'Grace Tan', date: 'Feb 14, 2026', flags: 1, risk: 'green', status: 'done', note: 'Set by Orca · all sections clean' },
-];
-
 function getSessionStore() {
   try {
     var raw = localStorage.getItem(SESSION_STORE_KEY);
     if (raw) return JSON.parse(raw);
   } catch(e) {}
-  localStorage.setItem(SESSION_STORE_KEY, JSON.stringify(SEED_SESSIONS));
-  return SEED_SESSIONS;
+  return [];
 }
 
 function saveSessionStore(sessions) {
@@ -2265,10 +2222,15 @@ function populateIrdScreen(irdData) {
     id: 'session-' + Date.now(),
     company: prospectData.companyName || 'Unknown Company',
     contact: prospectData.contactName || '',
+    jobTitle: prospectData.jobTitle || '',
+    salesRep: prospectData.salesRep || '',
     date: prospectData.sessionDate || new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
     flags: (irdData.doleFlags||[]).length,
+    totalFlags: totalFlags,
     risk: irdData.riskLevel || 'amber',
     status: 'in-progress',
+    inputMode: 'transcript',
+    irdDocUrl: irdDocUrl || '',
     note: 'Set by Orca · ' + totalFlags + ' total item' + (totalFlags !== 1 ? 's' : '') + ' to review'
   });
 
@@ -3956,11 +3918,150 @@ function buildSectionAccuracy(corrections) {
   }
 }
 
-// Hook renderTrends into navigation
+// ── Archive table renderer ────────────────────────────────────
+function renderArchiveTable(filterStatus, searchQuery) {
+  var sessions = getSessionStore();
+  var body = document.getElementById('archiveTableBody');
+  var footer = document.getElementById('archiveFooterCount');
+  if (!body) return;
+
+  // Update summary stats
+  var statMap = {
+    'archiveStat-total':    sessions.length,
+    'archiveStat-done':     sessions.filter(function(s){return s.status==='done';}).length,
+    'archiveStat-inprog':   sessions.filter(function(s){return s.status==='in-progress';}).length,
+    'archiveStat-stuck':    sessions.filter(function(s){return s.status==='stuck';}).length,
+    'archiveStat-green':    sessions.filter(function(s){return s.risk==='green';}).length,
+    'archiveStat-amberred': sessions.filter(function(s){return s.risk==='amber'||s.risk==='red';}).length
+  };
+  Object.keys(statMap).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = statMap[id];
+  });
+
+  // Filter
+  var filtered = sessions;
+  if (filterStatus && filterStatus !== 'all') {
+    filtered = filtered.filter(function(s) { return s.status === filterStatus; });
+  }
+  if (searchQuery && searchQuery.trim()) {
+    var q = searchQuery.toLowerCase();
+    filtered = filtered.filter(function(s) {
+      return (s.company||'').toLowerCase().includes(q) || (s.contact||'').toLowerCase().includes(q);
+    });
+  }
+
+  if (filtered.length === 0) {
+    var msg = sessions.length === 0
+      ? 'No sessions yet. Generate an IRD to see it appear here.'
+      : 'No sessions match your filters.';
+    body.innerHTML = '<div style="padding:40px;text-align:center;font-size:13px;color:var(--muted);">' + msg + '</div>';
+    if (footer) footer.textContent = 'Showing 0 sessions';
+    return;
+  }
+
+  var riskCfg = {
+    green: { bg:'var(--green-light)', border:'var(--green-mid)', color:'var(--green-dark)', dot:'var(--green)', label:'Green' },
+    amber: { bg:'#FFFBEB', border:'#FDE68A', color:'#B45309', dot:'#F59E0B', label:'Amber' },
+    red:   { bg:'#FEF2F2', border:'#FECACA', color:'#DC2626', dot:'#DC2626', label:'Red' }
+  };
+  var statusLabels = { done:'Done', 'in-progress':'In Progress', stuck:'Stuck' };
+
+  body.innerHTML = '';
+  filtered.forEach(function(s) {
+    var flagCount = s.totalFlags || s.flags || 0;
+    var flagLabel = flagCount === 1 ? '1 flag' : flagCount + ' flags';
+    var rc = riskCfg[s.risk] || riskCfg.amber;
+    var modeText = s.inputMode === 'transcript' ? 'transcript' : s.inputMode === 'interview' ? 'self-serve' : '';
+
+    var row = document.createElement('div');
+    row.className = 'archive-row';
+    row.dataset.sessionId = s.id;
+    row.dataset.status = s.status || 'in-progress';
+
+    // Col 1: Company + flags
+    var col1 = document.createElement('div');
+    col1.innerHTML = '<div style="font-size:13px;font-weight:500;color:var(--near-black);">' + (s.company||'—') + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);">' + flagLabel + (modeText ? ' · <span style="font-size:10px;">' + modeText + '</span>' : '') + '</div>';
+
+    // Col 2: Contact + title
+    var col2 = document.createElement('div');
+    col2.innerHTML = '<div style="font-size:13px;color:var(--mid);">' + (s.contact||'—') + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);">' + (s.jobTitle||'') + '</div>';
+
+    // Col 3: Date
+    var col3 = document.createElement('div');
+    col3.style.cssText = 'font-size:13px;color:var(--mid);';
+    col3.textContent = s.date || '—';
+
+    // Col 4: Sales Rep
+    var col4 = document.createElement('div');
+    col4.style.cssText = 'font-size:13px;color:var(--mid);';
+    col4.textContent = s.salesRep || '—';
+
+    // Col 5: SolCon (always VK for now)
+    var col5 = document.createElement('div');
+    col5.style.cssText = 'font-size:13px;color:var(--mid);';
+    col5.textContent = 'VK';
+
+    // Col 6: Risk badge
+    var col6 = document.createElement('div');
+    var riskSpan = document.createElement('span');
+    riskSpan.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:' + rc.bg + ';border:1px solid ' + rc.border + ';color:' + rc.color + ';';
+    var dot = document.createElement('span');
+    dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:' + rc.dot + ';display:inline-block;';
+    riskSpan.appendChild(dot);
+    riskSpan.appendChild(document.createTextNode(rc.label));
+    col6.appendChild(riskSpan);
+
+    // Col 7: Status badge
+    var col7 = document.createElement('div');
+    var statusSpan = document.createElement('span');
+    statusSpan.className = 'status-badge ' + (s.status||'in-progress');
+    statusSpan.textContent = statusLabels[s.status] || 'In Progress';
+    statusSpan.addEventListener('click', function(e) {
+      e.stopPropagation();
+      cycleStatus(statusSpan, s.id);
+    });
+    col7.appendChild(statusSpan);
+
+    // Col 8: Drive link
+    var col8 = document.createElement('div');
+    if (s.irdDocUrl) {
+      var driveLink = document.createElement('a');
+      driveLink.href = s.irdDocUrl;
+      driveLink.target = '_blank';
+      driveLink.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--green-light);border:1px solid var(--green-mid);color:var(--green);cursor:pointer;';
+      driveLink.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      driveLink.addEventListener('click', function(e) { e.stopPropagation(); });
+      col8.appendChild(driveLink);
+    } else {
+      col8.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--bg);border:1px solid var(--border);color:var(--muted);" title="No Drive doc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>';
+    }
+
+    row.appendChild(col1);
+    row.appendChild(col2);
+    row.appendChild(col3);
+    row.appendChild(col4);
+    row.appendChild(col5);
+    row.appendChild(col6);
+    row.appendChild(col7);
+    row.appendChild(col8);
+
+    // Row click → open session
+    row.addEventListener('click', function() { openSession(s.id); });
+    body.appendChild(row);
+  });
+
+  if (footer) footer.textContent = 'Showing ' + filtered.length + ' of ' + sessions.length + ' session' + (sessions.length !== 1 ? 's' : '');
+}
+
+// Hook renderTrends + renderArchiveTable into navigation
 var _origSolconNav = solconNav;
 solconNav = function(id, clickedEl) {
   _origSolconNav(id, clickedEl);
   if (id === 's-trends') renderTrends();
+  if (id === 's-archive') renderArchiveTable();
 };
 
 // Init on load
