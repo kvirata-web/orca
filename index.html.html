@@ -787,7 +787,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     </div>
     <div class="solcon-user">
       <div class="solcon-avatar" id="solconAvatarMain">KV</div>
-      <div class="solcon-username" id="solconEmailMain"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6e0518071c0f1a0f2e1d1e1c011b1a401e06">[email&#160;protected]</a></div>
+      <div class="solcon-username" id="solconEmailMain">kvirata@sprout.ph</div>
     </div>
   </div>
   <div class="solcon-body">
@@ -901,7 +901,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <div class="ird-title-row">
       <div>
         <div class="ird-company" id="irdCompany">Bigbys Quality Food Corporation</div>
-        <div class="ird-meta-row" id="irdMeta">Mai Santos · Payroll Officer · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d9b4b8b099bbb0bebba0aaf7bab6b4">[email&#160;protected]</a> · Feb 24, 2026 · Sprout POC: Christine Garcia</div>
+        <div class="ird-meta-row" id="irdMeta">Mai Santos · Payroll Officer · mai@bigbys.com · Feb 24, 2026 · Sprout POC: Christine Garcia</div>
       </div>
       <div class="risk-badge amber" id="irdRiskBadge"><div class="risk-badge-dot"></div><span id="irdRiskText">Amber — Review Required</span></div>
     </div>
@@ -1020,7 +1020,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
         </div>
       </div>
-      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="513a273823302530112221233e24257f2139">[email&#160;protected]</a></div></div>
+      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
     </div>
     <div style="padding:40px 48px;max-width:1200px;margin:0 auto;width:100%;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;">
@@ -1093,7 +1093,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
         </div>
       </div>
-      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0a617c63786b7e6b4a797a78657f7e247a62">[email&#160;protected]</a></div></div>
+      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
     </div>
     <div style="padding:40px 48px;max-width:860px;margin:0 auto;width:100%;">
       <div class="solcon-page-title" style="margin-bottom:4px;">Settings</div>
@@ -1179,7 +1179,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
         </div>
       </div>
-      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a9c2dfc0dbc8ddc8e9dad9dbc6dcdd87d9c1">[email&#160;protected]</a></div></div>
+      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
     </div>
     <div style="padding:40px 48px;max-width:1060px;margin:0 auto;width:100%;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;">
@@ -1338,7 +1338,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item active" onclick="solconNav('s-trends',this)">Trends</div>
         </div>
       </div>
-      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6308150a11021702231013110c16174d130b">[email&#160;protected]</a></div></div>
+      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
     </div>
     <div style="padding:40px 48px;max-width:1200px;margin:0 auto;width:100%;">
       <div style="margin-bottom:28px;">
@@ -1545,7 +1545,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ─────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────
@@ -1954,7 +1954,7 @@ async function processTranscriptSolCon() {
   startExtractProgress();
 
   var trimmed = transcript.length > 20000 ? transcript.substring(0, 20000) + '\n[transcript trimmed]' : transcript;
-  var extractPrompt = 'You are Orca, an expert Sprout HR Solution Consultant. Extract the timekeeping policies from this discovery call transcript and return a JSON object with exactly these 10 keys:\n\ntimelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, salesRep, contactName\n\n## FORMAT RULES (follow exactly):\n\n1. OPENING SENTENCE: Start each section with one sentence giving the overall picture.\n2. BULLET POINTS: Use bullet points for any rule that has conditions, tiers, or multiple values. One bullet per rule. Write bullets as \\n• tier/rule text\n3. TIERED/CONDITIONAL RULES: Always write each tier on its own bullet. NEVER collapse tiers into one sentence.\n4. LENGTH: Brief and scannable — like a form field, not a report. Not more than 1 opening sentence + necessary bullets.\n5. NEVER mix unrelated policies from different sections into the same section.\n\n## FORMAT PER SECTION (strict boundaries — only include what is listed):\n\n- timelogs: Device type(s) + integration method (manual upload / API / web clock-in) + who collates and how often. NOTHING ELSE.\n  Example: "Biometrics at branches (download biologs per device) + Bundy clock at most branches. Manual upload to payroll every cutoff by branch payroll officer."\n\n- approval: ALWAYS a single arrow-chain line. Format: EE \u2192 IM \u2192 Role \u2192 Role. Add short parenthetical only if both approvers are required or there is a routing exception. NO PARAGRAPHS.\n  Example: "EE \u2192 IM \u2192 Restaurant Manager \u2192 VP Ops + VP Admin (both required)"\n\n- work_schedule: One bullet per schedule type with key parameters (start/end times, days, break). Include who it applies to.\n  DO NOT INCLUDE: deduction rules, grace period, or tardiness penalties.\n\n- computation: One opening sentence + bullets for tiered/conditional rules (grace period, tardiness deductions, break monitoring).\n  DO NOT INCLUDE: leave credit deductions, payroll cut-off timing, holiday pay computation, or LWOP rules.\n\n- leaves: One opening sentence + bullets for each leave type, tenure tier, or renewal rule.\n  DO NOT INCLUDE: payroll deduction rules or computation methods.\n\n- overtime: 1-2 sentences. Minimum OT duration, approval requirement, rate basis.\n  DO NOT INCLUDE: holiday pay or rest day rules.\n\n- holidays: 1-2 sentences + one bullet per rule if multiple apply. Include day-before/after policy and rate.\n  DO NOT INCLUDE: overtime multiplier for regular days.\n\n- other: Bullets for payroll items, allowances, deductions, government contributions, 13th month, sub-companies, special cases. One bullet per item.\n\n## FEW-SHOT EXAMPLES (match this style exactly):\n\ntimelogs example:\n"Biometrics at branches + Bundy clock at most branches. Branch payroll officer downloads biologs and uploads manually every cutoff."\n\ncomputation example:\n"No grace period. Tardiness is deducted in conditional tiers:\\n\u2022 1-30 mins late = 30-minute deduction\\n\u2022 31-60 mins late = 1-hour deduction\\n\u2022 Increments of 30 minutes thereafter.\\n\u2022 Break monitoring supported via macro (may entail additional cost)."\n\napproval example:\n"EE \u2192 IM \u2192 Restaurant Manager \u2192 VP Ops + VP Admin (both required)"\n\nleaves example:\n"5-day SIL given upfront upon completing 1 year. Resets every January.\\n\u2022 VL: 5 days, accrual monthly\\n\u2022 SL: 5 days, accrual monthly\\n\u2022 Half-day use supported.\\n\u2022 Unused credits: max divided by 2 are monetizable."\n\nwork_schedule example:\n"Three schedule types in use:\\n\u2022 Branch fixed: 5AM-2PM or 6AM-3PM, 6-day workweek, varying rest days\\n\u2022 Shift-based (long break): 1 break of 2-4.5 hrs depending on assignment\\n\u2022 Head office CWW: 8AM-6PM Mon-Fri (10 hrs/day)"\n\nsalesRep: name of the Sprout SolCon or sales rep who conducted the session (NOT the client). Empty string if unclear.\ncontactName: name of the CLIENT contact being interviewed (NOT the SolCon). Empty string if unclear.\n\nIf a topic was not discussed write "Not discussed in this session."\n\nReturn ONLY valid JSON. No markdown, no backticks.\n\nTranscript:\n' + trimmed;
+  var extractPrompt = 'You are Orca, an expert Sprout HR Solution Consultant. Extract the timekeeping policies from this discovery call transcript and return a JSON object with exactly these 10 keys:\n\ntimelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, salesRep, contactName\n\n## FORMAT RULES (follow exactly):\n1. Start each section with one opening sentence.\n2. Use bullet points (\\n\u2022) for any tiered, conditional, or multi-value rules. One bullet per rule.\n3. NEVER collapse tiers into one sentence.\n4. Brief and scannable. Not more than 1 opening sentence + necessary bullets.\n5. NEVER mix policies from different sections.\n\n## SECTION BOUNDARIES (strict):\n- timelogs: Device type(s) + integration method (manual upload / API / web) + who collates. Example: "Biometrics at branches. Branch payroll officer downloads biologs and uploads manually every cutoff."\n- approval: ALWAYS a single arrow-chain line only. Example: "EE \u2192 IM \u2192 Restaurant Manager \u2192 VP Ops + VP Admin (both required)"\n- work_schedule: One bullet per schedule type (times, days, who). DO NOT include tardiness or grace period rules.\n- computation: Grace period + tardiness tiers + break monitoring ONLY. DO NOT include leave deductions or CWW rules.\n- leaves: Leave types, tenure rules, renewal, monetization. DO NOT include payroll computation.\n- overtime: Minimum duration, approval, rate. DO NOT include holiday pay.\n- holidays: Day-before/after rule, rates. One bullet per rule.\n- other: Payroll items, allowances, deductions, gov contributions, 13th month, sub-companies. One bullet each.\n\n## FEW-SHOT EXAMPLES:\ncomputation: "No grace period. Tardiness deducted in tiers:\\n\u2022 1-30 mins late = 30-min deduction\\n\u2022 31-60 mins late = 1-hr deduction\\n\u2022 Break monitoring via macro (may entail additional cost)."\napproval: "EE \u2192 IM \u2192 Restaurant Manager \u2192 VP Ops + VP Admin (both required)"\nleaves: "5-day SIL upon completing 1 year, resets every January.\\n\u2022 Half-day use supported.\\n\u2022 Unused credits: max divided by 2 are monetizable."\n\nsalesRep: Sprout SolCon name (NOT the client). Empty string if unclear.\ncontactName: CLIENT contact name (NOT the SolCon). Empty string if unclear.\n\nIf a topic was not discussed write "Not discussed in this session."\nReturn ONLY valid JSON. No markdown, no backticks.\n\nTranscript:\n' + trimmed;
 
   try {
     var extractResp = await fetch(EDGE_FUNCTION_URL, {
@@ -4046,4 +4046,34 @@ function renderArchiveTable(filterStatus, searchQuery) {
 
     row.appendChild(col1);
     row.appendChild(col2);
-    ro
+    row.appendChild(col3);
+    row.appendChild(col4);
+    row.appendChild(col5);
+    row.appendChild(col6);
+    row.appendChild(col7);
+    row.appendChild(col8);
+
+    // Row click → open session
+    row.addEventListener('click', function() { openSession(s.id); });
+    body.appendChild(row);
+  });
+
+  if (footer) footer.textContent = 'Showing ' + filtered.length + ' of ' + sessions.length + ' session' + (sessions.length !== 1 ? 's' : '');
+}
+
+// Hook renderTrends + renderArchiveTable into navigation
+var _origSolconNav = solconNav;
+solconNav = function(id, clickedEl) {
+  _origSolconNav(id, clickedEl);
+  if (id === 's-trends') renderTrends();
+  if (id === 's-archive') renderArchiveTable();
+};
+
+// Init on load
+document.addEventListener('DOMContentLoaded', function() {
+  updateRuleQueueBadge();
+});
+
+</script>
+</body>
+</html>
