@@ -679,6 +679,119 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 .tic-stat { font-size: 28px; font-weight: 600; color: var(--green); font-family: 'DM Serif Display', serif; margin-bottom: 2px; }
 .tic-stat-label { font-size: 12px; color: var(--muted); margin-bottom: 0; }
 .tic-text { font-size: 13px; color: white; line-height: 1.65; font-weight: 300; }
+
+/* ── ORCA BRIEFING STRIP ── */
+.orca-strip {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 20px;
+  animation: stripFadeIn .5s ease both;
+}
+@keyframes stripFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.orca-strip-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 20px;
+  border-right: 1.5px solid var(--border);
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+.orca-strip-avatar {
+  width: 34px;
+  height: 34px;
+  background: var(--near-black);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.orca-strip-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 2px solid white;
+  animation: avatarPulse 3s ease-in-out infinite;
+}
+@keyframes avatarPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: .8; }
+}
+.orca-strip-name { font-size: 12px; font-weight: 600; color: var(--near-black); }
+.orca-strip-status { font-size: 10px; color: var(--green); font-weight: 500; }
+.orca-strip-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+.orca-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  transition: all .15s;
+  cursor: default;
+}
+.orca-chip:hover { border-color: var(--green); background: var(--green-light); }
+.orca-chip-num {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--near-black);
+  line-height: 1;
+}
+.orca-chip-num.c-amber { color: #F59E0B; }
+.orca-chip-num.c-red   { color: #DC2626; }
+.orca-chip-num.c-green { color: var(--green); }
+.orca-chip-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.orca-strip-message {
+  padding-left: 20px;
+  border-left: 1.5px solid var(--border);
+  margin-left: 10px;
+  flex-shrink: 0;
+  max-width: 260px;
+}
+.orca-strip-msg-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 3px;
+}
+.orca-strip-msg-text {
+  font-size: 12px;
+  color: var(--mid);
+  line-height: 1.55;
+  font-weight: 300;
+}
+.orca-strip-msg-text strong { color: var(--near-black); font-weight: 500; }
+
 </style>
 </head>
 <body>
@@ -1001,13 +1114,23 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           Export to Google Sheets
         </button>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px;">
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Total</div><div style="font-size:24px;font-weight:600;color:var(--near-black);" id="archiveStat-total">0</div><div style="font-size:11px;color:var(--muted);">All sessions</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Done</div><div style="font-size:24px;font-weight:600;color:var(--green);" id="archiveStat-done">0</div><div style="font-size:11px;color:var(--muted);">Ready to move</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">In Progress</div><div style="font-size:24px;font-weight:600;color:#F59E0B;" id="archiveStat-inprog">0</div><div style="font-size:11px;color:var(--muted);">Being worked</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Stuck</div><div style="font-size:24px;font-weight:600;color:#DC2626;" id="archiveStat-stuck">0</div><div style="font-size:11px;color:var(--muted);">Waiting on client</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Green</div><div style="font-size:24px;font-weight:600;color:var(--green);" id="archiveStat-green">0</div><div style="font-size:11px;color:var(--muted);">Low risk</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Amber / Red</div><div style="font-size:24px;font-weight:600;color:#DC2626;" id="archiveStat-amberred">0</div><div style="font-size:11px;color:var(--muted);">Need review</div></div>
+      <!-- ORCA BRIEFING STRIP -->
+      <div class="orca-strip" id="orcaBriefingStrip">
+        <div class="orca-strip-identity">
+          <div class="orca-strip-avatar">
+            <svg viewBox="0 0 24 24" fill="none" style="width:14px;height:14px;"><circle cx="12" cy="12" r="4" fill="white"/></svg>
+          </div>
+          <div>
+            <div class="orca-strip-name">Orca</div>
+            <div class="orca-strip-status">● Active</div>
+          </div>
+        </div>
+        <div class="orca-strip-chips" id="orcaChips">
+          <!-- Populated by buildOrcaBriefing() -->
+        </div>
+        <div class="orca-strip-message" id="orcaMessage">
+          <!-- Populated by buildOrcaBriefing() -->
+        </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
         <div style="flex:1;min-width:220px;position:relative;">
@@ -3937,25 +4060,100 @@ function buildSectionAccuracy(corrections) {
 }
 
 // ── Archive table renderer ────────────────────────────────────
+
+// ─────────────────────────────────────────
+// ORCA BRIEFING STRIP
+// ─────────────────────────────────────────
+function buildOrcaBriefing() {
+  var chipsEl   = document.getElementById('orcaChips');
+  var messageEl = document.getElementById('orcaMessage');
+  if (!chipsEl || !messageEl) return;
+
+  var sessions = getSessionStore();
+  var now = Date.now();
+  var ONE_DAY = 86400000;
+
+  // Counts
+  var total    = sessions.length;
+  var done     = sessions.filter(function(s) { return s.status === 'done'; }).length;
+  var inProg   = sessions.filter(function(s) { return s.status === 'in-progress'; }).length;
+  var stuck    = sessions.filter(function(s) { return s.status === 'stuck'; }).length;
+  var amberRed = sessions.filter(function(s) { return s.risk === 'amber' || s.risk === 'red'; }).length;
+
+  // Find oldest stuck session (by stored id timestamp)
+  var stuckSessions = sessions.filter(function(s) { return s.status === 'stuck'; });
+  var oldestStuck   = null;
+  var maxAge        = 0;
+  stuckSessions.forEach(function(s) {
+    var ts = parseInt((s.id || '').replace('session-', '')) || 0;
+    var age = now - ts;
+    if (age > maxAge) { maxAge = age; oldestStuck = s; }
+  });
+
+  // Find most recent session
+  var sorted  = sessions.slice().sort(function(a, b) {
+    return (parseInt((b.id||'').replace('session-',''))||0) - (parseInt((a.id||'').replace('session-',''))||0);
+  });
+  var latest  = sorted[0] || null;
+
+  // Unreviewed amber/red (in-progress or stuck with amber/red risk)
+  var needsReview = sessions.filter(function(s) {
+    return (s.risk === 'amber' || s.risk === 'red') && s.status !== 'done';
+  });
+
+  // ── Build chips ──
+  function chip(num, label, colorClass) {
+    return '<div class="orca-chip"><div class="orca-chip-num ' + colorClass + '">' + num + '</div>' +
+           '<div class="orca-chip-label">' + label + '</div></div>';
+  }
+
+  var chipsHTML = '';
+  chipsHTML += chip(inProg,   'In<br>Progress', inProg  > 0 ? 'c-amber' : '');
+  chipsHTML += chip(stuck,    'Stuck',          stuck   > 0 ? 'c-red'   : '');
+  chipsHTML += chip(needsReview.length, 'Amber/<br>Unreviewed', needsReview.length > 0 ? 'c-amber' : '');
+  chipsHTML += chip(done,     'Done This<br>Month',      done    > 0 ? 'c-green'  : '');
+
+  chipsEl.innerHTML = chipsHTML;
+
+  // ── Build message (Orca's voice) ──
+  var msgLabel = '<div class="orca-strip-msg-label">Orca says</div>';
+  var msgText  = '';
+
+  if (total === 0) {
+    msgText = 'No sessions yet. Generate your first IRD to get started.';
+  } else if (oldestStuck) {
+    var ageDays = Math.floor(maxAge / ONE_DAY);
+    var ageStr  = ageDays >= 2 ? ageDays + ' days' : ageDays === 1 ? 'yesterday' : 'earlier today';
+    var dayName = '';
+    if (ageDays >= 1 && ageDays <= 6) {
+      var d = new Date(parseInt((oldestStuck.id||'').replace('session-',''))||now);
+      dayName = ' since ' + d.toLocaleDateString('en-PH', { weekday: 'long' });
+    }
+    msgText = '<strong>' + (oldestStuck.company || 'A session') + '</strong> has not moved' +
+              (dayName || ' in ' + ageStr) + ' — worth a nudge today.';
+  } else if (needsReview.length > 0) {
+    var names = needsReview.slice(0, 2).map(function(s) { return '<strong>' + (s.company || 'Unknown') + '</strong>'; }).join(' and ');
+    msgText = names + (needsReview.length > 2 ? ' and ' + (needsReview.length - 2) + ' others' : '') +
+              ' flagged amber — not reviewed yet.';
+  } else if (latest) {
+    var latestTs = parseInt((latest.id||'').replace('session-',''))||0;
+    var minsAgo  = Math.floor((now - latestTs) / 60000);
+    var timeStr  = minsAgo < 60 ? minsAgo + ' min ago' : Math.floor(minsAgo/60) + ' hr ago';
+    if (minsAgo > 1440) timeStr = latest.date || 'recently';
+    msgText = 'Last session: <strong>' + (latest.company || 'Unknown') + '</strong> · ' + timeStr + '. ' +
+              (latest.risk === 'green' ? 'Green — good to go.' : 'Check the outstanding items before your next call.');
+  } else {
+    msgText = 'Pipeline looks clear. ' + done + ' session' + (done !== 1 ? 's' : '') + ' done this month.';
+  }
+
+  messageEl.innerHTML = msgLabel + '<div class="orca-strip-msg-text">' + msgText + '</div>';
+}
+
 function renderArchiveTable(filterStatus, searchQuery) {
   var sessions = getSessionStore();
   var body = document.getElementById('archiveTableBody');
   var footer = document.getElementById('archiveFooterCount');
   if (!body) return;
-
-  // Update summary stats
-  var statMap = {
-    'archiveStat-total':    sessions.length,
-    'archiveStat-done':     sessions.filter(function(s){return s.status==='done';}).length,
-    'archiveStat-inprog':   sessions.filter(function(s){return s.status==='in-progress';}).length,
-    'archiveStat-stuck':    sessions.filter(function(s){return s.status==='stuck';}).length,
-    'archiveStat-green':    sessions.filter(function(s){return s.risk==='green';}).length,
-    'archiveStat-amberred': sessions.filter(function(s){return s.risk==='amber'||s.risk==='red';}).length
-  };
-  Object.keys(statMap).forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = statMap[id];
-  });
 
   // Filter
   var filtered = sessions;
@@ -3992,15 +4190,30 @@ function renderArchiveTable(filterStatus, searchQuery) {
     var rc = riskCfg[s.risk] || riskCfg.amber;
     var modeText = s.inputMode === 'transcript' ? 'transcript' : s.inputMode === 'interview' ? 'self-serve' : '';
 
+    // Calculate session age in days
+    var sessionTs  = parseInt((s.id||'').replace('session-','')) || 0;
+    var sessionAge = sessionTs ? Math.floor((Date.now() - sessionTs) / 86400000) : 0;
+    var isStaleStuck = s.status === 'stuck' && sessionAge >= 2;
+
     var row = document.createElement('div');
     row.className = 'archive-row';
     row.dataset.sessionId = s.id;
     row.dataset.status = s.status || 'in-progress';
+    if (isStaleStuck) {
+      row.style.cssText = 'background:rgba(245,158,11,.04);border-left:2px solid #F59E0B;';
+    }
 
-    // Col 1: Company + total flags subline
+    // Col 1: Company + subline (age warning for stuck, otherwise contact/flags)
     var col1 = document.createElement('div');
+    var sublineText  = s.contact ? s.contact + (s.jobTitle ? ' · ' + s.jobTitle : '') : flagLabel;
+    var sublineStyle = 'font-size:11px;color:var(--muted);';
+    if (isStaleStuck) {
+      var ageLabel = sessionAge === 1 ? 'yesterday' : sessionAge + ' days old';
+      sublineText  = '⚠ Stuck since ' + ageLabel;
+      sublineStyle = 'font-size:11px;color:#F59E0B;font-weight:500;';
+    }
     col1.innerHTML = '<div style="font-size:13px;font-weight:500;color:var(--near-black);">' + (s.company||'—') + '</div>' +
-      '<div style="font-size:11px;color:var(--muted);">' + (s.contact ? s.contact + (s.jobTitle ? ' · ' + s.jobTitle : '') : flagLabel) + '</div>';
+      '<div style="' + sublineStyle + '">' + sublineText + '</div>';
 
     // Col 2: Date
     var col2 = document.createElement('div');
@@ -4088,7 +4301,7 @@ var _origSolconNav = solconNav;
 solconNav = function(id, clickedEl) {
   _origSolconNav(id, clickedEl);
   if (id === 's-trends') renderTrends();
-  if (id === 's-archive') renderArchiveTable();
+  if (id === 's-archive') { renderArchiveTable(); buildOrcaBriefing(); }
 };
 
 // Init on load
