@@ -2901,7 +2901,7 @@ function getSectionGuide(sectionIndex) {
     '✓ Any other non-standard policies captured or confirmed as none\n' +
     'SPECIAL NOTES:\n' +
     '- This is the final section — wrap up warmly after this\n' +
-    '- If the prospect seems uncertain about something, reassure them: "No problem, the Sprout team can sort that out with you before setup"'
+    '- If the prospect seems uncertain about something, reassure them: "No problem, the Sprout team can sort that out with you before your next meeting"'
   ];
 
   return guides[sectionIndex] || guides[7];
@@ -2911,13 +2911,13 @@ function buildSystemPrompt() {
   var base =
     'You are Orca, a friendly and knowledgeable assistant built by Sprout, helping ' +
     (prospectData.contactName || 'the client') + ' (' + (prospectData.jobTitle || '') + ') from ' +
-    (prospectData.companyName || 'their company') + ' prepare for their Sprout setup by collecting their timekeeping policies across 8 topics.\n\n' +
+    (prospectData.companyName || 'their company') + ' prepare for their next meeting with Sprout by sharing how their team currently handles timekeeping across 8 topics.\n\n' +
 
     'TONE & STYLE RULES (follow these strictly):\n' +
     '- Ask ONE question at a time. Wait for the answer before asking the next.\n' +
     '- Use plain, everyday language. Speak like a helpful colleague, not a form.\n' +
     '- Never open a response with "Great!", "Perfect!", "Absolutely!", "Of course!", or similar filler words. Vary acknowledgments naturally.\n' +
-    '- If the prospect says they don\'t know: respond with "No problem — the Sprout team can sort that out with you before setup."\n' +
+    '- If the prospect says they don\'t know: respond with "No problem — the Sprout team can sort that out with you before your next meeting."\n' +
     '- Do NOT use these internal terms with the prospect: IRD, SolCon, SolServ, CRF, DOLE flag, biolog, Required Confirmation.\n' +
     '- After every question, on a new line write OPTIONS: followed by 2–4 short choices separated by | characters.\n' +
     '- Do NOT use markdown formatting. Plain text only.\n' +
@@ -2925,7 +2925,7 @@ function buildSystemPrompt() {
 
     'SECTION MECHANICS:\n' +
     '- You are currently on Section ' + (currentSection + 1) + ' of 8: ' + SECTIONS[currentSection].name + '\n' +
-    '- When this section is fully complete (all completeness criteria met), output SECTION_COMPLETE on its own line, then SUMMARY: followed by a synthesized, consultant-quality paragraph — not a list of question answers, but a readable summary a consultant would write.\n\n' +
+    '- When this section is fully complete (all completeness criteria met), output SECTION_COMPLETE on its own line, then SUMMARY: followed by a synthesized paragraph written for the prospect in plain, warm language — specific to their actual details, readable by a non-technical person. The summary must never include DOLE flags, CRF notes, compliance risks, SolServ escalations, Required Confirmations, or any internal Sprout term. Write only what the prospect said, using their specifics.\n\n' +
 
     'CURRENT SECTION GUIDE:\n' +
     getSectionGuide(currentSection) + '\n\n' +
@@ -2968,7 +2968,11 @@ async function sendMessage(presetText) {
       }
       currentSection++;
       if (currentSection >= SECTIONS.length) {
-        setTimeout(showProspectSummaryScreen, 1200);
+        // E1: Show warm closing message before transitioning to summary screen
+        var repName = prospectData.salesRep ? prospectData.salesRep : null;
+        var closingMsg = "That's everything — you've given us a clear picture of how " + (prospectData.companyName || 'your team') + " manages time.\n\nYour summary is being put together now. " + (repName ? repName + " will be in touch to walk through it with you." : "Your Sprout consultant will be in touch shortly to walk through everything.") + " In the meantime, your summary will show you exactly what to prepare for that conversation.";
+        addOrcaMessage(closingMsg);
+        setTimeout(showProspectSummaryScreen, 2200);
       } else {
         updateSectionHeader();
         updateProgress(currentSection / SECTIONS.length);
@@ -2989,7 +2993,7 @@ async function sendMessage(presetText) {
 async function askNextSection() {
   setWaiting(true); showTyping();
   try {
-    var prompt = 'The previous section is complete. Now start Section ' + (currentSection + 1) + ': ' + SECTIONS[currentSection].name + '. Briefly introduce this section in one sentence, then ask the first question. Include OPTIONS after your question.';
+    var prompt = 'The previous section is complete. Now move to Section ' + (currentSection + 1) + ': ' + SECTIONS[currentSection].name + '. Remember: you are speaking directly with the prospect in a warm, conversational tone — no internal terms, no jargon. Briefly introduce this topic in one plain sentence, then ask the first question. Include OPTIONS after your question.';
     conversationHistory.push({ role: 'user', content: prompt });
     var reply = await callEdge(conversationHistory, buildSystemPrompt());
     hideTyping();
@@ -2997,7 +3001,17 @@ async function askNextSection() {
     addOrcaMessage(reply);
   } catch(e) {
     hideTyping();
-    addOrcaMessage("Let's move on to " + SECTIONS[currentSection].name + ". Tell me about " + SECTIONS[currentSection].desc.toLowerCase() + ".\nOPTIONS: Yes | No | Not sure | Tell me more");
+    var fallbackOptions = [
+      'Biometric devices | Bundy clock | Mobile app | Manual timesheets',
+      'One level of approval | Two levels | Three or more | Depends on request type',
+      'Fixed shift | Flexible hours | Compressed work week | Mix of schedules',
+      'Exact minutes deducted | Rounded to 30-min increments | Grace period applies | Not sure',
+      'Vacation and sick leave | Multiple leave types | Only government-mandated | Not sure',
+      'Pre-approval required | Filed after | Minimum hours apply | Not sure',
+      'Philippine holidays only | Local holidays too | International holidays | Not sure',
+      'Night differential paid | Not paid | Not applicable | Not sure'
+    ];
+    addOrcaMessage("Let's talk about " + SECTIONS[currentSection].name.toLowerCase() + ". " + SECTIONS[currentSection].desc + ".\nOPTIONS: " + (fallbackOptions[currentSection] || 'Yes | No | Not sure | Tell me more'));
   }
   setWaiting(false);
   document.getElementById('chatInput').focus();
@@ -3014,9 +3028,9 @@ async function showProspectSummaryScreen() {
   document.getElementById('genLabel').textContent = 'Preparing your summary…';
 
   try {
-    var prompt = 'Based on this interview with ' + prospectData.companyName + ', generate a JSON object with exactly these 8 keys: timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other.\n\nFor each section, write a 2-sentence prospect-facing summary:\n- Sentence 1: Mirror their specific setup in plain language. Start with their team or company, not "Sprout".\n- Sentence 2: Name the specific Sprout feature that handles this.\n\nData: ' + JSON.stringify(sectionSummaries) + '\n\nReturn ONLY valid JSON, no markdown.';
+    var prompt = 'Based on this interview with ' + prospectData.companyName + ', generate a JSON object with exactly 9 keys: timelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, and prepare.\n\nFor the first 8 keys, write a 2-sentence prospect-facing summary:\n- Sentence 1: Mirror their specific setup using their exact details — locations, role names, methods, numbers. Start with their team or company, not \"Sprout\". Be specific, not generic.\n- Sentence 2: Name the specific Sprout feature that handles this, as a direct confident statement.\n\nFor the "prepare" key, write a plain-language list of 1–4 open items the prospect should bring to their next meeting with the Sprout team. Each item starts with "• ". Only include genuine open questions — things not confirmed during the session. Frame each as preparation, not a problem. Example: "• Confirm the brand and model of your biometric devices at each location." If there are no open items, return an empty string.\n\nCRITICAL RULES for all output:\n- Never use these words: IRD, SolCon, SolServ, CRF, DOLE, biolog, Required Confirmation, configuration, onboarding\n- Never mention compliance risks, flag anything as non-compliant, or reference any setup process\n- Write in plain English for an HR Manager — warm, specific, confident\n- No markdown formatting\n\nData: ' + JSON.stringify(sectionSummaries) + '\n\nReturn ONLY valid JSON, no markdown, no backticks.';
 
-    var enrichResp = await callEdge([{ role: 'user', content: prompt }], 'You are Orca. Generate prospect-facing summaries. 2 sentences each. Return only valid JSON.');
+    var enrichResp = await callEdge([{ role: 'user', content: prompt }], 'You are Orca, a warm assistant helping a prospect prepare for their meeting with Sprout. Write clean, plain-language prospect-facing summaries. Never use internal terms like IRD, SolCon, CRF, DOLE, biolog, or Required Confirmation. Never mention compliance issues or imply anything is being configured or set up. Return only valid JSON.');
     var summaries;
     try { summaries = JSON.parse(enrichResp.replace(/```json|```/g, '').trim()); }
     catch(e) { summaries = sectionSummaries; }
@@ -3038,7 +3052,7 @@ async function showProspectSummaryScreen() {
     var grid = document.getElementById('summaryGrid');
     grid.innerHTML = '';
     meta.forEach(function(s, i) {
-      var raw = (summaries[s.key] || sectionSummaries[s.key] || 'Configuration noted.').replace(/^here'?s how sprout [^:]*:\s*/i, '');
+      var raw = (summaries[s.key] || sectionSummaries[s.key] || 'To be confirmed with your Sprout consultant.').replace(/^here'?s how sprout [^:]*:\s*/i, '');
       var sentences = raw.split(/(?<=\.)\s+/);
       var layer1 = sentences[0] || raw;
       var layer2 = sentences.slice(1).join(' ') || '';
@@ -3050,6 +3064,26 @@ async function showProspectSummaryScreen() {
         (layer2 ? '<div class="ps-how-sprout"><strong>How Sprout handles this:</strong> ' + layer2 + '</div>' : '');
       grid.appendChild(card);
     });
+
+    // Render "What to Prepare" section if there are open items
+    var prepareText = (summaries.prepare || '').trim();
+    var existingPrepare = document.getElementById('prepareSection');
+    if (existingPrepare) existingPrepare.remove();
+    if (prepareText) {
+      var prepareItems = prepareText.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.startsWith('•'); });
+      if (prepareItems.length) {
+        var prepareEl = document.createElement('div');
+        prepareEl.id = 'prepareSection';
+        prepareEl.style.cssText = 'background:#F0F9F4;border:1.5px solid #C8EDDA;border-radius:12px;padding:24px 28px;margin-top:8px;';
+        var itemsHtml = prepareItems.map(function(item) {
+          return '<li style="margin-bottom:8px;color:#2D4A3E;font-size:14px;line-height:1.6;">' + item.replace(/^•\s*/, '') + '</li>';
+        }).join('');
+        prepareEl.innerHTML = '<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00A651;margin-bottom:12px;">Before Your Next Meeting</div>' +
+          '<div style="font-size:14px;color:#4A6357;margin-bottom:12px;line-height:1.6;">A few things worth having ready when you meet with the Sprout team:</div>' +
+          '<ul style="padding-left:18px;margin:0;">' + itemsHtml + '</ul>';
+        grid.parentNode.insertBefore(prepareEl, grid.nextSibling);
+      }
+    }
 
     document.getElementById('emailBanner').style.display = 'flex';
     document.getElementById('btnPdf').disabled = false;
@@ -3108,8 +3142,8 @@ async function submitCorrection() {
   var status = document.getElementById('correctionStatus');
   btn.disabled = true; btn.textContent = 'Updating…'; status.textContent = '';
   try {
-    var updatePrompt = 'The prospect just added this correction: "' + note + '". Identify which section this affects (timelogs, approval, work_schedule, computation, leaves, overtime, holidays, or other) and return a JSON with two keys: "section" and "summary" (updated 2-sentence summary). Return ONLY valid JSON.';
-    var resp = await callEdge([{ role: 'user', content: updatePrompt }], 'You are Orca. Return updated section summary as JSON with keys "section" and "summary" only.');
+    var updatePrompt = 'The prospect just added this correction or addition: "' + note + '". Identify which section this affects (timelogs, approval, work_schedule, computation, leaves, overtime, holidays, or other) and return a JSON with two keys: "section" and "summary". The "summary" must be an updated 2-sentence prospect-facing summary — Sentence 1 mirrors their specific setup in plain language using their details, Sentence 2 names the Sprout feature that handles it. Never use internal terms: no IRD, SolCon, SolServ, CRF, DOLE, biolog, Required Confirmation. Never mention compliance risks or imply anything is being configured. Return ONLY valid JSON.';
+    var resp = await callEdge([{ role: 'user', content: updatePrompt }], 'You are Orca. Generate a clean prospect-facing section summary. No internal terms, no compliance flags, no setup language. Return JSON with keys "section" and "summary" only.');
     var parsed = JSON.parse(resp.replace(/```json|```/g, '').trim());
     if (parsed.section && parsed.summary) {
       sectionSummaries[parsed.section] = parsed.summary;
@@ -3141,11 +3175,14 @@ function generatePDF() {
     var defs = ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'];
     var names = ['1. How You Track Time','2. How Requests Get Approved','3. How Your Team is Scheduled','4. How Lateness is Computed','5. How Leaves Work','6. How Overtime Works','7. Holidays and Special Days','8. Other Notes'];
     var sectionsHTML = defs.map(function(k, i) {
-      return '<div class="section"><div class="section-num">' + names[i] + '</div><div class="section-content">' + (lastSummaries[k] || sectionSummaries[k] || 'To be confirmed.') + '</div></div>';
+      return '<div class="section"><div class="section-num">' + names[i] + '</div><div class="section-content">' + (lastSummaries[k] || sectionSummaries[k] || 'To be confirmed with your Sprout consultant.') + '</div></div>';
     }).join('');
+    var prepareText = ((lastSummaries && lastSummaries.prepare) || '').trim();
+    var prepareItems = prepareText ? prepareText.split('\n').map(function(l){return l.trim();}).filter(function(l){return l.startsWith('•');}) : [];
+    var prepareHTML = prepareItems.length ? '<div class="prepare"><div class="prepare-label">Before Your Next Meeting</div><div class="prepare-intro">A few things worth having ready when you speak with the Sprout team:</div><ul class="prepare-list">' + prepareItems.map(function(item){return '<li>' + item.replace(/^•\s*/,'') + '</li>';}).join('') + '</ul></div>' : '';
     var w = window.open('', '_blank');
     if (!w) { alert('Please allow pop-ups for this site.'); return; }
-    w.document.write('<!DOCTYPE html><html><head><title>Sprout Discovery Summary — ' + prospectData.companyName + '</title><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:\'DM Sans\',sans-serif;color:#0D1F17;padding:60px;max-width:800px;margin:0 auto}.header{border-bottom:3px solid #00A651;padding-bottom:28px;margin-bottom:36px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#00A651;margin-bottom:8px}.title{font-family:\'DM Serif Display\',serif;font-size:34px;color:#0D1F17;margin-bottom:4px}.company{font-size:20px;color:#4A6357;font-weight:300;margin-bottom:16px}.meta{display:flex;gap:28px;flex-wrap:wrap}.meta-item{font-size:12px;color:#8AA89A}.meta-item strong{display:block;color:#0D1F17;font-size:13px;font-weight:500}.section{margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid #D4E8DC}.section:last-child{border-bottom:none}.section-num{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00A651;margin-bottom:8px}.section-content{font-size:14px;color:#4A6357;line-height:1.85;font-weight:300}.closing{background:#E8F7EF;border:1.5px solid #C8EDDA;border-radius:12px;padding:28px;margin-top:36px;text-align:center}.closing-title{font-family:\'DM Serif Display\',serif;font-size:22px;color:#0D1F17;margin-bottom:8px}.closing-text{font-size:14px;color:#4A6357;line-height:1.7;font-weight:300}.badge{display:inline-block;background:#00A651;color:white;font-size:11px;font-weight:600;padding:4px 12px;border-radius:100px;margin-top:14px}@media print{body{padding:40px}}</style></head><body><div class="header"><div class="eyebrow">Orca by Sprout · Discovery Summary</div><div class="title">Your Timekeeping Overview</div><div class="company">' + prospectData.companyName + '</div><div class="meta"><div class="meta-item"><strong>Prepared for</strong>' + prospectData.contactName + ', ' + prospectData.jobTitle + '</div><div class="meta-item"><strong>Date</strong>' + new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}) + '</div></div></div><div class="sections">' + sectionsHTML + '</div><div class="closing"><div class="closing-title">Your Sprout conversation is ready.</div><div class="closing-text">A Sprout consultant will walk you through how each of these areas is handled in your next meeting.</div><div class="badge">Orca by Sprout</div></div></body></html>');
+    w.document.write('<!DOCTYPE html><html><head><title>Sprout Discovery Summary — ' + prospectData.companyName + '</title><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:\'DM Sans\',sans-serif;color:#0D1F17;padding:60px;max-width:800px;margin:0 auto}.header{border-bottom:3px solid #00A651;padding-bottom:28px;margin-bottom:36px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#00A651;margin-bottom:8px}.title{font-family:\'DM Serif Display\',serif;font-size:34px;color:#0D1F17;margin-bottom:4px}.company{font-size:20px;color:#4A6357;font-weight:300;margin-bottom:16px}.meta{display:flex;gap:28px;flex-wrap:wrap}.meta-item{font-size:12px;color:#8AA89A}.meta-item strong{display:block;color:#0D1F17;font-size:13px;font-weight:500}.section{margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid #D4E8DC}.section:last-child{border-bottom:none}.section-num{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00A651;margin-bottom:8px}.section-content{font-size:14px;color:#4A6357;line-height:1.85;font-weight:300}.closing{background:#E8F7EF;border:1.5px solid #C8EDDA;border-radius:12px;padding:28px;margin-top:36px;text-align:center}.closing-title{font-family:\'DM Serif Display\',serif;font-size:22px;color:#0D1F17;margin-bottom:8px}.closing-text{font-size:14px;color:#4A6357;line-height:1.7;font-weight:300}.badge{display:inline-block;background:#00A651;color:white;font-size:11px;font-weight:600;padding:4px 12px;border-radius:100px;margin-top:14px}@media print{body{padding:40px}}.prepare{background:#F0F9F4;border:1.5px solid #C8EDDA;border-radius:12px;padding:24px 28px;margin-top:28px}.prepare-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00A651;margin-bottom:10px}.prepare-intro{font-size:13px;color:#4A6357;margin-bottom:12px;line-height:1.6}.prepare-list{padding-left:18px;margin:0}.prepare-list li{font-size:13px;color:#2D4A3E;line-height:1.7;margin-bottom:6px}</style></head><body><div class="header"><div class="eyebrow">Orca by Sprout · Discovery Summary</div><div class="title">Your Timekeeping Overview</div><div class="company">' + prospectData.companyName + '</div><div class="meta"><div class="meta-item"><strong>Prepared for</strong>' + prospectData.contactName + ', ' + prospectData.jobTitle + '</div><div class="meta-item"><strong>Date</strong>' + new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}) + '</div></div></div><div class="sections">' + sectionsHTML + '</div>' + prepareHTML + '<div class="closing"><div class="closing-title">Your Sprout conversation is ready.</div><div class="closing-text">' + (prospectData.salesRep ? prospectData.salesRep + ' will be in touch to walk through this with you.' : 'Your Sprout consultant will be in touch shortly.') + '</div><div class="badge">Orca by Sprout</div></div></body></html>');
     w.document.close();
     setTimeout(function() { w.print(); }, 800);
   } catch(e) { alert('Could not generate document. Please try again.'); }
