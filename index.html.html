@@ -1532,68 +1532,56 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
      SCREEN: PROSPECT INTAKE
 ══════════════════════════════════════════ -->
 <div class="screen" id="s-prospect">
-  <div class="prospect-wrap">
-    <div class="prospect-left">
+  <div class="prospect-wrap" style="grid-template-columns:55fr 45fr;">
+    <!-- LEFT -->
+    <div class="prospect-left" style="justify-content:space-between;">
       <div class="landing-logo">
         <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
         <div class="logo-text-wrap"><div style="display:flex;align-items:center;gap:6px;"><div class="orca">Orca</div><span class="beta-tag dark">BETA</span></div><div class="by">by Sprout</div></div>
       </div>
-      <div class="prospect-hero">
-        <div class="prospect-eyebrow">Self-Serve Discovery Session</div>
-        <div class="prospect-title">Help us understand<br>how your team<br><em>works today.</em></div>
-        <div class="prospect-sub">You'll be talking to Orca, Sprout's AI discovery assistant. Orca will guide you through a short conversation about how your team manages time — so your next meeting with the Sprout team is focused on reviewing your setup and seeing exactly how Sprout fits.</div>
 
-        <!-- What to expect strip -->
-        <div style="margin-bottom:28px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2D4035;margin-bottom:14px;">What to expect</div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="display:flex;align-items:center;gap:14px;padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:12px;">
-              <div style="width:34px;height:34px;border-radius:9px;background:rgba(0,166,81,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#00A651" stroke-width="1.5"/><polyline points="12 6 12 12 16 14" stroke="#00A651" stroke-width="1.5" stroke-linecap="round"/></svg>
-              </div>
-              <div>
-                <div style="font-size:13px;font-weight:500;color:white;margin-bottom:1px;">About 10 minutes</div>
-                <div style="font-size:11px;color:#4A6357;">8 topics · go at your own pace</div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:14px;padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:12px;">
-              <div style="width:34px;height:34px;border-radius:9px;background:rgba(0,166,81,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#00A651" stroke-width="1.5" stroke-linecap="round"/></svg>
-              </div>
-              <div>
-                <div style="font-size:13px;font-weight:500;color:white;margin-bottom:1px;">Plain language throughout</div>
-                <div style="font-size:11px;color:#4A6357;">No HR jargon — just answer naturally</div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:14px;padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:12px;">
-              <div style="width:34px;height:34px;border-radius:9px;background:rgba(0,166,81,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#00A651"/></svg>
-              </div>
-              <div>
-                <div style="font-size:13px;font-weight:500;color:white;margin-bottom:1px;">Your summary is emailed to you</div>
-                <div style="font-size:11px;color:#4A6357;">Shared with your Sprout contact too</div>
-              </div>
-            </div>
-          </div>
+      <div style="display:flex;flex-direction:column;gap:28px;">
+        <!-- Headline -->
+        <div>
+          <div class="prospect-eyebrow">Self-Serve Discovery Session</div>
+          <div class="prospect-title">Help us understand<br>how your team<br><em>works today.</em></div>
         </div>
 
-        <!-- 8 topics preview -->
-        <div style="padding:16px;background:rgba(0,0,0,0.2);border:1px solid #1E3028;border-radius:12px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#2D4035;margin-bottom:12px;">8 topics we'll cover</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">1</span>Timelogs</div>
-            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">2</span>Approval Flow</div>
-            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">3</span>Work Schedule</div>
-            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">4</span>Computation Rules</div>
-            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">5</span>Leaves</div>
-            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">6</span>Overtime</div>
-            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">7</span>Holidays</div>
-            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">8</span>Other Notes</div>
+        <!-- Orca intro card -->
+        <div style="background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:16px;padding:20px 22px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;">
+              <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;"><circle cx="12" cy="12" r="4" fill="white"/></svg>
+              <span style="position:absolute;bottom:-1px;right:-1px;width:11px;height:11px;border-radius:50%;background:#00C96B;border:2px solid var(--near-black);display:block;"></span>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:white;line-height:1.2;">Orca</div>
+              <div style="font-size:11px;color:var(--green);margin-top:2px;">Sprout's AI discovery assistant</div>
+            </div>
+          </div>
+          <div style="font-size:13.5px;color:#8AA89A;line-height:1.75;font-weight:300;">Hi! I'm Orca. I'll guide you through a <span style="color:white;font-weight:500;">short conversation about how your team manages time</span> — no jargon, no pressure, just your own words. When we're done, your next meeting with the Sprout team will be focused on <span style="color:white;font-weight:500;">reviewing your setup and seeing exactly how Sprout fits.</span></div>
+        </div>
+
+        <!-- Topic chips -->
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#2D4035;margin-bottom:10px;">8 topics we'll cover</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="padding:5px 10px;border-radius:7px;font-size:11px;color:#4A6357;background:rgba(255,255,255,0.03);border:1px solid #1E3028;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:9px;font-weight:700;color:#2D4035;">01</span>Timelogs</span>
+            <span style="padding:5px 10px;border-radius:7px;font-size:11px;color:#4A6357;background:rgba(255,255,255,0.03);border:1px solid #1E3028;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:9px;font-weight:700;color:#2D4035;">02</span>Approval Flow</span>
+            <span style="padding:5px 10px;border-radius:7px;font-size:11px;color:#4A6357;background:rgba(255,255,255,0.03);border:1px solid #1E3028;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:9px;font-weight:700;color:#2D4035;">03</span>Work Schedule</span>
+            <span style="padding:5px 10px;border-radius:7px;font-size:11px;color:#4A6357;background:rgba(255,255,255,0.03);border:1px solid #1E3028;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:9px;font-weight:700;color:#2D4035;">04</span>Computation Rules</span>
+            <span style="padding:5px 10px;border-radius:7px;font-size:11px;color:#4A6357;background:rgba(255,255,255,0.03);border:1px solid #1E3028;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:9px;font-weight:700;color:#2D4035;">05</span>Leaves</span>
+            <span style="padding:5px 10px;border-radius:7px;font-size:11px;color:#4A6357;background:rgba(255,255,255,0.03);border:1px solid #1E3028;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:9px;font-weight:700;color:#2D4035;">06</span>Overtime</span>
+            <span style="padding:5px 10px;border-radius:7px;font-size:11px;color:#4A6357;background:rgba(255,255,255,0.03);border:1px solid #1E3028;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:9px;font-weight:700;color:#2D4035;">07</span>Holidays</span>
+            <span style="padding:5px 10px;border-radius:7px;font-size:11px;color:#4A6357;background:rgba(255,255,255,0.03);border:1px solid #1E3028;display:inline-flex;align-items:center;gap:5px;"><span style="font-size:9px;font-weight:700;color:#2D4035;">08</span>Other Notes</span>
           </div>
         </div>
       </div>
+
       <div style="font-size:11px;color:#2D4035;cursor:pointer;" onclick="showScreen('s-landing')">← Back to home</div>
     </div>
+
+    <!-- RIGHT -->
     <div class="prospect-right">
       <div class="prospect-right-eyebrow">Before we begin</div>
       <div class="prospect-right-title">A bit about your company</div>
