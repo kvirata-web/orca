@@ -681,12 +681,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 .tic-text { font-size: 13px; color: white; line-height: 1.65; font-weight: 300; }
 
 /* user dropdown */
-.solcon-user{position:relative;cursor:pointer;user-select:none;}
-.user-dropdown{display:none;position:absolute;right:0;top:calc(100% + 8px);background:#1a2e24;border:1px solid rgba(255,255,255,.1);border-radius:10px;min-width:160px;z-index:200;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4);}
-.user-dropdown.open{display:block;}
-.user-dropdown-item{padding:11px 16px;font-size:13px;color:#8AA89A;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap;}
-.user-dropdown-item:hover{background:rgba(255,255,255,.07);color:white;}
-.user-dropdown-divider{height:1px;background:rgba(255,255,255,.08);margin:3px 0;}
+.solcon-user { position: relative; cursor: pointer; user-select: none; }
+.user-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1a2e24; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; min-width: 160px; z-index: 200; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+.user-dropdown.open { display: block; }
+.user-dropdown-item { padding: 11px 16px; font-size: 13px; color: #8AA89A; cursor: pointer; transition: background .15s, color .15s; white-space: nowrap; }
+.user-dropdown-item:hover { background: rgba(255,255,255,.07); color: white; }
+.user-dropdown-divider { height: 1px; background: rgba(255,255,255,.08); margin: 3px 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -781,25 +782,21 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
   <div class="solcon-header">
     <div style="display:flex;align-items:center;gap:24px;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-        <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
+        <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
+        <span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
       </div>
       <div class="divider" style="height:20px;"></div>
-              <div class="solcon-nav">
-          <div class="solcon-nav-item" onclick="solconNav('s-sessions',this)">Sessions</div>
-          <div class="solcon-nav-item active" onclick="solconNav('s-solcon',this)">IRD Generator</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
-        </div>
+      <div class="solcon-nav">
         <div class="solcon-nav-item" onclick="solconNav('s-sessions',this)">Sessions</div>
-        <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
+        <div class="solcon-nav-item active" onclick="solconNav('s-solcon',this)">IRD Generator</div>
         <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
+        <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
       </div>
     </div>
     <div class="solcon-user" onclick="toggleUserDropdown(event)">
-      <div class="solcon-avatar" id="solconAvatarMain">KV<div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div>
-      <div class="solcon-username" id="solconEmailMain">kvirata@sprout.ph</div>
+      <div class="solcon-avatar solcon-avatar-dyn" id="solconAvatarMain">KV</div>
+      <div class="solcon-username solcon-username-dyn" id="solconEmailMain">kvirata@sprout.ph</div>
+      <div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div>
     </div>
   </div>
   <div class="solcon-body">
@@ -831,7 +828,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <div class="panel" style="margin-top:16px;">
           <div class="panel-title">Discovery call transcript</div>
           <div class="panel-sub">Paste the full transcript below. Orca reads the conversation and extracts the 8 IRD sections — no reformatting needed.</div>
-          <textarea class="transcript-area" id="sc-transcript" placeholder="Paste the full discovery call transcript here…"></textarea>
+          <textarea class="transcript-area" id="sc-transcript" placeholder="[TRANSCRIPT BEGINS]&#10;&#10;Christine: Hi Mai, thanks for joining. Let's go through your timekeeping setup..."></textarea>
           <button class="btn-generate" onclick="processTranscriptSolCon()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Generate IRD
@@ -1024,23 +1021,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <div class="solcon-header">
       <div style="display:flex;align-items:center;gap:24px;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-          <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
+          <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
+          <span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
         </div>
         <div class="divider" style="height:20px;"></div>
-                <div class="solcon-nav">
+        <div class="solcon-nav">
           <div class="solcon-nav-item active" onclick="solconNav('s-sessions',this)">Sessions</div>
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
           <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
         </div>
-          <div class="solcon-nav-item active" onclick="solconNav('s-sessions',this)">Sessions</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
-        </div>
       </div>
-      <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar">KV<div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div><div class="solcon-username">kvirata@sprout.ph</div></div>
+      <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar solcon-avatar-dyn">KV</div><div class="solcon-username solcon-username-dyn">kvirata@sprout.ph</div><div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div>
     </div>
     <div style="padding:40px 48px;max-width:1200px;margin:0 auto;width:100%;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;">
@@ -1102,23 +1094,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <div class="solcon-header">
       <div style="display:flex;align-items:center;gap:24px;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-          <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
+          <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
+          <span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
         </div>
         <div class="divider" style="height:20px;"></div>
-                <div class="solcon-nav">
-          <div class="solcon-nav-item active" onclick="solconNav('s-sessions',this)">Sessions</div>
+        <div class="solcon-nav">
+          <div class="solcon-nav-item" onclick="solconNav('s-sessions',this)">Sessions</div>
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
           <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
         </div>
-          <div class="solcon-nav-item" onclick="solconNav('s-sessions',this)">Sessions</div>
-          <div class="solcon-nav-item active" onclick="solconNav('s-settings',this)">Settings</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
-        </div>
       </div>
-      <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar">KV<div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div><div class="solcon-username">kvirata@sprout.ph</div></div>
+      <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar solcon-avatar-dyn">KV</div><div class="solcon-username solcon-username-dyn">kvirata@sprout.ph</div><div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div>
     </div>
     <div style="padding:40px 48px;max-width:860px;margin:0 auto;width:100%;">
       <div class="solcon-page-title" style="margin-bottom:4px;">Settings</div>
@@ -1192,23 +1179,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <div class="solcon-header">
       <div style="display:flex;align-items:center;gap:24px;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-          <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
+          <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
+          <span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
         </div>
         <div class="divider" style="height:20px;"></div>
-                <div class="solcon-nav">
-          <div class="solcon-nav-item active" onclick="solconNav('s-sessions',this)">Sessions</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
-        </div>
+        <div class="solcon-nav">
           <div class="solcon-nav-item" onclick="solconNav('s-sessions',this)">Sessions</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-coaching',this)">Coach Orca</div>
           <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
         </div>
       </div>
-      <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar">KV<div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div><div class="solcon-username">kvirata@sprout.ph</div></div>
+      <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar solcon-avatar-dyn">KV</div><div class="solcon-username solcon-username-dyn">kvirata@sprout.ph</div><div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div>
     </div>
     <div style="padding:40px 48px;max-width:1060px;margin:0 auto;width:100%;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;">
@@ -1355,23 +1337,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <div class="solcon-header">
       <div style="display:flex;align-items:center;gap:24px;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-          <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
+          <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
+          <span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="solconNav('s-sessions',null)"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
         </div>
         <div class="divider" style="height:20px;"></div>
-                <div class="solcon-nav">
-          <div class="solcon-nav-item active" onclick="solconNav('s-sessions',this)">Sessions</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
-        </div>
+        <div class="solcon-nav">
           <div class="solcon-nav-item" onclick="solconNav('s-sessions',this)">Sessions</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-health',this)">Orca Health</div>
         </div>
       </div>
-      <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar">KV<div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div><div class="solcon-username">kvirata@sprout.ph</div></div>
+      <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar solcon-avatar-dyn">KV</div><div class="solcon-username solcon-username-dyn">kvirata@sprout.ph</div><div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div>
     </div>
     <div style="padding:40px 48px;max-width:1200px;margin:0 auto;width:100%;">
       <div style="margin-bottom:28px;">
@@ -1616,6 +1593,10 @@ function showScreen(id) {
   var el = document.getElementById(id);
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
   if (id === 's-solcon') { renderRecentSessions(); updateMonthlyStats(); }
+  if (id === 's-sessions') {
+    if (currentSolconEmail) { loadSessionsFromSupabase(function() { renderArchiveTable(); buildOrcaBriefing(); }); }
+    else { renderArchiveTable(); buildOrcaBriefing(); }
+  }
 }
 
 function solconNav(id, clickedEl) {
@@ -1644,8 +1625,6 @@ function doLogin() {
     return;
   }
   errEl.textContent = '';
-  // Set username display
-  var initials = email.split('@')[0].substring(0,2).toUpperCase();
   currentSolconEmail = email;
   try { sessionStorage.setItem('orca_session_email', email); } catch(e) {}
   syncUserDisplay(email);
@@ -1653,7 +1632,7 @@ function doLogin() {
   loadSessionsFromSupabase(function() { renderArchiveTable(); buildOrcaBriefing(); updateMonthlyStats(); });
 }
 
-// Auto-restore session on refresh
+// Auto-restore session on page refresh
 (function() {
   try {
     var saved = sessionStorage.getItem('orca_session_email');
@@ -1682,8 +1661,10 @@ function exportToSheets() {
 }
 
 // ─────────────────────────────────────────
-// SESSION STORE — Supabase-backed, localStorage cache
-// ─────────────────────────────────────────
+// SESSION STORE — localStorage-backed
+// -----------------------------------------
+// SESSION STORE — Supabase + localStorage cache
+// -----------------------------------------
 var SESSION_STORE_KEY = 'orca_recent_sessions';
 
 function getSessionStore() {
@@ -1695,7 +1676,7 @@ function saveSessionStore(sessions) {
 }
 function supabaseSaveSession(session) {
   if (!currentSolconEmail) return;
-  fetch(EDGE_FUNCTION_URL, {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({type:'session_save',session:session,solconEmail:currentSolconEmail})}).then(function(r){return r.json();}).then(function(d){if(!d.ok) console.error('Save failed:',d.error);}).catch(function(e){console.error('Save error:',e);});
+  fetch(EDGE_FUNCTION_URL, {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({type:'session_save',session:session,solconEmail:currentSolconEmail})}).then(function(r){return r.json();}).then(function(d){if(!d.ok)console.error('Save failed:',d.error);}).catch(function(e){console.error('Save error:',e);});
 }
 function supabaseUpdateStatus(sessionId, newStatus) {
   if (!currentSolconEmail) return;
@@ -1704,12 +1685,12 @@ function supabaseUpdateStatus(sessionId, newStatus) {
 function loadSessionsFromSupabase(callback) {
   if (!currentSolconEmail) { callback([]); return; }
   var el = document.getElementById('archiveLoadingState');
-  if (el) el.style.display='flex';
+  if (el) el.style.display = 'flex';
   fetch(EDGE_FUNCTION_URL, {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({type:'session_list',solconEmail:currentSolconEmail})}).then(function(r){return r.json();}).then(function(d){if(el)el.style.display='none';if(d.ok&&d.sessions){saveSessionStore(d.sessions);callback(d.sessions);}else{callback(getSessionStore());}}).catch(function(e){if(el)el.style.display='none';callback(getSessionStore());});
 }
 function addSession(session) {
   var sessions = getSessionStore();
-  sessions = sessions.filter(function(s){ return !(s.company===session.company&&s.contact===session.contact); });
+  sessions = sessions.filter(function(s){return !(s.company===session.company&&s.contact===session.contact);});
   sessions.unshift(session);
   saveSessionStore(sessions);
   supabaseSaveSession(session);
@@ -1728,7 +1709,6 @@ function updateSessionStatus(sessionId, newStatus) {
   supabaseUpdateStatus(sessionId, newStatus);
   updateMonthlyStats();
 }
-
 function renderRecentSessions(filterStatus) {
   var sessions = getSessionStore();
   var list = document.getElementById('recentSessionsList');
@@ -1776,7 +1756,39 @@ function updateMonthlyStats() {
 }
 
 function openSession(sessionId) {
+  var sessions = getSessionStore();
+  var session = sessions.find(function(s) { return s.id === sessionId; });
+  if (!session) { alert('Session not found.'); return; }
+
+  // Set global context
+  prospectData = {
+    companyName: session.company,
+    contactName: session.contact,
+    jobTitle: session.jobTitle || '',
+    email: session.email || '',
+    salesRep: session.salesRep || '',
+    sessionDate: session.sessionDate || ''
+  };
+  irdDocUrl = session.irdDocUrl || '';
+
+  // Restore section summaries if available
+  if (session.sections) {
+    Object.assign(sectionSummaries, session.sections);
+  }
+
   showScreen('s-ird');
+
+  // Show sidebar immediately (normally shown after analysis animation)
+  var _rs = document.getElementById('irdRealSidebar');
+  if (_rs) _rs.style.display = 'flex';
+  var _ap = document.getElementById('irdAnalysisPanel');
+  if (_ap) _ap.style.display = 'none';
+
+  if (session.irdData) {
+    populateIrdScreen(session.irdData);
+  } else {
+    document.getElementById('irdSalesBrief').textContent = 'Full IRD data not available for this session. Open the Drive document for the complete IRD.';
+  }
 }
 
 function cycleStatus(badge, sessionId) {
@@ -2286,7 +2298,9 @@ function populateIrdScreen(irdData) {
     status: 'in-progress',
     inputMode: 'transcript',
     irdDocUrl: irdDocUrl || '',
-    note: 'Set by Orca · ' + totalFlags + ' total item' + (totalFlags !== 1 ? 's' : '') + ' to review'
+    note: 'Set by Orca · ' + totalFlags + ' total item' + (totalFlags !== 1 ? 's' : '') + ' to review',
+    irdData: irdData,
+    sections: (function(){var s={};['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'].forEach(function(k){s[k]=sectionSummaries[k]||'';});return s;})()
   });
 
   // ── Client-side flag routing (mirrors index.ts sfm logic) ──
@@ -4141,7 +4155,7 @@ document.addEventListener('click', function(){
   document.querySelectorAll('.user-dropdown').forEach(function(d){d.classList.remove('open');});
 });
 
-// ── Date picker sync ──
+// ── Date picker: YYYY-MM-DD → "Mar 1, 2026" ──
 function syncDateField(val) {
   if (!val) return;
   var p = val.split('-');
@@ -4163,12 +4177,12 @@ function syncUserDisplay(email) {
 // ── Logout ──
 function doLogout() {
   try{sessionStorage.removeItem('orca_session_email');}catch(e){}
-  currentSolconEmail = '';
+  currentSolconEmail='';
   document.querySelectorAll('.user-dropdown').forEach(function(d){d.classList.remove('open');});
-  showScreen('s-login');
+  showScreen('s-landing');
 }
 
-// ── Set date picker default to today ──
+// ── Set date picker to today on load ──
 window.addEventListener('DOMContentLoaded', function() {
   var picker = document.getElementById('sc-date-picker');
   if (picker) {
@@ -4181,7 +4195,7 @@ window.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <!-- ═══════════════ ABOUT ═══════════════ -->
-<div class="screen" id="s-about" style="flex-direction:column;background:var(--bg);min-height:100vh;">
+<div class="screen" id="s-about">
   <div class="solcon-header">
     <div style="display:flex;align-items:center;gap:24px;">
       <div style="display:flex;align-items:center;gap:10px;">
@@ -4196,9 +4210,9 @@ window.addEventListener('DOMContentLoaded', function() {
         <div class="solcon-nav-item" onclick="solconNav('s-health',this)">Orca Health</div>
       </div>
     </div>
-    <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar solcon-avatar-dyn">KV</div><div class="solcon-username solcon-username-dyn">user@sprout.ph</div><div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div>
+    <div class="solcon-user" onclick="toggleUserDropdown(event)"><div class="solcon-avatar solcon-avatar-dyn">KV</div><div class="solcon-username solcon-username-dyn">kvirata@sprout.ph</div><div class="user-dropdown"><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-settings',null)">&#9881; Settings</div><div class="user-dropdown-item" onclick="event.stopPropagation();solconNav('s-about',null)">&#9432; About</div><div class="user-dropdown-divider"></div><div class="user-dropdown-item" onclick="event.stopPropagation();doLogout()">Sign out</div></div></div>
   </div>
-  <div style="padding:40px 48px;max-width:720px;margin:0 auto;width:100%;">
+  <div class="solcon-body" style="max-width:720px;">
     <div class="solcon-page-title" style="margin-bottom:4px;">About Orca</div>
     <div class="solcon-page-sub" style="margin-bottom:32px;">Orca is Sprout’s internal IRD generation tool — built by SolCons, for SolCons.</div>
     <div class="panel" style="margin-bottom:20px;">
