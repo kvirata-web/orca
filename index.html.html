@@ -1798,31 +1798,47 @@ function supabaseUpdateStatus(sessionId, newStatus) {
   }).catch(function(e) { console.error('Status update error:', e); });
 }
 
-// ── Supabase: load all sessions for this SolCon ──
+// ── Supabase: load all sessions for this SolCon + all self-serve sessions ──
 function loadSessionsFromSupabase(callback) {
   if (!currentSolconEmail) { callback([]); return; }
   var loadingEl = document.getElementById('archiveLoadingState');
   if (loadingEl) loadingEl.style.display = 'flex';
-  fetch(EDGE_FUNCTION_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
-    body: JSON.stringify({ type: 'session_list', solconEmail: currentSolconEmail })
-  }).then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (loadingEl) loadingEl.style.display = 'none';
-      if (d.ok && d.sessions) {
-        saveSessionStore(d.sessions);
-        callback(d.sessions);
-      } else {
-        console.error('Session list failed:', d.error);
-        callback(getSessionStore()); // fall back to cache
-      }
-    })
-    .catch(function(e) {
-      if (loadingEl) loadingEl.style.display = 'none';
-      console.error('Session load error:', e);
-      callback(getSessionStore()); // fall back to cache
+
+  // Fetch SolCon's own sessions and self-serve sessions in parallel
+  Promise.all([
+    fetch(EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ type: 'session_list', solconEmail: currentSolconEmail })
+    }).then(function(r) { return r.json(); }).catch(function() { return { ok: false, sessions: [] }; }),
+
+    fetch(EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ type: 'session_list', solconEmail: 'self-serve' })
+    }).then(function(r) { return r.json(); }).catch(function() { return { ok: false, sessions: [] }; })
+  ]).then(function(results) {
+    if (loadingEl) loadingEl.style.display = 'none';
+    var solconSessions   = (results[0].ok && results[0].sessions) ? results[0].sessions : [];
+    var selfServeSessions = (results[1].ok && results[1].sessions) ? results[1].sessions : [];
+
+    // Merge — deduplicate by session id, sort newest first
+    var seen = {};
+    var merged = [];
+    solconSessions.concat(selfServeSessions).forEach(function(s) {
+      if (!seen[s.id]) { seen[s.id] = true; merged.push(s); }
     });
+    merged.sort(function(a, b) {
+      return (parseInt((b.id||'').replace('session-',''))||0) - (parseInt((a.id||'').replace('session-',''))||0);
+    });
+
+    saveSessionStore(merged);
+    callback(merged);
+  }).catch(function(e) {
+    if (loadingEl) loadingEl.style.display = 'none';
+    console.error('Session load error:', e);
+    callback(getSessionStore()); // fall back to cache
+  });
 }
 
 // ── addSession: write-through — cache first, then Supabase ──
@@ -3072,35 +3088,6 @@ async function showProspectSummaryScreen() {
     document.getElementById('genLabel').textContent = 'Saving your session…';
     await saveAndNotify(summaries);
 
-    // ── Write self-serve session into local archive store ──
-    // saveAndNotify() sends to Supabase but never calls addSession(), so self-serve
-    // sessions were invisible in the archive. This write-through fixes that.
-    (function() {
-      var sectionSnap = {};
-      ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'].forEach(function(k) {
-        sectionSnap[k] = sectionSummaries[k] || '';
-      });
-      addSession({
-        id:          'session-' + Date.now(),
-        company:     prospectData.companyName  || 'Unknown Company',
-        contact:     prospectData.contactName  || '',
-        jobTitle:    prospectData.jobTitle     || '',
-        email:       prospectData.email        || '',
-        salesRep:    prospectData.salesRep     || '',
-        sessionDate: prospectData.sessionDate  || '',
-        date:        prospectData.sessionDate  || new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
-        flags:       0,
-        totalFlags:  0,
-        risk:        'amber',
-        status:      'in-progress',
-        inputMode:   'interview',
-        irdDocUrl:   irdDocUrl || '',
-        irdData:     { doleFlags:[], requiredConfirmations:[], crfItems:[], specialistItems:[], riskLevel:'amber' },
-        sections:    sectionSnap,
-        note:        'Self-serve session completed by prospect'
-      });
-    })();
-
     var meta = [
       { key: 'timelogs',      num: '01', name: '01 · How You Track Time' },
       { key: 'approval',      num: '02', name: '02 · How Requests Get Approved' },
@@ -3164,6 +3151,8 @@ async function saveAndNotify(summaries) {
     var conversationLog = conversationHistory.map(function(m) {
       return (m.role === 'assistant' ? 'Orca' : (prospectData.contactName || 'Prospect')) + ':\n' + m.content;
     }).join('\n\n');
+
+    // Step 1: Run IRD analysis via 'complete'
     var resp = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
@@ -3189,6 +3178,54 @@ async function saveAndNotify(summaries) {
     });
     var result = await resp.json();
     if (result.irdDocUrl) irdDocUrl = result.irdDocUrl;
+
+    // Step 2: Fire 'save' to trigger Drive/Sheets/email (fire-and-forget)
+    if (result._savePayload) {
+      fetch(EDGE_FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+        body: JSON.stringify({ type: 'save', savePayload: result._savePayload })
+      }).catch(function(e) { console.error('Save fire-and-forget failed:', e); });
+    }
+
+    // Step 3: Persist session to Supabase DB under 'self-serve' owner so all SolCons can see it
+    var irdResult = result.irdData || {};
+    var sectionSnap = {};
+    ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'].forEach(function(k) {
+      sectionSnap[k] = sectionSummaries[k] || '';
+    });
+    var totalFlags = ((irdResult.doleFlags||[]).length) + ((irdResult.requiredConfirmations||[]).length) +
+                     ((irdResult.crfItems||[]).length) + ((irdResult.specialistItems||[]).length);
+    var selfServeSession = {
+      id:          'session-' + Date.now(),
+      company:     prospectData.companyName  || 'Unknown Company',
+      contact:     prospectData.contactName  || '',
+      jobTitle:    prospectData.jobTitle     || '',
+      email:       prospectData.email        || '',
+      salesRep:    prospectData.salesRep     || '',
+      sessionDate: prospectData.sessionDate  || '',
+      date:        prospectData.sessionDate  || new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
+      flags:       (irdResult.doleFlags||[]).length,
+      totalFlags:  totalFlags,
+      risk:        irdResult.riskLevel || 'amber',
+      status:      'in-progress',
+      inputMode:   'interview',
+      irdDocUrl:   irdDocUrl || '',
+      irdData:     irdResult,
+      sections:    sectionSnap,
+      note:        'Self-serve session · ' + totalFlags + ' item' + (totalFlags !== 1 ? 's' : '') + ' to review'
+    };
+
+    // Save to Supabase DB with sentinel owner 'self-serve' so it's visible to all SolCons
+    fetch(EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ type: 'session_save', session: selfServeSession, solconEmail: 'self-serve' })
+    }).catch(function(e) { console.error('Self-serve session_save failed:', e); });
+
+    // Also write to local store so it shows immediately if SolCon is on same browser
+    addSession(selfServeSession);
+
     return result;
   } catch(e) { console.error('Save error:', e); }
 }
