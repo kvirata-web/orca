@@ -894,7 +894,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Sessions</div>
         <div class="solcon-nav-item active" onclick="solconNav('s-solcon',this)">IRD Generator</div>
         <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-        <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Orca Health</div>
+        <div class="solcon-nav-item" style="cursor:default;opacity:0.6;" title="Coming soon">Orca Health <span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:#FFFBEB;color:#B45309;border:1px solid #FDE68A;margin-left:4px;vertical-align:middle;">SOON</span></div>
         <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
       </div>
     </div>
@@ -1094,7 +1094,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item active" onclick="solconNav('s-archive',this)">Sessions</div>
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Orca Health</div>
+          <div class="solcon-nav-item" style="cursor:default;opacity:0.6;" title="Coming soon">Orca Health <span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:#FFFBEB;color:#B45309;border:1px solid #FDE68A;margin-left:4px;vertical-align:middle;">SOON</span></div>
           <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
@@ -1180,17 +1180,27 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Sessions</div>
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Orca Health</div>
+          <div class="solcon-nav-item" style="cursor:default;opacity:0.6;" title="Coming soon">Orca Health <span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:#FFFBEB;color:#B45309;border:1px solid #FDE68A;margin-left:4px;vertical-align:middle;">SOON</span></div>
           <div class="solcon-nav-item active" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
-      <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
+      <div class="solcon-user">
+        <div class="solcon-avatar">KV</div>
+        <div class="solcon-username">kvirata@sprout.ph</div>
+        <button onclick="doLogout()" style="margin-left:12px;padding:6px 14px;background:transparent;border:1.5px solid #3D5045;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;color:var(--muted);cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='#DC2626';this.style.color='#DC2626'" onmouseout="this.style.borderColor='#3D5045';this.style.color='var(--muted)'">Log out</button>
+      </div>
     </div>
     <div style="padding:40px 48px;max-width:860px;margin:0 auto;width:100%;">
       <div class="solcon-page-title" style="margin-bottom:4px;">Settings</div>
       <div class="solcon-page-sub" style="margin-bottom:32px;">Configure how Orca behaves, where it saves, and who gets notified.</div>
       <div class="panel" style="margin-bottom:20px;">
-        <div style="font-size:13px;font-weight:700;color:var(--near-black);margin-bottom:2px;">My Profile</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <div style="font-size:13px;font-weight:700;color:var(--near-black);">My Profile</div>
+          <button onclick="doLogout()" style="padding:6px 14px;background:var(--dole-bg);border:1.5px solid var(--dole-border);border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;color:var(--dole-color);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;" onmouseover="this.style.background='#FEE2E2'" onmouseout="this.style.background='var(--dole-bg)'">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Log Out
+          </button>
+        </div>
         <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">Your details appear on every IRD and session record you generate.</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div class="form-group"><div class="form-label">Full name</div><input class="form-input-sm" type="text" id="settingsName" placeholder="e.g. VK"></div>
@@ -1242,6 +1252,40 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <button onclick="showScreen('s-prospect');setTimeout(fillTestScript,300)" style="padding:8px 16px;background:var(--near-black);color:white;border:none;border-radius:8px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;">Run Test Script</button>
         </div>
       </div>
+      <!-- ABOUT SECTION -->
+      <div class="panel" style="margin-bottom:20px;background:var(--near-black);border-color:#1E3028;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:white;margin-bottom:3px;">About Orca</div>
+            <div style="font-size:12px;color:var(--muted);font-weight:300;">Built by the Sprout team. Powered by AI.</div>
+          </div>
+          <span class="beta-tag dark" style="flex-shrink:0;margin-top:2px;">BETA</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:10px;padding:14px 16px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Version</div>
+            <div style="font-size:15px;font-weight:600;color:white;margin-bottom:2px;">Orca Beta</div>
+            <div style="font-size:11px;color:var(--muted);">Build 2026.03 · March 2026</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:10px;padding:14px 16px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">AI Engine</div>
+            <div style="font-size:15px;font-weight:600;color:white;margin-bottom:2px;">Claude by Anthropic</div>
+            <div style="font-size:11px;color:var(--muted);">claude-sonnet-4 · Anthropic</div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:10px;padding:14px 16px;margin-bottom:18px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">What Orca does</div>
+          <div style="font-size:12px;color:#8AA89A;line-height:1.75;font-weight:300;">Orca listens to your timekeeping discovery sessions (or reads transcripts), extracts all policy data, checks for DOLE compliance risks, and auto-generates structured Implementation Requirement Documents — so your team can focus on selling, not note-taking.</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:11px;color:#2D4035;">Made with care by the Sprout Solutions team · Manila, Philippines</div>
+          <a href="https://anthropic.com" target="_blank" style="font-size:11px;color:var(--green);text-decoration:none;display:flex;align-items:center;gap:4px;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+            Powered by Anthropic
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+
       <div style="display:flex;justify-content:flex-end;gap:10px;">
         <button onclick="solconNav('s-solcon',null)" style="padding:10px 20px;background:white;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;color:var(--mid);cursor:pointer;">Cancel</button>
         <button style="padding:10px 24px;background:var(--green);border:none;border-radius:10px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;color:white;cursor:pointer;">Save Settings</button>
@@ -1266,7 +1310,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Sessions</div>
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Orca Health</div>
+          <div class="solcon-nav-item" style="cursor:default;opacity:0.6;" title="Coming soon">Orca Health <span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:#FFFBEB;color:#B45309;border:1px solid #FDE68A;margin-left:4px;vertical-align:middle;">SOON</span></div>
           <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
@@ -1301,7 +1345,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             Active Rules
           </div>
-          <div class="coaching-sidenav-item" onclick="coachingNav('prompt',this)">
+          <div class="coaching-sidenav-item" onclick="coachingNav('prompt',this)" style="display:none;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             Prompt Preview
           </div>
@@ -1425,7 +1469,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Sessions</div>
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item active" onclick="solconNav('s-trends',this)">Orca Health</div>
+          <div class="solcon-nav-item" style="cursor:default;opacity:0.6;" title="Coming soon">Orca Health <span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:#FFFBEB;color:#B45309;border:1px solid #FDE68A;margin-left:4px;vertical-align:middle;">SOON</span></div>
           <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
@@ -1497,11 +1541,55 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
       <div class="prospect-hero">
         <div class="prospect-eyebrow">Self-Serve Discovery Session</div>
         <div class="prospect-title">Help us understand<br>how your team<br><em>works today.</em></div>
-        <div class="prospect-sub">This is a self-guided session — no one from Sprout is on the call with you. Take your time, answer in your own words, and don't worry about getting everything perfect. We'll use what you share to prepare for a much more focused conversation when you meet the Sprout team.</div>
-        <div class="prospect-pills">
-          <div class="prospect-pill"><div class="prospect-pill-dot"></div><div class="prospect-pill-text">~10 minutes · 8 topics · Go at your own pace</div></div>
-          <div class="prospect-pill"><div class="prospect-pill-dot"></div><div class="prospect-pill-text">No jargon — plain language throughout</div></div>
-          <div class="prospect-pill"><div class="prospect-pill-dot"></div><div class="prospect-pill-text">Your summary is sent to you and your Sprout contact</div></div>
+        <div class="prospect-sub">You'll be talking to Orca, Sprout's AI discovery assistant. Orca will guide you through a short conversation about how your team manages time — so your next meeting with the Sprout team is focused on reviewing your setup and seeing exactly how Sprout fits.</div>
+
+        <!-- What to expect strip -->
+        <div style="margin-bottom:28px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2D4035;margin-bottom:14px;">What to expect</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:14px;padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:12px;">
+              <div style="width:34px;height:34px;border-radius:9px;background:rgba(0,166,81,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#00A651" stroke-width="1.5"/><polyline points="12 6 12 12 16 14" stroke="#00A651" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:500;color:white;margin-bottom:1px;">About 10 minutes</div>
+                <div style="font-size:11px;color:#4A6357;">8 topics · go at your own pace</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px;padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:12px;">
+              <div style="width:34px;height:34px;border-radius:9px;background:rgba(0,166,81,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#00A651" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:500;color:white;margin-bottom:1px;">Plain language throughout</div>
+                <div style="font-size:11px;color:#4A6357;">No HR jargon — just answer naturally</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px;padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid #1E3028;border-radius:12px;">
+              <div style="width:34px;height:34px;border-radius:9px;background:rgba(0,166,81,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#00A651"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:500;color:white;margin-bottom:1px;">Your summary is emailed to you</div>
+                <div style="font-size:11px;color:#4A6357;">Shared with your Sprout contact too</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8 topics preview -->
+        <div style="padding:16px;background:rgba(0,0,0,0.2);border:1px solid #1E3028;border-radius:12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#2D4035;margin-bottom:12px;">8 topics we'll cover</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">1</span>Timelogs</div>
+            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">2</span>Approval Flow</div>
+            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">3</span>Work Schedule</div>
+            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">4</span>Computation Rules</div>
+            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">5</span>Leaves</div>
+            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">6</span>Overtime</div>
+            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">7</span>Holidays</div>
+            <div style="font-size:11px;color:#4A6357;display:flex;align-items:center;gap:6px;"><span style="width:16px;height:16px;border-radius:50%;background:#0D2B1D;border:1px solid #1E3028;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2D5A3D;flex-shrink:0;">8</span>Other Notes</div>
+          </div>
         </div>
       </div>
       <div style="font-size:11px;color:#2D4035;cursor:pointer;" onclick="showScreen('s-landing')">← Back to home</div>
@@ -1509,7 +1597,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <div class="prospect-right">
       <div class="prospect-right-eyebrow">Before we begin</div>
       <div class="prospect-right-title">A bit about your company</div>
-      <div class="prospect-right-sub">We'll use this to personalise your summary and make sure it reaches the right people on your team.</div>
+      <div class="prospect-right-sub">Orca uses this to personalise your session and send your summary to you and your Sprout contact.</div>
       <div id="testScriptBanner" style="display:none;align-items:center;gap:10px;background:#0D1F17;border-radius:10px;padding:10px 14px;margin-bottom:12px;">
         <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"></div>
         <div style="font-size:12px;color:#8AA89A;flex:1;">Test script loaded — Bigbys QFC · Mai Santos</div>
@@ -1526,13 +1614,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
       <div class="form-field"><label>Email address *</label><input id="f-email" type="email" placeholder="maria@company.com"></div>
       <div class="form-field"><label>Your Sprout contact</label><input id="f-sprout" type="text" placeholder="e.g. Christine Garcia — the person you've been talking to"></div>
       <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-        <button onclick="startProspectInterview()" style="flex:1;padding:15px;background:var(--green);color:white;border:none;border-radius:12px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
+        <button onclick="startProspectInterview()" style="flex:1;padding:15px;background:var(--green);color:white;border:none;border-radius:12px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;box-shadow:0 4px 20px rgba(0,166,81,0.25);" onmouseover="this.style.background='var(--green-dark)';this.style.boxShadow='0 6px 28px rgba(0,166,81,0.35)'" onmouseout="this.style.background='var(--green)';this.style.boxShadow='0 4px 20px rgba(0,166,81,0.25)'">
           Start the Session
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <button onclick="fillTestScript()" title="Fill with test data" style="padding:0 14px;height:50px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">⚡ Test</button>
       </div>
-      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;">Everything you share here stays between you and your Sprout team — it's used only to prepare for your conversation.</div>
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:5px;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#8AA89A" stroke-width="1.5"/></svg>
+        Everything you share stays between you and your Sprout team.
+      </div>
     </div>
   </div>
 </div>
@@ -1739,6 +1830,14 @@ function doLogin() {
 // ─────────────────────────────────────────
 // SOLCON NAV HELPERS
 // ─────────────────────────────────────────
+function doLogout() {
+  try { sessionStorage.removeItem('orca_session_email'); } catch(e) {}
+  currentSolconEmail = '';
+  document.querySelectorAll('.solcon-avatar').forEach(function(el) { el.textContent = 'KV'; });
+  document.querySelectorAll('.solcon-username').forEach(function(el) { el.textContent = 'kvirata@sprout.ph'; });
+  showScreen('s-landing');
+}
+
 function toggleSwitch(el) {
   var isOn = el.style.background === 'rgb(0, 166, 81)' || el.style.background === 'var(--green)' || el.style.background.includes('0, 166, 81');
   el.style.background = isOn ? '#D1D5DB' : 'var(--green)';
