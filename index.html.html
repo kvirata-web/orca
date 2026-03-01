@@ -21,6 +21,7 @@
   --rc-bg: #FFFBEB; --rc-border: #FDE68A; --rc-color: #B45309;
   --spec-bg: #EFF6FF; --spec-border: #BFDBFE; --spec-color: #1679FA;
   --crf-bg: #EEE9FE; --crf-border: #DDD6FE; --crf-color: #8139EE;
+  --qa-bg: #ECFDF5; --qa-border: #6EE7B7; --qa-color: #0D9488;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--near-black); min-height: 100vh; overflow-x: hidden; }
@@ -375,7 +376,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
    SCREEN: SESSION ARCHIVE
 ══════════════════════════════════════════ */
 #s-archive { flex-direction: column; background: var(--bg); min-height: 100vh; }
-.archive-row { display: grid; grid-template-columns: 2fr 1.2fr 0.9fr 1fr 1fr 0.8fr 0.8fr 0.5fr; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: background .15s; }
+.archive-row { display: grid; grid-template-columns: 2fr 1.2fr 0.9fr 1fr 1fr 0.8fr 0.8fr 0.7fr 0.5fr; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: background .15s; }
 .archive-row:hover { background: var(--green-light); }
 .archive-row:last-child { border-bottom: none; }
 
@@ -1052,7 +1053,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <select style="padding:9px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--mid);background:white;outline:none;cursor:pointer;"><option>All time</option><option>This month</option><option>Last 30 days</option><option>Last 90 days</option></select>
       </div>
       <div style="background:white;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;">
-        <div style="display:grid;grid-template-columns:2fr 1.2fr 0.9fr 1fr 1fr 0.8fr 0.8fr 0.5fr;padding:12px 20px;border-bottom:1.5px solid var(--border);background:var(--bg);">
+        <div style="display:grid;grid-template-columns:2fr 1.2fr 0.9fr 1fr 1fr 0.8fr 0.8fr 0.7fr 0.5fr;padding:12px 20px;border-bottom:1.5px solid var(--border);background:var(--bg);">
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Company</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Contact</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Date</div>
@@ -1060,6 +1061,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">SolCon</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Risk</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Status</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">QA</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">IRD</div>
         </div>
         <div id="archiveTableBody">
@@ -1563,6 +1565,8 @@ var prospectData = {};
 var lastSummaries = {};
 var irdDocUrl = '';
 var lastIrdData = null;
+var lastTranscriptText = '';
+var lastSessionId = null;
 
 var SECTIONS = [
   { id: 'timelogs',      name: 'Timelogs',         desc: 'How your employees record their time' },
@@ -1954,6 +1958,7 @@ async function processTranscriptSolCon() {
   startExtractProgress();
 
   var trimmed = transcript.length > 20000 ? transcript.substring(0, 20000) + '\n[transcript trimmed]' : transcript;
+  lastTranscriptText = trimmed; // Store for QA agent
   var extractPrompt = 'You are Orca, an expert Sprout HR Solution Consultant. Extract the timekeeping policies from this discovery call transcript and return a JSON object with exactly these 10 keys:\n\ntimelogs, approval, work_schedule, computation, leaves, overtime, holidays, other, salesRep, contactName\n\n## FORMAT RULES (follow exactly):\n1. Start each section with one opening sentence.\n2. Use bullet points (\\n\u2022) for any tiered, conditional, or multi-value rules. One bullet per rule.\n3. NEVER collapse tiers into one sentence.\n4. Brief and scannable. Not more than 1 opening sentence + necessary bullets.\n5. NEVER mix policies from different sections.\n\n## SECTION BOUNDARIES (strict):\n- timelogs: Device type(s) + integration method (manual upload / API / web) + who collates. Example: "Biometrics at branches. Branch payroll officer downloads biologs and uploads manually every cutoff."\n- approval: ALWAYS a single arrow-chain line only. Example: "EE \u2192 IM \u2192 Restaurant Manager \u2192 VP Ops + VP Admin (both required)"\n- work_schedule: One bullet per schedule type (times, days, who). DO NOT include tardiness or grace period rules.\n- computation: Grace period + tardiness tiers + break monitoring ONLY. DO NOT include leave deductions or CWW rules.\n- leaves: Leave types, tenure rules, renewal, monetization. DO NOT include payroll computation.\n- overtime: Minimum duration, approval, rate. DO NOT include holiday pay.\n- holidays: Day-before/after rule, rates. One bullet per rule.\n- other: Payroll items, allowances, deductions, gov contributions, 13th month, sub-companies. One bullet each.\n\n## FEW-SHOT EXAMPLES:\ncomputation: "No grace period. Tardiness deducted in tiers:\\n\u2022 1-30 mins late = 30-min deduction\\n\u2022 31-60 mins late = 1-hr deduction\\n\u2022 Break monitoring via macro (may entail additional cost)."\napproval: "EE \u2192 IM \u2192 Restaurant Manager \u2192 VP Ops + VP Admin (both required)"\nleaves: "5-day SIL upon completing 1 year, resets every January.\\n\u2022 Half-day use supported.\\n\u2022 Unused credits: max divided by 2 are monetizable."\n\nsalesRep: Sprout SolCon name (NOT the client). Empty string if unclear.\ncontactName: CLIENT contact name (NOT the SolCon). Empty string if unclear.\n\nIf a topic was not discussed write "Not discussed in this session."\nReturn ONLY valid JSON. No markdown, no backticks.\n\nTranscript:\n' + trimmed;
 
   try {
@@ -2177,11 +2182,205 @@ async function buildAndShowIrd() {
       }).catch(function(e) { console.warn('Save call failed (non-fatal):', e); });
     }
 
+    // Fire QA in parallel — runs while user reviews IRD, no added latency
+    if (result.irdData) {
+      runQaAgent(result.irdData, lastTranscriptText, 'transcript', sectionSummaries);
+    }
+
   } catch(err) {
     stopAnalysisProgress();
     console.error('complete() error:', err);
     document.getElementById('irdSalesBrief').textContent = 'IRD saved to Drive. Email sent. Sidebar unavailable: ' + err.message;
   }
+}
+
+// ─────────────────────────────────────────
+// QA AGENT
+// Runs in parallel after IRD is generated.
+// Fires a lightweight checklist pass (Haiku) and injects QA flags into the IRD view.
+// ─────────────────────────────────────────
+var currentQaResult = null;
+var currentSessionId = null;
+
+async function runQaAgent(irdData, transcriptText, inputMode, sections) {
+  try {
+    var qaResp = await fetch(EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({
+        type: 'qa',
+        irdData: irdData,
+        transcript: transcriptText || '',
+        inputMode: inputMode || 'transcript',
+        sections: sections || sectionSummaries || {}
+      })
+    });
+    var qaResult = await qaResp.json();
+    if (!qaResult || !qaResult.checks) return;
+    currentQaResult = qaResult;
+
+    // Save qaResult back to the session store
+    var sessions = getSessionStore();
+    if (sessions.length > 0) {
+      sessions[0].qaResult = qaResult;
+      saveSessionStore(sessions);
+    }
+
+    // If IRD screen is currently visible, inject QA pills
+    var irdScreen = document.getElementById('s-ird');
+    if (irdScreen && irdScreen.classList.contains('active')) {
+      applyQaFlagsToIrd(qaResult);
+    }
+
+    // Update archive table if visible
+    var archiveScreen = document.getElementById('s-archive');
+    if (archiveScreen && archiveScreen.classList.contains('active')) {
+      renderArchiveTable();
+    }
+
+    // For self-serve: show QA banner on prospect summary if it's visible
+    var psScreen = document.getElementById('s-prospect-summary');
+    if (psScreen && psScreen.classList.contains('active') && inputMode === 'interview') {
+      showQaBannerOnProspectSummary(qaResult);
+    }
+
+  } catch(e) {
+    console.warn('QA agent failed (non-fatal):', e);
+  }
+}
+
+function applyQaFlagsToIrd(qaResult) {
+  if (!qaResult || !qaResult.checks) return;
+  var checks = qaResult.checks;
+
+  // Map check keys to the section they most likely belong to
+  var checkSectionMap = {
+    approvalChain:        'approval',
+    scheduleTypes:        'work_schedule',
+    doleKeywords:         'other',
+    requiredConfirmations:'timelogs',
+    numbersAndRates:      'computation'
+  };
+  var checkLabels = {
+    approvalChain:        'QA — Approval chain',
+    scheduleTypes:        'QA — Schedule types',
+    doleKeywords:         'QA — DOLE keyword',
+    requiredConfirmations:'QA — Missing RC',
+    numbersAndRates:      'QA — Numbers/rates'
+  };
+
+  // Inject QA pills into affected section cards
+  var sectionCards = document.querySelectorAll('.ird-section-card');
+  sectionCards.forEach(function(card) {
+    // Remove any existing QA pills first (for re-runs)
+    card.querySelectorAll('.flag-pill.qa').forEach(function(p) { p.remove(); });
+  });
+
+  Object.keys(checks).forEach(function(checkKey) {
+    var check = checks[checkKey];
+    if (!check || check.pass !== false) return; // only inject for failures
+    var sectionKey = checkSectionMap[checkKey] || 'other';
+    var label = checkLabels[checkKey] || 'QA — Check';
+
+    // Find the card for this section
+    var card = document.querySelector('.ird-section-card[data-section-key="' + sectionKey + '"]');
+    if (!card) return;
+
+    var flagsDiv = card.querySelector('.ird-flags');
+    if (!flagsDiv) return;
+
+    // Build QA pill
+    var pill = document.createElement('span');
+    pill.className = 'flag-pill qa';
+    pill.style.cssText = 'background:var(--qa-bg);border:1px solid var(--qa-border);color:var(--qa-color);cursor:pointer;';
+    pill.title = check.finding || '';
+    pill.innerHTML = '⬡ ' + label;
+
+    // Click to expand finding detail
+    pill.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var existing = card.querySelector('.qa-finding-detail');
+      if (existing) { existing.remove(); return; }
+      var detail = document.createElement('div');
+      detail.className = 'qa-finding-detail';
+      detail.style.cssText = 'margin-top:10px;padding:10px 14px;background:var(--qa-bg);border:1px solid var(--qa-border);border-radius:8px;font-size:12px;color:var(--qa-color);line-height:1.6;display:flex;align-items:flex-start;gap:10px;';
+      detail.innerHTML = '<span style="flex-shrink:0;font-weight:700;">⬡ QA Note</span><span>' + escHtml(check.finding || '') + ' <button onclick="sendQaFindingToCoach(\'' + checkKey + '\',this)" style="margin-left:8px;font-size:11px;padding:2px 8px;border:1px solid var(--qa-border);border-radius:4px;background:white;color:var(--qa-color);cursor:pointer;font-family:\'DM Sans\',sans-serif;">Send to Coach Orca</button></span>';
+      card.querySelector('.wrong-form-container').before(detail);
+    });
+
+    flagsDiv.appendChild(pill);
+  });
+
+  // Show QA summary in sidebar
+  var failCount = qaResult.failCount || 0;
+  injectQaSidebarBadge(failCount, qaResult.verdict);
+}
+
+function sendQaFindingToCoach(checkKey, btn) {
+  if (!currentQaResult || !currentQaResult.checks || !currentQaResult.checks[checkKey]) return;
+  var check = currentQaResult.checks[checkKey];
+  var correction = {
+    id: 'qa-' + Date.now(),
+    section: checkKey,
+    sectionName: checkKey,
+    text: '[QA Agent] ' + (check.finding || ''),
+    timestamp: new Date().toISOString(),
+    draftRule: null,
+    status: 'pending'
+  };
+  saveCorrection(correction);
+  // Draft a rule from this QA finding
+  fetch(EDGE_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify({ type: 'draft_rule', correctionText: check.finding, sectionName: checkKey })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.ruleText) {
+      var rule = { id: 'r-' + Date.now(), text: d.ruleText, source: 'qa', status: 'pending', timestamp: new Date().toISOString() };
+      saveDraftRule(rule);
+      updateRuleQueueBadge();
+      flashRuleQueueBadge();
+    }
+  }).catch(function(){});
+  if (btn) {
+    btn.textContent = '✓ Sent';
+    btn.disabled = true;
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+  }
+}
+
+function injectQaSidebarBadge(failCount, verdict) {
+  var existing = document.getElementById('qaSidebarBadge');
+  if (existing) existing.remove();
+  if (!verdict) return;
+  var sidebar = document.getElementById('irdSidebarContent') || document.querySelector('.ird-sidebar');
+  if (!sidebar) return;
+  var badge = document.createElement('div');
+  badge.id = 'qaSidebarBadge';
+  var isPass = verdict === 'pass';
+  badge.style.cssText = 'margin-bottom:20px;padding:12px 16px;border-radius:10px;border:1px solid ' + (isPass ? 'var(--green-mid)' : 'var(--qa-border)') + ';background:' + (isPass ? 'var(--green-light)' : 'var(--qa-bg)') + ';';
+  badge.innerHTML = '<div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:' + (isPass ? 'var(--green-dark)' : 'var(--qa-color)') + ';margin-bottom:4px;">QA CHECK</div>' +
+    '<div style="font-size:14px;font-weight:600;color:' + (isPass ? 'var(--green)' : 'var(--qa-color)') + ';">' + (isPass ? '✓ All checks passed' : '⬡ ' + failCount + ' item' + (failCount !== 1 ? 's' : '') + ' flagged') + '</div>' +
+    (isPass ? '' : '<div style="font-size:11px;color:var(--qa-color);margin-top:3px;">Review QA flags on sections below</div>');
+  sidebar.prepend(badge);
+}
+
+function showQaBannerOnProspectSummary(qaResult) {
+  // QA banner visible to SolCon only on the prospect summary screen
+  var existing = document.getElementById('solconQaBanner');
+  if (existing) existing.remove();
+  var body = document.querySelector('#s-prospect-summary .ps-body');
+  if (!body) return;
+  var failCount = qaResult.failCount || 0;
+  var isPass = qaResult.verdict === 'pass';
+  var banner = document.createElement('div');
+  banner.id = 'solconQaBanner';
+  banner.style.cssText = 'margin-bottom:16px;padding:12px 18px;border-radius:10px;border:1.5px solid ' + (isPass ? 'var(--green-mid)' : 'var(--qa-border)') + ';background:' + (isPass ? 'var(--green-light)' : 'var(--qa-bg)') + ';font-size:12px;color:' + (isPass ? 'var(--green-dark)' : 'var(--qa-color)') + ';display:flex;align-items:center;gap:10px;';
+  banner.innerHTML = '<span style="font-size:16px;">' + (isPass ? '✓' : '⬡') + '</span>' +
+    '<span><strong>QA Check (SolCon only):</strong> ' + (isPass ? 'All 5 checks passed — IRD looks complete.' : failCount + ' potential gap' + (failCount !== 1 ? 's' : '') + ' detected. Review this session in the IRD view.') + '</span>';
+  var firstChild = body.firstChild;
+  body.insertBefore(banner, firstChild);
 }
 
 // Salvage partial JSON when truncation causes parse failure
@@ -2231,6 +2430,9 @@ function populateIrdScreen(irdData) {
     status: 'in-progress',
     inputMode: 'transcript',
     irdDocUrl: irdDocUrl || '',
+    irdData: irdData,
+    transcript: lastTranscriptText || '',
+    qaResult: null,
     note: 'Set by Orca · ' + totalFlags + ' total item' + (totalFlags !== 1 ? 's' : '') + ' to review'
   });
 
@@ -2600,6 +2802,10 @@ async function saveAndNotify(summaries) {
     });
     var result = await resp.json();
     if (result.irdDocUrl) irdDocUrl = result.irdDocUrl;
+    // Fire QA in parallel for self-serve sessions (no transcript ground truth)
+    if (result.irdData) {
+      runQaAgent(result.irdData, '', 'interview', sectionSummaries);
+    }
     return result;
   } catch(e) { console.error('Save error:', e); }
 }
@@ -4030,8 +4236,22 @@ function renderArchiveTable(filterStatus, searchQuery) {
     });
     col7.appendChild(statusSpan);
 
-    // Col 8: Drive link
+    // Col 8: QA badge
     var col8 = document.createElement('div');
+    if (s.qaResult) {
+      var qaVerdict = s.qaResult.verdict;
+      var qaFails = s.qaResult.failCount || 0;
+      var qaBadge = document.createElement('span');
+      var qaIsPass = qaVerdict === 'pass';
+      qaBadge.style.cssText = 'display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;background:' + (qaIsPass ? 'var(--green-light)' : 'var(--qa-bg)') + ';border:1px solid ' + (qaIsPass ? 'var(--green-mid)' : 'var(--qa-border)') + ';color:' + (qaIsPass ? 'var(--green-dark)' : 'var(--qa-color)') + ';';
+      qaBadge.innerHTML = (qaIsPass ? '✓ Pass' : '⬡ ' + qaFails + ' flag' + (qaFails !== 1 ? 's' : ''));
+      col8.appendChild(qaBadge);
+    } else {
+      col8.innerHTML = '<span style="font-size:11px;color:var(--muted);">—</span>';
+    }
+
+    // Col 9: Drive link
+    var col9 = document.createElement('div');
     if (s.irdDocUrl) {
       var driveLink = document.createElement('a');
       driveLink.href = s.irdDocUrl;
@@ -4039,9 +4259,9 @@ function renderArchiveTable(filterStatus, searchQuery) {
       driveLink.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--green-light);border:1px solid var(--green-mid);color:var(--green);cursor:pointer;';
       driveLink.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
       driveLink.addEventListener('click', function(e) { e.stopPropagation(); });
-      col8.appendChild(driveLink);
+      col9.appendChild(driveLink);
     } else {
-      col8.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--bg);border:1px solid var(--border);color:var(--muted);" title="No Drive doc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>';
+      col9.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--bg);border:1px solid var(--border);color:var(--muted);" title="No Drive doc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>';
     }
 
     row.appendChild(col1);
@@ -4052,6 +4272,7 @@ function renderArchiveTable(filterStatus, searchQuery) {
     row.appendChild(col6);
     row.appendChild(col7);
     row.appendChild(col8);
+    row.appendChild(col9);
 
     // Row click → open session
     row.addEventListener('click', function() { openSession(s.id); });
