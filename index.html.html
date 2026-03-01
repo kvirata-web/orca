@@ -1829,7 +1829,9 @@ function loadSessionsFromSupabase(callback) {
 function addSession(session) {
   var sessions = getSessionStore();
   sessions = sessions.filter(function(s) {
-    return !(s.company === session.company && s.contact === session.contact);
+    // Deduplicate only within the same input mode — a transcript session and a
+    // self-serve session for the same company/contact are distinct records
+    return !(s.company === session.company && s.contact === session.contact && s.inputMode === session.inputMode);
   });
   sessions.unshift(session);
   saveSessionStore(sessions);
@@ -3069,6 +3071,35 @@ async function showProspectSummaryScreen() {
 
     document.getElementById('genLabel').textContent = 'Saving your session…';
     await saveAndNotify(summaries);
+
+    // ── Write self-serve session into local archive store ──
+    // saveAndNotify() sends to Supabase but never calls addSession(), so self-serve
+    // sessions were invisible in the archive. This write-through fixes that.
+    (function() {
+      var sectionSnap = {};
+      ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'].forEach(function(k) {
+        sectionSnap[k] = sectionSummaries[k] || '';
+      });
+      addSession({
+        id:          'session-' + Date.now(),
+        company:     prospectData.companyName  || 'Unknown Company',
+        contact:     prospectData.contactName  || '',
+        jobTitle:    prospectData.jobTitle     || '',
+        email:       prospectData.email        || '',
+        salesRep:    prospectData.salesRep     || '',
+        sessionDate: prospectData.sessionDate  || '',
+        date:        prospectData.sessionDate  || new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
+        flags:       0,
+        totalFlags:  0,
+        risk:        'amber',
+        status:      'in-progress',
+        inputMode:   'interview',
+        irdDocUrl:   irdDocUrl || '',
+        irdData:     { doleFlags:[], requiredConfirmations:[], crfItems:[], specialistItems:[], riskLevel:'amber' },
+        sections:    sectionSnap,
+        note:        'Self-serve session completed by prospect'
+      });
+    })();
 
     var meta = [
       { key: 'timelogs',      num: '01', name: '01 · How You Track Time' },
