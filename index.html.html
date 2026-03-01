@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -375,7 +376,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
    SCREEN: SESSION ARCHIVE
 ══════════════════════════════════════════ */
 #s-archive { flex-direction: column; background: var(--bg); min-height: 100vh; }
-.archive-row { display: grid; grid-template-columns: 2fr 1.2fr 0.9fr 1fr 1fr 0.8fr 0.8fr 0.5fr; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: background .15s; }
+.archive-row { display: grid; grid-template-columns: 2fr 0.9fr 0.7fr 0.8fr 0.6fr 0.6fr 0.6fr 0.8fr 0.8fr; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: background .15s; }
 .archive-row:hover { background: var(--green-light); }
 .archive-row:last-child { border-bottom: none; }
 
@@ -679,6 +680,119 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 .tic-stat { font-size: 28px; font-weight: 600; color: var(--green); font-family: 'DM Serif Display', serif; margin-bottom: 2px; }
 .tic-stat-label { font-size: 12px; color: var(--muted); margin-bottom: 0; }
 .tic-text { font-size: 13px; color: white; line-height: 1.65; font-weight: 300; }
+
+/* ── ORCA BRIEFING STRIP ── */
+.orca-strip {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 20px;
+  animation: stripFadeIn .5s ease both;
+}
+@keyframes stripFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.orca-strip-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 20px;
+  border-right: 1.5px solid var(--border);
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+.orca-strip-avatar {
+  width: 34px;
+  height: 34px;
+  background: var(--near-black);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.orca-strip-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 2px solid white;
+  animation: avatarPulse 3s ease-in-out infinite;
+}
+@keyframes avatarPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: .8; }
+}
+.orca-strip-name { font-size: 12px; font-weight: 600; color: var(--near-black); }
+.orca-strip-status { font-size: 10px; color: var(--green); font-weight: 500; }
+.orca-strip-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+.orca-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  transition: all .15s;
+  cursor: default;
+}
+.orca-chip:hover { border-color: var(--green); background: var(--green-light); }
+.orca-chip-num {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--near-black);
+  line-height: 1;
+}
+.orca-chip-num.c-amber { color: #F59E0B; }
+.orca-chip-num.c-red   { color: #DC2626; }
+.orca-chip-num.c-green { color: var(--green); }
+.orca-chip-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.orca-strip-message {
+  padding-left: 20px;
+  border-left: 1.5px solid var(--border);
+  margin-left: 10px;
+  flex-shrink: 0;
+  max-width: 260px;
+}
+.orca-strip-msg-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 3px;
+}
+.orca-strip-msg-text {
+  font-size: 12px;
+  color: var(--mid);
+  line-height: 1.55;
+  font-weight: 300;
+}
+.orca-strip-msg-text strong { color: var(--near-black); font-weight: 500; }
+
 </style>
 </head>
 <body>
@@ -772,17 +886,17 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 <div class="screen" id="s-solcon">
   <div class="solcon-header">
     <div style="display:flex;align-items:center;gap:24px;">
-      <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="solconNav('s-archive',null)">
-        <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
-        <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;cursor:pointer;" onclick="solconNav('s-archive',null)"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
+        <span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="solconNav('s-archive',null)"><span style="font-size:15px;color:white;font-family:'DM Serif Display',serif;">Orca</span><span class="beta-tag dark">BETA</span></span>
       </div>
       <div class="divider" style="height:20px;"></div>
       <div class="solcon-nav">
         <div class="solcon-nav-item active" onclick="solconNav('s-solcon',this)">Generate IRD</div>
         <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
-        <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
+        <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
+        <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
       </div>
     </div>
     <div class="solcon-user">
@@ -793,9 +907,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
   <div class="solcon-body">
     <div class="solcon-page-title">Generate IRD from Transcript</div>
     <div class="solcon-page-sub">Paste a discovery call transcript and Orca will extract all 8 sections, flag DOLE risks, Required Confirmations, and CRF items.</div>
-    <div class="solcon-layout">
-      <!-- Left: Input -->
-      <div>
+    <div style="max-width:720px;">
         <div class="panel">
           <div class="panel-title">Session details</div>
           <div class="panel-sub">Who was this discovery call with?</div>
@@ -821,36 +933,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
             Generate IRD
           </button>
         </div>
-      </div>
-      <!-- Right: Recent sessions -->
-      <div>
-        <div class="panel">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <div class="recent-title">Recent sessions</div>
-            <div style="display:flex;gap:6px;">
-              <div class="filter-btn active-filter" onclick="filterSessions('all',this)">All</div>
-              <div class="filter-btn" onclick="filterSessions('done',this)">Done</div>
-              <div class="filter-btn" onclick="filterSessions('in-progress',this)">In Progress</div>
-              <div class="filter-btn" onclick="filterSessions('stuck',this)">Stuck</div>
-            </div>
-          </div>
-          <div id="recentSessionsList">
-            <!-- Populated by renderRecentSessions() -->
-          </div>
-          <div style="font-size:11px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:5px;">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#8AA89A" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="#8AA89A" stroke-width="2" stroke-linecap="round"/></svg>
-            Status is set by Orca automatically. Click any badge to override.
-          </div>
-        </div>
-        <div class="panel" style="margin-top:14px;background:var(--near-black);border-color:#2D4035;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:14px;">This Month</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-            <div><div style="font-size:26px;font-weight:600;color:white;" id="statDone">—</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Done</div></div>
-            <div><div style="font-size:26px;font-weight:600;color:#F59E0B;" id="statInProgress">—</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">In Progress</div></div>
-            <div><div style="font-size:26px;font-weight:600;color:#DC2626;" id="statStuck">—</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Stuck</div></div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -861,7 +943,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 <div class="screen" id="s-ird">
   <div class="ird-header">
     <div class="ird-header-left">
-      <div class="ird-back" onclick="showScreen('s-solcon')">
+      <div class="ird-back" onclick="showScreen('s-archive')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 19l-7-7 7-7" stroke="#8AA89A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Back
       </div>
@@ -1015,9 +1097,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <div class="solcon-nav">
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-archive',this)">Session Archive</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
           <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
       <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
@@ -1033,13 +1115,23 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           Export to Google Sheets
         </button>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px;">
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Total</div><div style="font-size:24px;font-weight:600;color:var(--near-black);" id="archiveStat-total">0</div><div style="font-size:11px;color:var(--muted);">All sessions</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Done</div><div style="font-size:24px;font-weight:600;color:var(--green);" id="archiveStat-done">0</div><div style="font-size:11px;color:var(--muted);">Ready to move</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">In Progress</div><div style="font-size:24px;font-weight:600;color:#F59E0B;" id="archiveStat-inprog">0</div><div style="font-size:11px;color:var(--muted);">Being worked</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Stuck</div><div style="font-size:24px;font-weight:600;color:#DC2626;" id="archiveStat-stuck">0</div><div style="font-size:11px;color:var(--muted);">Waiting on client</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Green</div><div style="font-size:24px;font-weight:600;color:var(--green);" id="archiveStat-green">0</div><div style="font-size:11px;color:var(--muted);">Low risk</div></div>
-        <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Amber / Red</div><div style="font-size:24px;font-weight:600;color:#DC2626;" id="archiveStat-amberred">0</div><div style="font-size:11px;color:var(--muted);">Need review</div></div>
+      <!-- ORCA BRIEFING STRIP -->
+      <div class="orca-strip" id="orcaBriefingStrip">
+        <div class="orca-strip-identity">
+          <div class="orca-strip-avatar">
+            <svg viewBox="0 0 24 24" fill="none" style="width:14px;height:14px;"><circle cx="12" cy="12" r="4" fill="white"/></svg>
+          </div>
+          <div>
+            <div class="orca-strip-name">Orca</div>
+            <div class="orca-strip-status">● Active</div>
+          </div>
+        </div>
+        <div class="orca-strip-chips" id="orcaChips">
+          <!-- Populated by buildOrcaBriefing() -->
+        </div>
+        <div class="orca-strip-message" id="orcaMessage">
+          <!-- Populated by buildOrcaBriefing() -->
+        </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
         <div style="flex:1;min-width:220px;position:relative;">
@@ -1052,15 +1144,21 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <select style="padding:9px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--mid);background:white;outline:none;cursor:pointer;"><option>All time</option><option>This month</option><option>Last 30 days</option><option>Last 90 days</option></select>
       </div>
       <div style="background:white;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;">
-        <div style="display:grid;grid-template-columns:2fr 1.2fr 0.9fr 1fr 1fr 0.8fr 0.8fr 0.5fr;padding:12px 20px;border-bottom:1.5px solid var(--border);background:var(--bg);">
+        <div style="display:grid;grid-template-columns:2fr 0.9fr 0.7fr 0.8fr 0.6fr 0.6fr 0.6fr 0.8fr 0.8fr;padding:12px 20px;border-bottom:1.5px solid var(--border);background:var(--bg);">
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Company</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Contact</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Date</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Sales Rep</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Type</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">SolCon</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);color:var(--dole-color);">DOLE</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--rc-color);">RC</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--crf-color);">CRF</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Risk</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Status</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">IRD</div>
+        </div>
+        <!-- Loading state -->
+        <div id="archiveLoadingState" style="display:none;align-items:center;justify-content:center;gap:10px;padding:40px;color:var(--muted);font-size:13px;">
+          <div style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;"></div>
+          Loading sessions from Orca…
         </div>
         <div id="archiveTableBody">
           <!-- Populated by renderArchiveTable() -->
@@ -1088,9 +1186,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <div class="solcon-nav">
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
           <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
-          <div class="solcon-nav-item active" onclick="solconNav('s-settings',this)">Settings</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
           <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
+          <div class="solcon-nav-item active" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
       <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
@@ -1174,9 +1272,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <div class="solcon-nav">
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
           <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-coaching',this)">Coach Orca</div>
           <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
       <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
@@ -1333,9 +1431,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <div class="solcon-nav">
           <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
           <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-trends',this)">Trends</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
       <div class="solcon-user"><div class="solcon-avatar">KV</div><div class="solcon-username">kvirata@sprout.ph</div></div>
@@ -1496,7 +1594,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
 <div class="screen" id="s-prospect-summary">
   <div class="ps-header">
     <div style="display:flex;align-items:center;gap:10px;">
-      <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
+      <div class="logo-mark" style="width:30px;height:30px;border-radius:7px;cursor:pointer;" onclick="solconNav('s-archive',null)"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
       <div class="logo-text-wrap"><div style="display:flex;align-items:center;gap:6px;"><div class="orca" style="font-size:15px;">Orca</div><span class="beta-tag dark">BETA</span></div><div class="by">by Sprout</div></div>
     </div>
     <div style="font-size:12px;color:var(--muted);">Sprout · Powered by Orca</div>
@@ -1611,24 +1709,36 @@ function doLogin() {
     return;
   }
   errEl.textContent = '';
+  currentSolconEmail = email;
+  try { sessionStorage.setItem('orca_session_email', email); } catch(e) {}
   var initials = email.split('@')[0].substring(0,2).toUpperCase();
   document.querySelectorAll('.solcon-avatar').forEach(function(el) { el.textContent = initials; });
   document.querySelectorAll('.solcon-username').forEach(function(el) { el.textContent = email; });
-  try { sessionStorage.setItem('orca_session_email', email); } catch(e) {}
-  showScreen('s-archive');
-  renderArchiveTable();
+  // Navigate first so the archive screen is visible, then load sessions
+  solconNav('s-archive', null);
+  loadSessionsFromSupabase(function(sessions) {
+    renderArchiveTable();
+    buildOrcaBriefing();
+    updateMonthlyStats();
+  });
 }
 
-// ── Auto-restore session on page refresh ──
+// ── Auto-restore session on page load ──
 (function() {
   try {
-    var saved = sessionStorage.getItem('orca_session_email');
-    if (saved && saved.endsWith('@sprout.ph')) {
-      var initials = saved.split('@')[0].substring(0,2).toUpperCase();
+    var savedEmail = sessionStorage.getItem('orca_session_email');
+    if (savedEmail && savedEmail.endsWith('@sprout.ph')) {
+      // Restore login state without going through password check
+      currentSolconEmail = savedEmail;
+      var initials = savedEmail.split('@')[0].substring(0,2).toUpperCase();
       document.querySelectorAll('.solcon-avatar').forEach(function(el) { el.textContent = initials; });
-      document.querySelectorAll('.solcon-username').forEach(function(el) { el.textContent = saved; });
-      showScreen('s-archive');
-      renderArchiveTable();
+      document.querySelectorAll('.solcon-username').forEach(function(el) { el.textContent = savedEmail; });
+      solconNav('s-archive', null);
+      loadSessionsFromSupabase(function() {
+        renderArchiveTable();
+        buildOrcaBriefing();
+        updateMonthlyStats();
+      });
     }
   } catch(e) {}
 })();
@@ -1649,10 +1759,12 @@ function exportToSheets() {
 }
 
 // ─────────────────────────────────────────
-// SESSION STORE — localStorage-backed
+// SESSION STORE — Supabase-backed, localStorage cache
 // ─────────────────────────────────────────
-var SESSION_STORE_KEY = 'orca_recent_sessions';
+var SESSION_STORE_KEY  = 'orca_recent_sessions';
+var currentSolconEmail = '';
 
+// ── Cache helpers ──
 function getSessionStore() {
   try {
     var raw = localStorage.getItem(SESSION_STORE_KEY);
@@ -1665,27 +1777,81 @@ function saveSessionStore(sessions) {
   try { localStorage.setItem(SESSION_STORE_KEY, JSON.stringify(sessions)); } catch(e) {}
 }
 
+// ── Supabase: save one session (fire-and-forget, non-blocking) ──
+function supabaseSaveSession(session) {
+  if (!currentSolconEmail) return;
+  fetch(EDGE_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify({ type: 'session_save', session: session, solconEmail: currentSolconEmail })
+  }).then(function(r) { return r.json(); })
+    .then(function(d) { if (!d.ok) console.error('Session save failed:', d.error); })
+    .catch(function(e) { console.error('Session save error:', e); });
+}
+
+// ── Supabase: update status only ──
+function supabaseUpdateStatus(sessionId, newStatus) {
+  if (!currentSolconEmail) return;
+  fetch(EDGE_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify({ type: 'session_status', sessionId: sessionId, status: newStatus, solconEmail: currentSolconEmail })
+  }).catch(function(e) { console.error('Status update error:', e); });
+}
+
+// ── Supabase: load all sessions for this SolCon ──
+function loadSessionsFromSupabase(callback) {
+  if (!currentSolconEmail) { callback([]); return; }
+  var loadingEl = document.getElementById('archiveLoadingState');
+  if (loadingEl) loadingEl.style.display = 'flex';
+  fetch(EDGE_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify({ type: 'session_list', solconEmail: currentSolconEmail })
+  }).then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (d.ok && d.sessions) {
+        saveSessionStore(d.sessions);
+        callback(d.sessions);
+      } else {
+        console.error('Session list failed:', d.error);
+        callback(getSessionStore()); // fall back to cache
+      }
+    })
+    .catch(function(e) {
+      if (loadingEl) loadingEl.style.display = 'none';
+      console.error('Session load error:', e);
+      callback(getSessionStore()); // fall back to cache
+    });
+}
+
+// ── addSession: write-through — cache first, then Supabase ──
 function addSession(session) {
   var sessions = getSessionStore();
-  sessions = sessions.filter(function(s) { return !(s.company === session.company && s.contact === session.contact); });
+  sessions = sessions.filter(function(s) {
+    return !(s.company === session.company && s.contact === session.contact);
+  });
   sessions.unshift(session);
-  if (sessions.length > 20) sessions = sessions.slice(0, 20);
   saveSessionStore(sessions);
+  supabaseSaveSession(session);    // async, non-blocking
   renderRecentSessions();
   updateMonthlyStats();
 }
 
+// ── updateSessionStatus: cache + Supabase ──
 function updateSessionStatus(sessionId, newStatus) {
   var sessions = getSessionStore();
   sessions.forEach(function(s) {
     if (s.id === sessionId) {
       s.status = newStatus;
-      if (!s.note.includes('Overridden')) {
+      if (!s.note || !s.note.includes('Overridden')) {
         s.note = 'Overridden by SolCon · ' + (newStatus === 'stuck' ? 'waiting on client' : newStatus === 'done' ? 'marked complete' : 'in progress');
       }
     }
   });
   saveSessionStore(sessions);
+  supabaseUpdateStatus(sessionId, newStatus);
   updateMonthlyStats();
 }
 
@@ -1738,32 +1904,88 @@ function updateMonthlyStats() {
 function openSession(sessionId) {
   var sessions = getSessionStore();
   var session = sessions.find(function(s) { return s.id === sessionId; });
-  if (!session) { alert('Session not found.'); return; }
+  if (!session) {
+    // Fallback: just show the IRD screen as-is (already loaded)
+    showScreen('s-ird');
+    return;
+  }
 
-  // Restore global context
+  // Restore prospectData from the session
   prospectData = {
-    companyName: session.company,
-    contactName: session.contact,
-    jobTitle:    session.jobTitle    || '',
-    email:       session.email       || '',
-    salesRep:    session.salesRep    || '',
-    sessionDate: session.sessionDate || ''
+    companyName: session.company || '',
+    contactName: session.contact || '',
+    jobTitle:    session.jobTitle || '',
+    email:       session.email || '',
+    salesRep:    session.salesRep || '',
+    sessionDate: session.sessionDate || session.date || '',
   };
-  irdDocUrl = session.irdDocUrl || '';
 
-  if (session.sections) { Object.assign(sectionSummaries, session.sections); }
+  // Restore section summaries — use stored sections, or reconstruct from irdData fields
+  if (session.sections && Object.keys(session.sections).length > 0) {
+    // Best case: sections were stored directly (sessions generated after this build)
+    sectionSummaries = session.sections;
+  } else if (session.irdData && session.irdData.sections) {
+    // irdData has a sections sub-object
+    sectionSummaries = session.irdData.sections;
+  } else {
+    // Older session — section text was not stored in this session object.
+    // Try direct key extraction first, then fall back to Drive doc prompt.
+    var sectionKeys = ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'];
+    var recovered = {};
+    var anyFound = false;
+    sectionKeys.forEach(function(k) {
+      if (session.irdData && session.irdData[k] && typeof session.irdData[k] === 'string') {
+        recovered[k] = session.irdData[k];
+        anyFound = true;
+      } else if (session[k] && typeof session[k] === 'string') {
+        recovered[k] = session[k];
+        anyFound = true;
+      } else {
+        recovered[k] = session.irdDocUrl
+          ? 'Section detail not available for this session — open the Drive document to view the full IRD.'
+          : 'Section detail not available for this session. Regenerate the IRD to restore full content.';
+      }
+    });
+    sectionSummaries = recovered;
+  }
 
+  // Restore irdDocUrl
+  if (session.irdDocUrl) {
+    irdDocUrl = session.irdDocUrl;
+  }
+
+  // Patch the session store if sections were missing — fixes it for next time
+  if (!session.sections || Object.keys(session.sections).length === 0) {
+    var allSessions = getSessionStore();
+    allSessions = allSessions.map(function(s) {
+      if (s.id === session.id && Object.keys(sectionSummaries).some(function(k) {
+        return sectionSummaries[k] && !sectionSummaries[k].includes('not available');
+      })) {
+        s.sections = JSON.parse(JSON.stringify(sectionSummaries));
+      }
+      return s;
+    });
+    saveSessionStore(allSessions);
+  }
+
+  // Navigate to IRD screen
   showScreen('s-ird');
 
-  // Show sidebar immediately (normally revealed after analysis animation)
-  var _rs = document.getElementById('irdRealSidebar');
-  if (_rs) _rs.style.display = 'flex';
-  var _ap = document.getElementById('irdAnalysisPanel');
-  if (_ap) _ap.style.display = 'none';
-
+  // Populate the IRD screen with the stored irdData
+  // Set replay flag so populateIrdScreen skips re-saving to session store
+  window._orcaReplayMode = true;
   if (session.irdData) {
+    // Show sidebar immediately (normally shown by stopAnalysisProgress after generation)
+    var realSidebar = document.getElementById('irdRealSidebar');
+    if (realSidebar) { realSidebar.style.display = 'flex'; }
+    var analysisPanelEl = document.getElementById('irdAnalysisPanel');
+    if (analysisPanelEl) { analysisPanelEl.style.display = 'none'; }
     populateIrdScreen(session.irdData);
   } else {
+    // No irdData stored — show minimal header only
+    document.getElementById('irdBreadcrumb').textContent = (session.company || 'Session') + ' — IRD';
+    document.getElementById('irdCompany').textContent = session.company || '—';
+    document.getElementById('irdMeta').textContent = [session.contact, session.jobTitle, session.email, session.date, session.salesRep ? 'Sprout POC: ' + session.salesRep : ''].filter(Boolean).join(' · ');
     document.getElementById('irdSalesBrief').textContent = 'Full IRD data not available for this session. Open the Drive document for the complete IRD.';
   }
 }
@@ -2260,14 +2482,16 @@ function populateIrdScreen(irdData) {
   document.getElementById('irdStatRc').textContent = (irdData.requiredConfirmations || []).length;
   document.getElementById('irdStatCrf').textContent = (irdData.crfItems || []).length;
 
-  // ── Save to recent sessions store ──
+  // ── Save to recent sessions store (skip when replaying from archive) ──
   var totalFlags = (irdData.doleFlags||[]).length + (irdData.requiredConfirmations||[]).length + (irdData.crfItems||[]).length + (irdData.specialistItems||[]).length;
-  addSession({
+  if (!window._orcaReplayMode) { addSession({
     id: 'session-' + Date.now(),
     company: prospectData.companyName || 'Unknown Company',
     contact: prospectData.contactName || '',
     jobTitle: prospectData.jobTitle || '',
+    email: prospectData.email || '',
     salesRep: prospectData.salesRep || '',
+    sessionDate: prospectData.sessionDate || '',
     date: prospectData.sessionDate || new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
     flags: (irdData.doleFlags||[]).length,
     totalFlags: totalFlags,
@@ -2275,10 +2499,17 @@ function populateIrdScreen(irdData) {
     status: 'in-progress',
     inputMode: 'transcript',
     irdDocUrl: irdDocUrl || '',
-    note: 'Set by Orca · ' + totalFlags + ' total item' + (totalFlags !== 1 ? 's' : '') + ' to review',
     irdData: irdData,
-    sections: (function(){var s={};['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'].forEach(function(k){s[k]=sectionSummaries[k]||'';});return s;})()
-  });
+    sections: (function() {
+      var snap = {};
+      ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'].forEach(function(k) {
+        snap[k] = sectionSummaries[k] || '';
+      });
+      return snap;
+    })(),
+    note: 'Set by Orca · ' + totalFlags + ' total item' + (totalFlags !== 1 ? 's' : '') + ' to review'
+  }); } // end if !_orcaReplayMode
+  window._orcaReplayMode = false;
 
   // ── Client-side flag routing (mirrors index.ts sfm logic) ──
   var sfm = { timelogs:'', approval:'', work_schedule:'', computation:'', leaves:'', overtime:'', holidays:'', other:'' };
@@ -3970,25 +4201,100 @@ function buildSectionAccuracy(corrections) {
 }
 
 // ── Archive table renderer ────────────────────────────────────
+
+// ─────────────────────────────────────────
+// ORCA BRIEFING STRIP
+// ─────────────────────────────────────────
+function buildOrcaBriefing() {
+  var chipsEl   = document.getElementById('orcaChips');
+  var messageEl = document.getElementById('orcaMessage');
+  if (!chipsEl || !messageEl) return;
+
+  var sessions = getSessionStore();
+  var now = Date.now();
+  var ONE_DAY = 86400000;
+
+  // Counts
+  var total    = sessions.length;
+  var done     = sessions.filter(function(s) { return s.status === 'done'; }).length;
+  var inProg   = sessions.filter(function(s) { return s.status === 'in-progress'; }).length;
+  var stuck    = sessions.filter(function(s) { return s.status === 'stuck'; }).length;
+  var amberRed = sessions.filter(function(s) { return s.risk === 'amber' || s.risk === 'red'; }).length;
+
+  // Find oldest stuck session (by stored id timestamp)
+  var stuckSessions = sessions.filter(function(s) { return s.status === 'stuck'; });
+  var oldestStuck   = null;
+  var maxAge        = 0;
+  stuckSessions.forEach(function(s) {
+    var ts = parseInt((s.id || '').replace('session-', '')) || 0;
+    var age = now - ts;
+    if (age > maxAge) { maxAge = age; oldestStuck = s; }
+  });
+
+  // Find most recent session
+  var sorted  = sessions.slice().sort(function(a, b) {
+    return (parseInt((b.id||'').replace('session-',''))||0) - (parseInt((a.id||'').replace('session-',''))||0);
+  });
+  var latest  = sorted[0] || null;
+
+  // Unreviewed amber/red (in-progress or stuck with amber/red risk)
+  var needsReview = sessions.filter(function(s) {
+    return (s.risk === 'amber' || s.risk === 'red') && s.status !== 'done';
+  });
+
+  // ── Build chips ──
+  function chip(num, label, colorClass) {
+    return '<div class="orca-chip"><div class="orca-chip-num ' + colorClass + '">' + num + '</div>' +
+           '<div class="orca-chip-label">' + label + '</div></div>';
+  }
+
+  var chipsHTML = '';
+  chipsHTML += chip(inProg,   'In<br>Progress', inProg  > 0 ? 'c-amber' : '');
+  chipsHTML += chip(stuck,    'Stuck',          stuck   > 0 ? 'c-red'   : '');
+  chipsHTML += chip(needsReview.length, 'Amber/<br>Unreviewed', needsReview.length > 0 ? 'c-amber' : '');
+  chipsHTML += chip(done,     'Done This<br>Month',      done    > 0 ? 'c-green'  : '');
+
+  chipsEl.innerHTML = chipsHTML;
+
+  // ── Build message (Orca's voice) ──
+  var msgLabel = '<div class="orca-strip-msg-label">Orca says</div>';
+  var msgText  = '';
+
+  if (total === 0) {
+    msgText = 'No sessions yet. Generate your first IRD to get started.';
+  } else if (oldestStuck) {
+    var ageDays = Math.floor(maxAge / ONE_DAY);
+    var ageStr  = ageDays >= 2 ? ageDays + ' days' : ageDays === 1 ? 'yesterday' : 'earlier today';
+    var dayName = '';
+    if (ageDays >= 1 && ageDays <= 6) {
+      var d = new Date(parseInt((oldestStuck.id||'').replace('session-',''))||now);
+      dayName = ' since ' + d.toLocaleDateString('en-PH', { weekday: 'long' });
+    }
+    msgText = '<strong>' + (oldestStuck.company || 'A session') + '</strong> has not moved' +
+              (dayName || ' in ' + ageStr) + ' — worth a nudge today.';
+  } else if (needsReview.length > 0) {
+    var names = needsReview.slice(0, 2).map(function(s) { return '<strong>' + (s.company || 'Unknown') + '</strong>'; }).join(' and ');
+    msgText = names + (needsReview.length > 2 ? ' and ' + (needsReview.length - 2) + ' others' : '') +
+              ' flagged amber — not reviewed yet.';
+  } else if (latest) {
+    var latestTs = parseInt((latest.id||'').replace('session-',''))||0;
+    var minsAgo  = Math.floor((now - latestTs) / 60000);
+    var timeStr  = minsAgo < 60 ? minsAgo + ' min ago' : Math.floor(minsAgo/60) + ' hr ago';
+    if (minsAgo > 1440) timeStr = latest.date || 'recently';
+    msgText = 'Last session: <strong>' + (latest.company || 'Unknown') + '</strong> · ' + timeStr + '. ' +
+              (latest.risk === 'green' ? 'Green — good to go.' : 'Check the outstanding items before your next call.');
+  } else {
+    msgText = 'Pipeline looks clear. ' + done + ' session' + (done !== 1 ? 's' : '') + ' done this month.';
+  }
+
+  messageEl.innerHTML = msgLabel + '<div class="orca-strip-msg-text">' + msgText + '</div>';
+}
+
 function renderArchiveTable(filterStatus, searchQuery) {
   var sessions = getSessionStore();
   var body = document.getElementById('archiveTableBody');
   var footer = document.getElementById('archiveFooterCount');
   if (!body) return;
-
-  // Update summary stats
-  var statMap = {
-    'archiveStat-total':    sessions.length,
-    'archiveStat-done':     sessions.filter(function(s){return s.status==='done';}).length,
-    'archiveStat-inprog':   sessions.filter(function(s){return s.status==='in-progress';}).length,
-    'archiveStat-stuck':    sessions.filter(function(s){return s.status==='stuck';}).length,
-    'archiveStat-green':    sessions.filter(function(s){return s.risk==='green';}).length,
-    'archiveStat-amberred': sessions.filter(function(s){return s.risk==='amber'||s.risk==='red';}).length
-  };
-  Object.keys(statMap).forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = statMap[id];
-  });
 
   // Filter
   var filtered = sessions;
@@ -4025,48 +4331,85 @@ function renderArchiveTable(filterStatus, searchQuery) {
     var rc = riskCfg[s.risk] || riskCfg.amber;
     var modeText = s.inputMode === 'transcript' ? 'transcript' : s.inputMode === 'interview' ? 'self-serve' : '';
 
+    // Calculate session age in days
+    var sessionTs  = parseInt((s.id||'').replace('session-','')) || 0;
+    var sessionAge = sessionTs ? Math.floor((Date.now() - sessionTs) / 86400000) : 0;
+    var isStaleStuck = s.status === 'stuck' && sessionAge >= 2;
+
     var row = document.createElement('div');
     row.className = 'archive-row';
     row.dataset.sessionId = s.id;
     row.dataset.status = s.status || 'in-progress';
+    if (isStaleStuck) {
+      row.style.cssText = 'background:rgba(245,158,11,.04);border-left:2px solid #F59E0B;';
+    }
 
-    // Col 1: Company + flags
+    // Col 1: Company + subline (age warning for stuck, otherwise contact/flags)
     var col1 = document.createElement('div');
+    var sublineText  = s.contact ? s.contact + (s.jobTitle ? ' · ' + s.jobTitle : '') : flagLabel;
+    var sublineStyle = 'font-size:11px;color:var(--muted);';
+    if (isStaleStuck) {
+      var ageLabel = sessionAge === 1 ? 'yesterday' : sessionAge + ' days old';
+      sublineText  = '⚠ Stuck since ' + ageLabel;
+      sublineStyle = 'font-size:11px;color:#F59E0B;font-weight:500;';
+    }
     col1.innerHTML = '<div style="font-size:13px;font-weight:500;color:var(--near-black);">' + (s.company||'—') + '</div>' +
-      '<div style="font-size:11px;color:var(--muted);">' + flagLabel + (modeText ? ' · <span style="font-size:10px;">' + modeText + '</span>' : '') + '</div>';
+      '<div style="' + sublineStyle + '">' + sublineText + '</div>';
 
-    // Col 2: Contact + title
+    // Col 2: Date
     var col2 = document.createElement('div');
-    col2.innerHTML = '<div style="font-size:13px;color:var(--mid);">' + (s.contact||'—') + '</div>' +
-      '<div style="font-size:11px;color:var(--muted);">' + (s.jobTitle||'') + '</div>';
+    col2.style.cssText = 'font-size:13px;color:var(--mid);';
+    col2.textContent = s.date || '—';
 
-    // Col 3: Date
+    // Col 3: Type pill
     var col3 = document.createElement('div');
-    col3.style.cssText = 'font-size:13px;color:var(--mid);';
-    col3.textContent = s.date || '—';
+    var isTranscript = s.inputMode === 'transcript';
+    var typePill = document.createElement('span');
+    typePill.style.cssText = 'display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.04em;' +
+      (isTranscript
+        ? 'background:var(--green-light);border:1px solid var(--green-mid);color:var(--green-dark);'
+        : 'background:#F0F4F2;border:1px solid var(--border);color:var(--muted);');
+    typePill.textContent = isTranscript ? 'Transcript' : 'Self-serve';
+    col3.appendChild(typePill);
 
-    // Col 4: Sales Rep
+    // Col 4: SolCon
     var col4 = document.createElement('div');
     col4.style.cssText = 'font-size:13px;color:var(--mid);';
-    col4.textContent = s.salesRep || '—';
+    col4.textContent = 'VK';
 
-    // Col 5: SolCon (always VK for now)
+    // Col 5: DOLE flags count
+    var doleCount = s.irdData ? (s.irdData.doleFlags||[]).length : (s.flags || 0);
     var col5 = document.createElement('div');
-    col5.style.cssText = 'font-size:13px;color:var(--mid);';
-    col5.textContent = 'VK';
+    col5.innerHTML = doleCount > 0
+      ? '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;border-radius:5px;font-size:12px;font-weight:700;background:var(--dole-bg);border:1px solid var(--dole-border);color:var(--dole-color);">' + doleCount + '</span>'
+      : '<span style="font-size:12px;color:var(--muted);">—</span>';
 
-    // Col 6: Risk badge
+    // Col 6: Required Confirmations count
+    var rcCount = s.irdData ? (s.irdData.requiredConfirmations||[]).length : 0;
     var col6 = document.createElement('div');
+    col6.innerHTML = rcCount > 0
+      ? '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;border-radius:5px;font-size:12px;font-weight:700;background:var(--rc-bg);border:1px solid var(--rc-border);color:var(--rc-color);">' + rcCount + '</span>'
+      : '<span style="font-size:12px;color:var(--muted);">—</span>';
+
+    // Col 7: CRF items count
+    var crfCount = s.irdData ? (s.irdData.crfItems||[]).length : 0;
+    var col7 = document.createElement('div');
+    col7.innerHTML = crfCount > 0
+      ? '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;border-radius:5px;font-size:12px;font-weight:700;background:var(--crf-bg);border:1px solid var(--crf-border);color:var(--crf-color);">' + crfCount + '</span>'
+      : '<span style="font-size:12px;color:var(--muted);">—</span>';
+
+    // Col 8: Risk badge
+    var col8 = document.createElement('div');
     var riskSpan = document.createElement('span');
     riskSpan.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:' + rc.bg + ';border:1px solid ' + rc.border + ';color:' + rc.color + ';';
     var dot = document.createElement('span');
     dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:' + rc.dot + ';display:inline-block;';
     riskSpan.appendChild(dot);
     riskSpan.appendChild(document.createTextNode(rc.label));
-    col6.appendChild(riskSpan);
+    col8.appendChild(riskSpan);
 
-    // Col 7: Status badge
-    var col7 = document.createElement('div');
+    // Col 9: Status badge
+    var col9 = document.createElement('div');
     var statusSpan = document.createElement('span');
     statusSpan.className = 'status-badge ' + (s.status||'in-progress');
     statusSpan.textContent = statusLabels[s.status] || 'In Progress';
@@ -4074,21 +4417,7 @@ function renderArchiveTable(filterStatus, searchQuery) {
       e.stopPropagation();
       cycleStatus(statusSpan, s.id);
     });
-    col7.appendChild(statusSpan);
-
-    // Col 8: Drive link
-    var col8 = document.createElement('div');
-    if (s.irdDocUrl) {
-      var driveLink = document.createElement('a');
-      driveLink.href = s.irdDocUrl;
-      driveLink.target = '_blank';
-      driveLink.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--green-light);border:1px solid var(--green-mid);color:var(--green);cursor:pointer;';
-      driveLink.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-      driveLink.addEventListener('click', function(e) { e.stopPropagation(); });
-      col8.appendChild(driveLink);
-    } else {
-      col8.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--bg);border:1px solid var(--border);color:var(--muted);" title="No Drive doc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>';
-    }
+    col9.appendChild(statusSpan);
 
     row.appendChild(col1);
     row.appendChild(col2);
@@ -4098,8 +4427,9 @@ function renderArchiveTable(filterStatus, searchQuery) {
     row.appendChild(col6);
     row.appendChild(col7);
     row.appendChild(col8);
+    row.appendChild(col9);
 
-    // Row click → open session
+    // Row click → open session IRD with real data
     row.addEventListener('click', function() { openSession(s.id); });
     body.appendChild(row);
   });
@@ -4112,7 +4442,17 @@ var _origSolconNav = solconNav;
 solconNav = function(id, clickedEl) {
   _origSolconNav(id, clickedEl);
   if (id === 's-trends') renderTrends();
-  if (id === 's-archive') renderArchiveTable();
+  if (id === 's-archive') {
+    if (currentSolconEmail) {
+      loadSessionsFromSupabase(function() {
+        renderArchiveTable();
+        buildOrcaBriefing();
+      });
+    } else {
+      renderArchiveTable();
+      buildOrcaBriefing();
+    }
+  }
 };
 
 // Init on load
