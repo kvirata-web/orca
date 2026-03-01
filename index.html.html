@@ -1154,6 +1154,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Risk</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Status</div>
         </div>
+        <!-- Loading state -->
+        <div id="archiveLoadingState" style="display:none;align-items:center;justify-content:center;gap:10px;padding:40px;color:var(--muted);font-size:13px;">
+          <div style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;"></div>
+          Loading sessions from Orca…
+        </div>
         <div id="archiveTableBody">
           <!-- Populated by renderArchiveTable() -->
         </div>
@@ -1703,11 +1708,17 @@ function doLogin() {
     return;
   }
   errEl.textContent = '';
-  // Set username display
+  currentSolconEmail = email;
   var initials = email.split('@')[0].substring(0,2).toUpperCase();
   document.querySelectorAll('.solcon-avatar').forEach(function(el) { el.textContent = initials; });
   document.querySelectorAll('.solcon-username').forEach(function(el) { el.textContent = email; });
+  // Navigate first so the archive screen is visible, then load sessions
   solconNav('s-archive', null);
+  loadSessionsFromSupabase(function(sessions) {
+    renderArchiveTable();
+    buildOrcaBriefing();
+    updateMonthlyStats();
+  });
 }
 
 // ─────────────────────────────────────────
@@ -1726,10 +1737,12 @@ function exportToSheets() {
 }
 
 // ─────────────────────────────────────────
-// SESSION STORE — localStorage-backed
+// SESSION STORE — Supabase-backed, localStorage cache
 // ─────────────────────────────────────────
-var SESSION_STORE_KEY = 'orca_recent_sessions';
+var SESSION_STORE_KEY  = 'orca_recent_sessions';
+var currentSolconEmail = '';
 
+// ── Cache helpers ──
 function getSessionStore() {
   try {
     var raw = localStorage.getItem(SESSION_STORE_KEY);
@@ -1742,27 +1755,81 @@ function saveSessionStore(sessions) {
   try { localStorage.setItem(SESSION_STORE_KEY, JSON.stringify(sessions)); } catch(e) {}
 }
 
+// ── Supabase: save one session (fire-and-forget, non-blocking) ──
+function supabaseSaveSession(session) {
+  if (!currentSolconEmail) return;
+  fetch(EDGE_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify({ type: 'session_save', session: session, solconEmail: currentSolconEmail })
+  }).then(function(r) { return r.json(); })
+    .then(function(d) { if (!d.ok) console.error('Session save failed:', d.error); })
+    .catch(function(e) { console.error('Session save error:', e); });
+}
+
+// ── Supabase: update status only ──
+function supabaseUpdateStatus(sessionId, newStatus) {
+  if (!currentSolconEmail) return;
+  fetch(EDGE_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify({ type: 'session_status', sessionId: sessionId, status: newStatus, solconEmail: currentSolconEmail })
+  }).catch(function(e) { console.error('Status update error:', e); });
+}
+
+// ── Supabase: load all sessions for this SolCon ──
+function loadSessionsFromSupabase(callback) {
+  if (!currentSolconEmail) { callback([]); return; }
+  var loadingEl = document.getElementById('archiveLoadingState');
+  if (loadingEl) loadingEl.style.display = 'flex';
+  fetch(EDGE_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify({ type: 'session_list', solconEmail: currentSolconEmail })
+  }).then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (d.ok && d.sessions) {
+        saveSessionStore(d.sessions);
+        callback(d.sessions);
+      } else {
+        console.error('Session list failed:', d.error);
+        callback(getSessionStore()); // fall back to cache
+      }
+    })
+    .catch(function(e) {
+      if (loadingEl) loadingEl.style.display = 'none';
+      console.error('Session load error:', e);
+      callback(getSessionStore()); // fall back to cache
+    });
+}
+
+// ── addSession: write-through — cache first, then Supabase ──
 function addSession(session) {
   var sessions = getSessionStore();
-  sessions = sessions.filter(function(s) { return !(s.company === session.company && s.contact === session.contact); });
+  sessions = sessions.filter(function(s) {
+    return !(s.company === session.company && s.contact === session.contact);
+  });
   sessions.unshift(session);
-  if (sessions.length > 20) sessions = sessions.slice(0, 20);
   saveSessionStore(sessions);
+  supabaseSaveSession(session);    // async, non-blocking
   renderRecentSessions();
   updateMonthlyStats();
 }
 
+// ── updateSessionStatus: cache + Supabase ──
 function updateSessionStatus(sessionId, newStatus) {
   var sessions = getSessionStore();
   sessions.forEach(function(s) {
     if (s.id === sessionId) {
       s.status = newStatus;
-      if (!s.note.includes('Overridden')) {
+      if (!s.note || !s.note.includes('Overridden')) {
         s.note = 'Overridden by SolCon · ' + (newStatus === 'stuck' ? 'waiting on client' : newStatus === 'done' ? 'marked complete' : 'in progress');
       }
     }
   });
   saveSessionStore(sessions);
+  supabaseUpdateStatus(sessionId, newStatus);
   updateMonthlyStats();
 }
 
@@ -1839,13 +1906,23 @@ function openSession(sessionId) {
     // irdData has a sections sub-object
     sectionSummaries = session.irdData.sections;
   } else {
-    // Older sessions: irdData may carry timelogs/approval etc. at top level via interviewData
-    // Try to pull any text fields that look like section content
-    var keys = ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'];
+    // Older session — section text was not stored in this session object.
+    // Try direct key extraction first, then fall back to Drive doc prompt.
+    var sectionKeys = ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'];
     var recovered = {};
-    keys.forEach(function(k) {
-      if (session.irdData && session.irdData[k]) recovered[k] = session.irdData[k];
-      else if (session[k]) recovered[k] = session[k];
+    var anyFound = false;
+    sectionKeys.forEach(function(k) {
+      if (session.irdData && session.irdData[k] && typeof session.irdData[k] === 'string') {
+        recovered[k] = session.irdData[k];
+        anyFound = true;
+      } else if (session[k] && typeof session[k] === 'string') {
+        recovered[k] = session[k];
+        anyFound = true;
+      } else {
+        recovered[k] = session.irdDocUrl
+          ? 'Section detail not available for this session — open the Drive document to view the full IRD.'
+          : 'Section detail not available for this session. Regenerate the IRD to restore full content.';
+      }
     });
     sectionSummaries = recovered;
   }
@@ -1853,6 +1930,20 @@ function openSession(sessionId) {
   // Restore irdDocUrl
   if (session.irdDocUrl) {
     irdDocUrl = session.irdDocUrl;
+  }
+
+  // Patch the session store if sections were missing — fixes it for next time
+  if (!session.sections || Object.keys(session.sections).length === 0) {
+    var allSessions = getSessionStore();
+    allSessions = allSessions.map(function(s) {
+      if (s.id === session.id && Object.keys(sectionSummaries).some(function(k) {
+        return sectionSummaries[k] && !sectionSummaries[k].includes('not available');
+      })) {
+        s.sections = JSON.parse(JSON.stringify(sectionSummaries));
+      }
+      return s;
+    });
+    saveSessionStore(allSessions);
   }
 
   // Navigate to IRD screen
@@ -2382,7 +2473,13 @@ function populateIrdScreen(irdData) {
     inputMode: 'transcript',
     irdDocUrl: irdDocUrl || '',
     irdData: irdData,
-    sections: JSON.parse(JSON.stringify(sectionSummaries)),
+    sections: (function() {
+      var snap = {};
+      ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'].forEach(function(k) {
+        snap[k] = sectionSummaries[k] || '';
+      });
+      return snap;
+    })(),
     note: 'Set by Orca · ' + totalFlags + ' total item' + (totalFlags !== 1 ? 's' : '') + ' to review'
   }); } // end if !_orcaReplayMode
   window._orcaReplayMode = false;
@@ -4318,7 +4415,17 @@ var _origSolconNav = solconNav;
 solconNav = function(id, clickedEl) {
   _origSolconNav(id, clickedEl);
   if (id === 's-trends') renderTrends();
-  if (id === 's-archive') { renderArchiveTable(); buildOrcaBriefing(); }
+  if (id === 's-archive') {
+    if (currentSolconEmail) {
+      loadSessionsFromSupabase(function() {
+        renderArchiveTable();
+        buildOrcaBriefing();
+      });
+    } else {
+      renderArchiveTable();
+      buildOrcaBriefing();
+    }
+  }
 };
 
 // Init on load
