@@ -2725,17 +2725,20 @@ function getSectionGuide(sectionIndex) {
     // ── 0: TIMELOGS ──
     'SECTION GOAL: Understand exactly how employees record their time and how those records reach payroll.\n' +
     'ASK ABOUT:\n' +
+    '- Whether the company currently uses any timekeeping or payroll system — ask this early, before asking about clock-in method\n' +
     '- How employees clock in/out (biometric device, mobile app, manual timesheets, Bundy clock, or a combination)\n' +
     '- If biometric: the brand AND model of the device (e.g. ZKTeco K40) — both are required\n' +
     '- How data gets from the device to payroll each cutoff — who does it, and how often\n' +
     '- Who is responsible for consolidating and uploading logs\n' +
     '- How absences or missed punches are handled and corrected\n' +
     'NATURAL CONVERSATION PROMPTS:\n' +
+    '- "Are you currently using any system to manage timekeeping or payroll, or is it handled manually?"\n' +
     '- "How do your employees clock in — is it a fingerprint scanner, a mobile app, or something else?"\n' +
     '- "What brand and model is the biometric device?"\n' +
     '- "Once the logs are in the device, how do they get into payroll — does someone download them, or is it automatic?"\n' +
     '- "Who handles it when an employee forgets to clock in or out?"\n' +
     'SECTION IS COMPLETE WHEN:\n' +
+    '✓ Whether a current system exists is confirmed (name it if yes; note manual or spreadsheet if no)\n' +
     '✓ At least one logging method is confirmed\n' +
     '✓ If biometric: brand AND model are stated (if not, note as to-be-confirmed)\n' +
     '✓ Data flow from device to payroll is described\n' +
@@ -2917,9 +2920,11 @@ function buildSystemPrompt() {
     '- Ask ONE question at a time. Wait for the answer before asking the next.\n' +
     '- Use plain, everyday language. Speak like a helpful colleague, not a form.\n' +
     '- Never open a response with "Great!", "Perfect!", "Absolutely!", "Of course!", or similar filler words. Vary acknowledgments naturally.\n' +
-    '- If the prospect says they don\'t know: respond with "No problem — the Sprout team can sort that out with you before your next meeting."\n' +
+    '- If the prospect says they don\'t know or aren\'t sure about something: acknowledge naturally and vary your response each time — never use the same phrase twice. Use alternatives like: "No worries — if you can check that before your meeting with Sprout, it\'ll help things move faster.", "That\'s fine — worth jotting that down as something to look up before your next conversation.", "Not a problem — if you can confirm that beforehand, the Sprout team will be able to give you a much more specific answer.", or "Totally fine — just something to have ready when you sit down with the Sprout team." The framing should always put the prospect in the driver\'s seat: they look up the info and bring it to the meeting, not wait for Sprout to chase them.\n' +
     '- Do NOT use these internal terms with the prospect: IRD, SolCon, SolServ, CRF, DOLE flag, biolog, Required Confirmation.\n' +
     '- After every question, on a new line write OPTIONS: followed by 2–4 short choices separated by | characters.\n' +
+    '- OPTIONS must be specific, plausible answers to the exact question you just asked — not generic fallbacks. If you asked about number of work days, options should be "4 days | 4.5 days | 5 days | Not sure". If you asked about clock-in method, options should be "Fingerprint scanner | Mobile app | Manual timesheet | Mix of methods".\n' +
+    '- Write OPTIONS in first person as the prospect would say them, or as neutral short factual phrases. Never write them in second person (e.g. never "You are not sure" or "They use biometrics"). Use "I\'m not sure" or "Not sure" — never "You\'re not sure".\n' +
     '- Do NOT use markdown formatting. Plain text only.\n' +
     '- Ask one smart follow-up if an answer is vague or incomplete based on the section guide below.\n\n' +
 
