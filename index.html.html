@@ -1831,9 +1831,23 @@ function openSession(sessionId) {
     sessionDate: session.sessionDate || session.date || '',
   };
 
-  // Restore section summaries if stored
-  if (session.sections) {
+  // Restore section summaries — use stored sections, or reconstruct from irdData fields
+  if (session.sections && Object.keys(session.sections).length > 0) {
+    // Best case: sections were stored directly (sessions generated after this build)
     sectionSummaries = session.sections;
+  } else if (session.irdData && session.irdData.sections) {
+    // irdData has a sections sub-object
+    sectionSummaries = session.irdData.sections;
+  } else {
+    // Older sessions: irdData may carry timelogs/approval etc. at top level via interviewData
+    // Try to pull any text fields that look like section content
+    var keys = ['timelogs','approval','work_schedule','computation','leaves','overtime','holidays','other'];
+    var recovered = {};
+    keys.forEach(function(k) {
+      if (session.irdData && session.irdData[k]) recovered[k] = session.irdData[k];
+      else if (session[k]) recovered[k] = session[k];
+    });
+    sectionSummaries = recovered;
   }
 
   // Restore irdDocUrl
@@ -1845,6 +1859,8 @@ function openSession(sessionId) {
   showScreen('s-ird');
 
   // Populate the IRD screen with the stored irdData
+  // Set replay flag so populateIrdScreen skips re-saving to session store
+  window._orcaReplayMode = true;
   if (session.irdData) {
     populateIrdScreen(session.irdData);
   } else {
@@ -2348,9 +2364,9 @@ function populateIrdScreen(irdData) {
   document.getElementById('irdStatRc').textContent = (irdData.requiredConfirmations || []).length;
   document.getElementById('irdStatCrf').textContent = (irdData.crfItems || []).length;
 
-  // ── Save to recent sessions store ──
+  // ── Save to recent sessions store (skip when replaying from archive) ──
   var totalFlags = (irdData.doleFlags||[]).length + (irdData.requiredConfirmations||[]).length + (irdData.crfItems||[]).length + (irdData.specialistItems||[]).length;
-  addSession({
+  if (!window._orcaReplayMode) { addSession({
     id: 'session-' + Date.now(),
     company: prospectData.companyName || 'Unknown Company',
     contact: prospectData.contactName || '',
@@ -2368,7 +2384,8 @@ function populateIrdScreen(irdData) {
     irdData: irdData,
     sections: JSON.parse(JSON.stringify(sectionSummaries)),
     note: 'Set by Orca · ' + totalFlags + ' total item' + (totalFlags !== 1 ? 's' : '') + ' to review'
-  });
+  }); } // end if !_orcaReplayMode
+  window._orcaReplayMode = false;
 
   // ── Client-side flag routing (mirrors index.ts sfm logic) ──
   var sfm = { timelogs:'', approval:'', work_schedule:'', computation:'', leaves:'', overtime:'', holidays:'', other:'' };
