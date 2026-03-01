@@ -375,7 +375,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
    SCREEN: SESSION ARCHIVE
 ══════════════════════════════════════════ */
 #s-archive { flex-direction: column; background: var(--bg); min-height: 100vh; }
-.archive-row { display: grid; grid-template-columns: 2fr 1.2fr 0.9fr 0.7fr 1fr 1fr 0.8fr 0.8fr 0.5fr; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: background .15s; }
+.archive-row { display: grid; grid-template-columns: 2fr 0.9fr 0.7fr 0.8fr 0.6fr 0.6fr 0.6fr 0.8fr 0.8fr; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: background .15s; }
 .archive-row:hover { background: var(--green-light); }
 .archive-row:last-child { border-bottom: none; }
 
@@ -1020,16 +1020,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <select style="padding:9px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--mid);background:white;outline:none;cursor:pointer;"><option>All time</option><option>This month</option><option>Last 30 days</option><option>Last 90 days</option></select>
       </div>
       <div style="background:white;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;">
-        <div style="display:grid;grid-template-columns:2fr 1.2fr 0.9fr 0.7fr 1fr 1fr 0.8fr 0.8fr 0.5fr;padding:12px 20px;border-bottom:1.5px solid var(--border);background:var(--bg);">
+        <div style="display:grid;grid-template-columns:2fr 0.9fr 0.7fr 0.8fr 0.6fr 0.6fr 0.6fr 0.8fr 0.8fr;padding:12px 20px;border-bottom:1.5px solid var(--border);background:var(--bg);">
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Company</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Contact</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Date</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Type</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Sales Rep</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">SolCon</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);color:var(--dole-color);">DOLE</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--rc-color);">RC</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--crf-color);">CRF</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Risk</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Status</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">IRD</div>
         </div>
         <div id="archiveTableBody">
           <!-- Populated by renderArchiveTable() -->
@@ -3997,54 +3997,65 @@ function renderArchiveTable(filterStatus, searchQuery) {
     row.dataset.sessionId = s.id;
     row.dataset.status = s.status || 'in-progress';
 
-    // Col 1: Company + flags
+    // Col 1: Company + total flags subline
     var col1 = document.createElement('div');
     col1.innerHTML = '<div style="font-size:13px;font-weight:500;color:var(--near-black);">' + (s.company||'—') + '</div>' +
-      '<div style="font-size:11px;color:var(--muted);">' + flagLabel + '</div>';
+      '<div style="font-size:11px;color:var(--muted);">' + (s.contact ? s.contact + (s.jobTitle ? ' · ' + s.jobTitle : '') : flagLabel) + '</div>';
 
-    // Col 2: Contact + title
+    // Col 2: Date
     var col2 = document.createElement('div');
-    col2.innerHTML = '<div style="font-size:13px;color:var(--mid);">' + (s.contact||'—') + '</div>' +
-      '<div style="font-size:11px;color:var(--muted);">' + (s.jobTitle||'') + '</div>';
+    col2.style.cssText = 'font-size:13px;color:var(--mid);';
+    col2.textContent = s.date || '—';
 
-    // Col 3: Date
+    // Col 3: Type pill
     var col3 = document.createElement('div');
-    col3.style.cssText = 'font-size:13px;color:var(--mid);';
-    col3.textContent = s.date || '—';
-
-    // Col 4: Type pill (transcript vs self-serve)
-    var col4 = document.createElement('div');
     var isTranscript = s.inputMode === 'transcript';
     var typePill = document.createElement('span');
-    typePill.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.04em;' +
+    typePill.style.cssText = 'display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.04em;' +
       (isTranscript
         ? 'background:var(--green-light);border:1px solid var(--green-mid);color:var(--green-dark);'
         : 'background:#F0F4F2;border:1px solid var(--border);color:var(--muted);');
     typePill.textContent = isTranscript ? 'Transcript' : 'Self-serve';
-    col4.appendChild(typePill);
+    col3.appendChild(typePill);
 
-    // Col 5: Sales Rep
+    // Col 4: SolCon
+    var col4 = document.createElement('div');
+    col4.style.cssText = 'font-size:13px;color:var(--mid);';
+    col4.textContent = 'VK';
+
+    // Col 5: DOLE flags count
+    var doleCount = s.irdData ? (s.irdData.doleFlags||[]).length : (s.flags || 0);
     var col5 = document.createElement('div');
-    col5.style.cssText = 'font-size:13px;color:var(--mid);';
-    col5.textContent = s.salesRep || '—';
+    col5.innerHTML = doleCount > 0
+      ? '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;border-radius:5px;font-size:12px;font-weight:700;background:var(--dole-bg);border:1px solid var(--dole-border);color:var(--dole-color);">' + doleCount + '</span>'
+      : '<span style="font-size:12px;color:var(--muted);">—</span>';
 
-    // Col 6: SolCon (always VK for now)
+    // Col 6: Required Confirmations count
+    var rcCount = s.irdData ? (s.irdData.requiredConfirmations||[]).length : 0;
     var col6 = document.createElement('div');
-    col6.style.cssText = 'font-size:13px;color:var(--mid);';
-    col6.textContent = 'VK';
+    col6.innerHTML = rcCount > 0
+      ? '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;border-radius:5px;font-size:12px;font-weight:700;background:var(--rc-bg);border:1px solid var(--rc-border);color:var(--rc-color);">' + rcCount + '</span>'
+      : '<span style="font-size:12px;color:var(--muted);">—</span>';
 
-    // Col 7: Risk badge
+    // Col 7: CRF items count
+    var crfCount = s.irdData ? (s.irdData.crfItems||[]).length : 0;
     var col7 = document.createElement('div');
+    col7.innerHTML = crfCount > 0
+      ? '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;border-radius:5px;font-size:12px;font-weight:700;background:var(--crf-bg);border:1px solid var(--crf-border);color:var(--crf-color);">' + crfCount + '</span>'
+      : '<span style="font-size:12px;color:var(--muted);">—</span>';
+
+    // Col 8: Risk badge
+    var col8 = document.createElement('div');
     var riskSpan = document.createElement('span');
     riskSpan.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:' + rc.bg + ';border:1px solid ' + rc.border + ';color:' + rc.color + ';';
     var dot = document.createElement('span');
     dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:' + rc.dot + ';display:inline-block;';
     riskSpan.appendChild(dot);
     riskSpan.appendChild(document.createTextNode(rc.label));
-    col7.appendChild(riskSpan);
+    col8.appendChild(riskSpan);
 
-    // Col 8: Status badge
-    var col8 = document.createElement('div');
+    // Col 9: Status badge
+    var col9 = document.createElement('div');
     var statusSpan = document.createElement('span');
     statusSpan.className = 'status-badge ' + (s.status||'in-progress');
     statusSpan.textContent = statusLabels[s.status] || 'In Progress';
@@ -4052,21 +4063,7 @@ function renderArchiveTable(filterStatus, searchQuery) {
       e.stopPropagation();
       cycleStatus(statusSpan, s.id);
     });
-    col8.appendChild(statusSpan);
-
-    // Col 9: Drive link (opens full IRD doc in new tab)
-    var col9 = document.createElement('div');
-    if (s.irdDocUrl) {
-      var driveLink = document.createElement('a');
-      driveLink.href = s.irdDocUrl;
-      driveLink.target = '_blank';
-      driveLink.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--green-light);border:1px solid var(--green-mid);color:var(--green);cursor:pointer;';
-      driveLink.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-      driveLink.addEventListener('click', function(e) { e.stopPropagation(); });
-      col9.appendChild(driveLink);
-    } else {
-      col9.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:var(--bg);border:1px solid var(--border);color:var(--muted);" title="No Drive doc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>';
-    }
+    col9.appendChild(statusSpan);
 
     row.appendChild(col1);
     row.appendChild(col2);
