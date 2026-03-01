@@ -891,10 +891,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
       </div>
       <div class="divider" style="height:20px;"></div>
       <div class="solcon-nav">
-        <div class="solcon-nav-item active" onclick="solconNav('s-solcon',this)">Generate IRD</div>
-        <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
+        <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Sessions</div>
+        <div class="solcon-nav-item active" onclick="solconNav('s-solcon',this)">IRD Generator</div>
         <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-        <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
+        <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Orca Health</div>
         <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
       </div>
     </div>
@@ -954,10 +954,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         Open in Drive
       </button>
-      <button class="btn-action outline" onclick="emailIrd()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/><path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="2"/></svg>
-        Email IRD
-      </button>
+
       <button class="btn-action solid" onclick="generateIrdPDF()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
         Download PDF
@@ -1094,10 +1091,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         </div>
         <div class="divider" style="height:20px;"></div>
         <div class="solcon-nav">
-          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
-          <div class="solcon-nav-item active" onclick="solconNav('s-archive',this)">Session Archive</div>
+          <div class="solcon-nav-item active" onclick="solconNav('s-archive',this)">Sessions</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Orca Health</div>
           <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
@@ -1106,13 +1103,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
     <div style="padding:40px 48px;max-width:1200px;margin:0 auto;width:100%;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;">
         <div>
-          <div class="solcon-page-title">Session Archive</div>
+          <div class="solcon-page-title">Sessions</div>
           <div class="solcon-page-sub" style="margin-bottom:0;">All discovery sessions — searchable, filterable, and linked to their IRD documents.</div>
         </div>
-        <button onclick="exportToSheets()" style="display:flex;align-items:center;gap:8px;padding:10px 18px;background:white;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;color:var(--mid);cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='#00A651';this.style.color='#00A651'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--mid)'">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M8 13h8M8 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          Export to Google Sheets
-        </button>
+
       </div>
       <!-- ORCA BRIEFING STRIP -->
       <div class="orca-strip" id="orcaBriefingStrip">
@@ -1183,10 +1177,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         </div>
         <div class="divider" style="height:20px;"></div>
         <div class="solcon-nav">
-          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Sessions</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Orca Health</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
@@ -1269,10 +1263,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         </div>
         <div class="divider" style="height:20px;"></div>
         <div class="solcon-nav">
-          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Sessions</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item active" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Trends</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-trends',this)">Orca Health</div>
           <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
@@ -1428,10 +1422,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--n
         </div>
         <div class="divider" style="height:20px;"></div>
         <div class="solcon-nav">
-          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">Generate IRD</div>
-          <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Session Archive</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-archive',this)">Sessions</div>
+          <div class="solcon-nav-item" onclick="solconNav('s-solcon',this)">IRD Generator</div>
           <div class="solcon-nav-item" onclick="solconNav('s-coaching',this)">Coach Orca</div>
-          <div class="solcon-nav-item active" onclick="solconNav('s-trends',this)">Trends</div>
+          <div class="solcon-nav-item active" onclick="solconNav('s-trends',this)">Orca Health</div>
           <div class="solcon-nav-item" onclick="solconNav('s-settings',this)">Settings</div>
         </div>
       </div>
