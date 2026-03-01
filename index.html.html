@@ -2723,29 +2723,55 @@ function getSectionGuide(sectionIndex) {
   var guides = [
 
     // ── 0: TIMELOGS ──
-    'SECTION GOAL: Understand exactly how employees record their time and how those records reach payroll.\n' +
-    'ASK ABOUT:\n' +
-    '- Whether the company currently uses any timekeeping or payroll system — ask this early, before asking about clock-in method\n' +
-    '- How employees clock in/out (biometric device, mobile app, manual timesheets, Bundy clock, or a combination)\n' +
-    '- If biometric: the brand AND model of the device (e.g. ZKTeco K40) — both are required\n' +
-    '- How data gets from the device to payroll each cutoff — who does it, and how often\n' +
-    '- Who is responsible for consolidating and uploading logs\n' +
-    '- How absences or missed punches are handled and corrected\n' +
+    'SECTION GOAL: Understand exactly how employees record their time, what system (if any) manages their HR and payroll, and how time logs flow from capture to payroll each cutoff.\n' +
+    '\n' +
+    'IMPORTANT: Logging method and current HR/payroll system are TWO SEPARATE topics. Ask them separately. A company can use biometric devices to capture time AND have a separate HR system — or neither. Do not mix them up.\n' +
+    '\n' +
+    'SEQUENCE TO FOLLOW:\n' +
+    '\n' +
+    'STEP 1 — Ask how employees clock in (logging method only):\n' +
+    '- Ask: "How do your employees record their time — is it a fingerprint scanner, a mobile app, paper timesheets, or something else?"\n' +
+    '- This is about the physical clock-in method, not software\n' +
+    '- Common answers: biometric device, Bundy clock, mobile app, web clock-in, manual/paper timesheet, mix of methods\n' +
+    '- If biometric or Bundy clock: ask the brand and model (e.g. ZKTeco K40)\n' +
+    '- If manual/paper: ask how logs are validated and consolidated each cutoff — who checks them, what do they look for, what tool do they use to upload?\n' +
+    '\n' +
+    'STEP 2 — Ask about their current HR or payroll system (separate from logging method):\n' +
+    '- Ask: "Do you currently use any HR or payroll software to manage employee records and process payroll?"\n' +
+    '- This is about software/platform, not how employees clock in\n' +
+    '- Common answers: yes (name the system), spreadsheets only, fully manual, no system yet\n' +
+    '- If yes: what system? Does it currently handle timekeeping, or just HR/payroll?\n' +
+    '\n' +
+    'STEP 3 — Ask how logs flow to payroll:\n' +
+    '- Ask: "Once time logs are captured, how do they get into payroll each cutoff — does someone download and upload them, or is there an automatic sync?"\n' +
+    '- Get the full flow: who does it, how often, what steps are involved\n' +
+    '- Ask who is responsible for consolidating and uploading logs each cutoff\n' +
+    '\n' +
+    'STEP 4 — If API integration comes up (only if they raise it):\n' +
+    '- Ask: what kind of integration are they looking for?\n' +
+    '- Do they have an IT or development team who can work on it?\n' +
+    '- Is it needed before go-live or can it wait?\n' +
+    '\n' +
     'NATURAL CONVERSATION PROMPTS:\n' +
-    '- "Are you currently using any system to manage timekeeping or payroll, or is it handled manually?"\n' +
-    '- "How do your employees clock in — is it a fingerprint scanner, a mobile app, or something else?"\n' +
-    '- "What brand and model is the biometric device?"\n' +
-    '- "Once the logs are in the device, how do they get into payroll — does someone download them, or is it automatic?"\n' +
-    '- "Who handles it when an employee forgets to clock in or out?"\n' +
+    '- "How do your employees record their time — fingerprint scanner, mobile app, paper timesheets, or something else?"\n' +
+    '- "What brand and model is the device?"\n' +
+    '- "How are those logs validated and consolidated each cutoff — who checks them and how do they get uploaded?"\n' +
+    '- "Separate from that — do you use any HR or payroll software to manage your employees and process payroll?"\n' +
+    '- "Once logs are captured, how do they make it into payroll — is someone downloading and uploading them, or does it sync automatically?"\n' +
+    '- "Who is responsible for pulling the logs together each cutoff?"\n' +
+    '\n' +
     'SECTION IS COMPLETE WHEN:\n' +
-    '✓ Whether a current system exists is confirmed (name it if yes; note manual or spreadsheet if no)\n' +
-    '✓ At least one logging method is confirmed\n' +
-    '✓ If biometric: brand AND model are stated (if not, note as to-be-confirmed)\n' +
-    '✓ Data flow from device to payroll is described\n' +
-    '✓ Who consolidates/uploads is confirmed\n' +
+    '✓ Logging method confirmed (biometric / Bundy clock / mobile / manual / mix)\n' +
+    '✓ If biometric or Bundy: brand and model stated (if unknown, note as to confirm)\n' +
+    '✓ If manual: validation and consolidation process described\n' +
+    '✓ Current HR/payroll system confirmed (name it, or confirm there is none)\n' +
+    '✓ Data flow from log capture to payroll described\n' +
+    '✓ Who consolidates and uploads each cutoff confirmed\n' +
+    '\n' +
     'SPECIAL NOTES:\n' +
-    '- Bundy clock ≠ biometric — do not conflate them\n' +
-    '- If API integration is mentioned, note it for technical follow-up\n' +
+    '- Bundy clock = mechanical punch-card machine. Biometric = fingerprint or facial recognition. Never conflate them.\n' +
+    '- A biometric device is a logging method, not a system. Ask about both separately.\n' +
+    '- If API integration is mentioned, note it — do not probe deeply unless they raise it\n' +
     '- Do NOT use the word "biolog" — say "time log" or "attendance record"',
 
     // ── 1: APPROVAL FLOW ──
